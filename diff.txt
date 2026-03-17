@@ -1,0 +1,277 @@
+Comparing files index.html and INDEX_BACKUP.HTML
+***** index.html
+<html lang="en">
+
+<head></head>
+
+<body class="h-screen flex flex-col overflow-hidden text-sm app-bg" onclick="closeAllMenus(event)">n++
+
+
+
+    <meta charset="UTF-8">
+***** INDEX_BACKUP.HTML
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+*****
+
+***** index.html
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer=""></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&amp;display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
+***** INDEX_BACKUP.HTML
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+
+            --ios-blue: #0A84FF;
+            --ios-green: #30D158;
+            --ios-red: #FF453A;
+            --ios-yellow: #FFD60A;
+            --ios-purple: #BF5AF2;
+            --ios-gray: #98989D;
+
+*****
+
+***** index.html
+
+
+***** INDEX_BACKUP.HTML
+
+            --bg-dark: #060a14;
+            --bg-left-glow: rgba(236, 72, 154, 0.411);
+            --bg-top-glow: rgba(99, 102, 241, 0.3);
+            --bg-right-glow: rgba(168, 85, 247, 0.25);
+            --bg-bottom-glow: rgba(15, 23, 42, 0.4);
+
+            --glass-bg: rgba(6, 12, 24, 0.50);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-highlight: rgba(255, 255, 255, 0.25);
+            --glass-shadow: rgba(0, 0, 0, 0.85);
+
+            --card-bg-weak: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.085);
+
+            --text-main: #ffffff;
+            --panel-bg: var(--glass-bg);
+            --cell-border: var(--glass-border);
+
+*****
+
+Resync Failed.  Files are too different.
+***** index.html
+
+    <!-- AMBIENT SHIFTING BACKGROUND BLOBS -->
+    <div id="ambient-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- TOP CONTROL BAR / BACCARAT DASHBOARD -->
+    <div
+        class="glass-bar glass-surface glass-surface--toolbar p-2 sm:p-3 flex justify-between items-center shadow-lg z-30 relat
+ive shrink-0">
+        <!-- ROULETTE CONTROLS -->
+        <div id="roulette-controls" class="hidden flex gap-2 items-center">
+            <input type="number" id="spinInput" min="0" max="36"
+                class="w-16 md:w-20 h-9 text-xl font-bold text-center bg-black/20 border border-white/10 rounded-lg text-white 
+focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/20 transition-all duration-200"
+                placeholder="#">
+
+            <button onclick="app.handleSpin()"
+                class="h-9 px-3 sm:px-5 btn-apple btn-apple-primary font-semibold rounded-lg shadow-lg transition-all active:sc
+ale-95 text-sm tracking-wide">
+                ADD
+            </button>
+
+            <button onclick="app.undo()" class="h-9 px-3 btn-apple text-gray-300 font-bold rounded-lg">
+                <i class="fas fa-undo"></i>
+            </button>
+
+            <!-- Save Indicator -->
+            <div class="flex items-center justify-center w-8 h-10 ml-1">
+                <i id="saveIndicator" class="fas fa-save save-icon text-xl text-gray-600"></i>
+            </div>
+        </div>
+
+        <!-- BACCARAT PREDICTION DASHBOARD -->
+        <div id="baccarat-dashboard"
+            class="hidden flex flex-1 items-center justify-start overflow-x-auto overscroll-contain no-scrollbar h-full py-2 pl
+-1 min-w-0">
+            <div
+                class="scanning-text uppercase font-bold text-xs opacity-60 w-full flex items-center justify-center h-full">
+                Scanning for patterns...</div>
+        </div>
+        <div id="dragontiger-dashboard"
+            class="hidden flex flex-1 items-center justify-start overflow-x-auto overscroll-contain no-scrollbar h-full py-2 pl
+-1 min-w-0">
+            <div
+                class="scanning-text uppercase font-bold text-xs opacity-60 w-full flex items-center justify-center h-full">
+                Scanning for patterns...</div>
+        </div>
+
+        <div class="flex gap-1 md:gap-2 relative">
+
+            <button id="btn-baccarat-undo" onclick="app.baccarat.undo()"
+                class="hidden h-9 px-3 btn-apple text-gray-300 font-bold rounded-lg">
+                <i class="fas fa-undo"></i>
+            </button><button id="btn-dragontiger-undo" onclick="app.baccarat.undo()"
+                class="hidden h-9 px-3 btn-apple text-gray-300 font-bold rounded-lg">
+                <i class="fas fa-undo"></i>
+            </button>
+
+            <!-- MASTER FILTER MENU -->
+            <div class="relative">
+                <button id="filterBtn" onclick="toggleFilterMenu(event)"
+                    class="h-9 px-2 sm:px-4 btn-apple text-gray-300 font-medium rounded-lg flex items-center gap-2 transition-c
+olors text-xs">
+                    <i class="fas fa-filter"></i> <span class="hidden md:inline">FILTERS</span>
+                </button>
+            </div>
+
+            <button id="roulette-bets-btn" onclick="toggleBetsModal()"
+                class="h-9 px-2 sm:px-4 btn-apple text-blue-400 font-medium rounded-lg flex items-center gap-2 transition-color
+s text-xs">
+                <i class="fas fa-list-check"></i> <span class="hidden md:inline">BETS</span>
+            </button>
+
+            <button onclick="toggleAnalytics()"
+                class="h-9 px-2 sm:px-4 btn-apple text-yellow-400 font-medium rounded-lg flex items-center gap-2 btn-pulse tran
+sition-colors text-xs">
+                <i class="fas fa-chart-bar"></i> <span class="hidden md:inline">STATS</span>
+            </button>
+
+            <!-- HAMBURGER MENU -->
+            <div class="relative">
+                <button id="menuBtn" onclick="toggleMainMenu(event)"
+                    class="h-9 w-9 btn-apple text-gray-300 font-bold rounded-lg flex justify-center items-center transition-col
+ors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PATTERN DASHBOARD (ALERTS) - HORIZONTAL SCROLL -->
+    <div id="roulette-dashboard"
+        class="hidden flex glass-surface glass-surface--dashboard p-2 sm:p-3 overflow-x-auto whitespace-nowrap no-scrollbar ite
+ms-center justify-start gap-2 sm:gap-3 bg-transparent h-[75px] sm:h-[90px] border-b border-white/5 shrink-0 relative z-10 trans
+ition-all duration-300">
+        <!-- JS will render cards or placeholder here -->
+    </div>
+***** INDEX_BACKUP.HTML
+
+            --col-high: #ffb366e6;
+            --col-low: #80bfffe6;
+
+            --col-odd: #c299ffe6;
+            --col-even: #ff9999e6;
+
+            --col-d1: #06b6d4e6;
+            --col-d2: #e0e0e0e6;
+            --col-d3: #cccc99e6;
+
+            --col-c1: #ff4d4de6;
+            --col-c2: #4dff4de6;
+            --col-c3: #ffff4de6;
+
+            --sec-voisins: #00bfff;
+            --sec-tier: #ffcc00;
+            --sec-orphelins: #ccccff;
+
+            --zero-green: #22c55e;
+            --win-gold: #fbbf24;
+            --loss-red: #ef4444;
+
+
+            --apple-blue: #0A84FF;
+            --apple-green: #30D158;
+            --apple-red: #FF453A;
+            --apple-gray: #8E8E93;
+        }
+
+
+        body.app-bg {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, var(--bg-left-glow) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, var(--bg-top-glow) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, var(--bg-right-glow) 0px, transparent 50%),
+                linear-gradient(rgba(6, 10, 20, 0.4), rgba(6, 10, 20, 0.4));
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            animation: aurora-drift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes aurora-drift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            25% {
+                background-position: 50% 0%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            75% {
+                background-position: 50% 100%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Subtle film grain overlay */
+        body.app-bg::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilt
+er id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crec
+t width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+
+        .glass-surface {
+            background:
+                linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01)),
+                var(--glass-bg);
+            box-shadow:
+                0 30px 60px -15px var(--glass-shadow),
+                inset 0 1px 1px var(--glass-highlight),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            position: relative;
+        }
+
+
+
+
+        .grid-item {
+*****
+
