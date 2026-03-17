@@ -1,13 +1,1394 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OUTSIDE 2.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <button id="test-spin-btn">Test Engine</button>
+
+<body class="h-screen flex flex-col overflow-hidden text-sm app-bg" onclick="closeAllMenus(event)">
+
+    <!-- TOP CONTROL BAR / BACCARAT DASHBOARD -->
+    <div
+        class="glass-bar glass-surface glass-surface--toolbar p-2 sm:p-3 flex justify-between items-center shadow-lg z-30 relative shrink-0">
+        <!-- ROULETTE CONTROLS -->
+        <div id="roulette-controls" class="hidden flex gap-2 items-center">
+            <input type="number" id="spinInput" min="0" max="36"
+                class="w-16 md:w-20 h-9 text-xl font-bold text-center bg-black/20 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/20 transition-all duration-200"
+                placeholder="#">
+
+            <button onclick="app.handleSpin()"
+                class="h-9 px-3 sm:px-5 btn-apple btn-apple-primary font-semibold rounded-lg shadow-lg transition-all active:scale-95 text-sm tracking-wide">
+                ADD
+            </button>
+
+            <button onclick="app.undo()" class="h-9 px-3 btn-apple text-gray-300 font-bold rounded-lg">
+                <i class="fas fa-undo"></i>
+            </button>
+
+            <!-- Save Indicator -->
+            <div class="flex items-center justify-center w-8 h-10 ml-1">
+                <i id="saveIndicator" class="fas fa-save save-icon text-xl text-gray-600"></i>
+            </div>
+        </div>
+
+        <!-- BACCARAT PREDICTION DASHBOARD -->
+        <div id="baccarat-dashboard"
+            class="hidden flex flex-1 items-center justify-start overflow-x-auto overscroll-contain no-scrollbar h-full py-2 pl-1 min-w-0">
+            <div
+                class="scanning-text uppercase font-bold text-xs opacity-60 w-full flex items-center justify-center h-full">
+                Scanning for patterns...</div>
+        </div>
+
+        <div class="flex gap-1 md:gap-2 relative">
+
+            <button id="btn-baccarat-undo" onclick="app.baccarat.undo()"
+                class="hidden h-9 px-3 btn-apple text-gray-300 font-bold rounded-lg">
+                <i class="fas fa-undo"></i>
+            </button>
+
+            <!-- MASTER FILTER MENU -->
+            <div class="relative">
+                <button id="filterBtn" onclick="toggleFilterMenu(event)"
+                    class="h-9 px-2 sm:px-4 btn-apple text-gray-300 font-medium rounded-lg flex items-center gap-2 transition-colors text-xs">
+                    <i class="fas fa-filter"></i> <span class="hidden md:inline">FILTERS</span>
+                </button>
+            </div>
+
+            <button id="roulette-bets-btn" onclick="toggleBetsModal()"
+                class="h-9 px-2 sm:px-4 btn-apple text-blue-400 font-medium rounded-lg flex items-center gap-2 transition-colors text-xs">
+                <i class="fas fa-list-check"></i> <span class="hidden md:inline">BETS</span>
+            </button>
+
+            <button onclick="toggleAnalytics()"
+                class="h-9 px-2 sm:px-4 btn-apple text-yellow-400 font-medium rounded-lg flex items-center gap-2 btn-pulse transition-colors text-xs">
+                <i class="fas fa-chart-bar"></i> <span class="hidden md:inline">STATS</span>
+            </button>
+
+            <!-- HAMBURGER MENU -->
+            <div class="relative">
+                <button id="menuBtn" onclick="toggleMainMenu(event)"
+                    class="h-9 w-9 btn-apple text-gray-300 font-bold rounded-lg flex justify-center items-center transition-colors">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PATTERN DASHBOARD (ALERTS) - HORIZONTAL SCROLL -->
+    <div id="roulette-dashboard"
+        class="hidden flex glass-surface glass-surface--dashboard p-2 sm:p-3 overflow-x-auto whitespace-nowrap no-scrollbar items-center justify-start gap-2 sm:gap-3 bg-transparent h-[75px] sm:h-[90px] border-b border-white/5 shrink-0 relative z-10 transition-all duration-300">
+        <!-- JS will render cards or placeholder here -->
+    </div>
+
+    <!-- ROULETTE VIEW -->
+    <div id="roulette-view" class="flex-1 flex flex-col overflow-hidden">
+        <!-- FROZEN HEADER GRID -->
+        <div class="glass-surface glass-surface--header shrink-0 bg-transparent pr-[8px] z-20 relative shadow-md">
+            <table class="w-full table-fixed border-separate border-spacing-1">
+                <thead>
+                    <tr>
+                        <th class="header-cell w-[8%]">#</th>
+                        <th class="header-cell w-[10%]">SPIN</th>
+                        <th class="header-cell" id="th-hl">H/L</th>
+                        <th class="header-cell" id="th-oe">O/E</th>
+                        <th class="header-cell w-[12%]" id="th-doz">DOZ</th>
+                        <th class="header-cell w-[12%]" id="th-col">COL</th>
+                        <th class="header-cell">PRED</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <!-- HISTORY GRID (SCROLLABLE BODY) -->
+        <div
+            class="flex-1 overflow-y-scroll overscroll-contain history-container relative z-10 bg-transparent no-scrollbar">
+            <table class="w-full table-fixed border-separate border-spacing-1">
+                <tbody id="historyBody">
+                    <!-- Data Rows -->
+                </tbody>
+            </table>
+            <div id="scrollAnchor" class="h-4"></div>
+        </div>
+    </div>
+
+    <!-- BACCARAT VIEW (Initially Hidden) -->
+    <div id="baccarat-view" class="hidden flex flex-1 flex-col overflow-hidden p-1 sm:p-3 gap-1 sm:gap-3">
+        <div class="flex flex-col gap-1.5 flex-1 min-h-0">
+            <div class="flex justify-between items-center px-1">
+                <div class="flex gap-2.5 text-[10px] font-black uppercase tracking-[0.1em]"><span
+                        class="text-white/30 tracking-widest"><i class="fas fa-chart-pie text-[8px] mr-1 mb-0.5"></i>
+                        Shoe Comp:</span><span class="text-[#0A84FF]">P: <span
+                            id="baccarat-comp-p">0%</span></span><span class="text-[#FF453A]">B: <span
+                            id="baccarat-comp-b">0%</span></span><span class="text-[#30D158]">T: <span
+                            id="baccarat-comp-t">0%</span></span></div><span id="baccarat-hands-count"
+                    class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">0 Hands</span>
+            </div>
+            <div id="bead-plate" class="road-container rounded-lg flex-1"></div>
+        </div>
+        <div class="flex flex-col gap-1.5 shrink-0 h-[140px]">
+            <div class="flex justify-between items-center px-1"><span
+                    class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]"><i
+                        class="fas fa-circle text-[7px] mr-1 mb-0.5"></i> Big Road</span><span
+                    class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Streaks View</span></div>
+            <div id="big-road" class="road-container rounded-lg h-full"></div>
+        </div>
+
+        <!-- BACCARAT FOOTER INPUTS (Moved inside baccarat-view) -->
+        <div id="baccarat-controls"
+            class="hidden glass-bar glass-surface p-3 sm:p-4 flex items-center gap-3 sm:gap-4 shrink-0 mt-auto">
+            <div class="flex items-center gap-3 sm:gap-4 w-full">
+                <button onclick="createRipple(event); app.baccarat.input('P')"
+                    class="btn-ios btn-p flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+                    <span class="text-xl sm:text-2xl font-black text-white tracking-tighter">PLAYER</span>
+                    <span class="text-[9px] sm:text-[10px] label-light text-white/50 mt-1">1:1</span>
+                </button>
+                <button onclick="createRipple(event); app.baccarat.input('T')"
+                    class="btn-ios btn-t w-[65px] sm:w-[90px] h-[52px] sm:h-[68px] rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
+                    <span class="text-sm sm:text-base font-black text-white">TIE</span>
+                    <span class="text-[8px] sm:text-[9px] label-light text-white/50 mt-0.5">8:1</span>
+                </button>
+                <button onclick="createRipple(event); app.baccarat.input('B')"
+                    class="btn-ios btn-b flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
+                    <span class="text-xl sm:text-2xl font-black text-white tracking-tighter">BANKER</span>
+                    <span class="text-[9px] sm:text-[10px] label-light text-white/50 mt-1">0.95:1</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ANALYTICS MODAL (MULTI-TAB) -->
+    <div id="analyticsModal" class="modal-overlay" onclick="if(event.target === this) app.toggleAnalytics()">
+        <div
+            class="glass-panel glass-surface tool-container w-11/12 max-w-4xl h-[90vh] rounded-3xl shadow-2xl flex flex-col anim-slide-up overflow-hidden border border-white/20">
+
+            <!-- HEADER WITH TOGGLE -->
+            <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
+                <div class="flex items-center gap-8">
+                    <h2 id="head-analytics" onclick="switchAnalyticsMode('analytics')"
+                        class="text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2">
+                        <span class="text-yellow-500"><i class="fas fa-chart-pie"></i></span> Engine Analytics
+                    </h2>
+                    <h2 id="head-simulation" onclick="switchAnalyticsMode('simulation')"
+                        class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
+                        <span class="text-purple-500"><i class="fas fa-flask"></i></span> Simulation
+                    </h2>
+                </div>
+                <button onclick="toggleAnalytics()" class="text-gray-500 hover:text-white text-xl"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <!-- VIEW: ENGINE ANALYTICS (DEFAULT) -->
+            <div id="analyticsView" class="flex flex-col flex-1 overflow-hidden h-full">
+                <!-- ROULETTE TABS -->
+                <div class="flex gap-2 p-3 bg-transparent border-b border-white/10 shrink-0">
+                    <button id="tab-master" onclick="app.roulette.switchAnalyticsTab('master')"
+                        class="px-4 py-2 bg-[#007AFF] text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors shadow-lg">MASTER
+                        DASHBOARD</button>
+                    <button id="tab-1to1" onclick="app.roulette.switchAnalyticsTab('1to1')"
+                        class="px-4 py-2 bg-white/10 text-gray-400 hover:text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors border border-white/10 hover:border-white/20">EVEN
+                        BETS (1:1)</button>
+                    <button id="tab-2to1" onclick="app.roulette.switchAnalyticsTab('2to1')"
+                        class="px-4 py-2 bg-white/10 text-gray-400 hover:text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors border border-white/10 hover:border-white/20">DOZEN
+                        / COLUMN (2:1)</button>
+                </div>
+
+                <div class="flex-1 overflow-auto p-6 bg-transparent">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="grid-item bg-white/5 p-4 rounded-xl text-center border border-white/10 shadow">
+                            <div class="text-gray-400 text-xs uppercase font-bold mb-1">Global Hit Rate</div>
+                            <div class="text-2xl font-black text-white" id="engHitRate">0%</div>
+                        </div>
+                        <div class="grid-item bg-white/5 p-4 rounded-xl text-center border border-white/10 shadow">
+                            <div class="text-gray-400 text-xs uppercase font-bold mb-1">Theoretical Net</div>
+                            <div class="text-2xl font-black" id="engNetUnits">0</div>
+                        </div>
+                        <div class="grid-item bg-white/5 p-4 rounded-xl text-center border border-white/10 shadow">
+                            <div class="text-gray-400 text-xs uppercase font-bold mb-1">Total Signals</div>
+                            <div class="text-2xl font-black text-blue-400" id="engTotalBets">0</div>
+                        </div>
+                        <div class="grid-item bg-white/5 p-4 rounded-xl text-center border border-white/10 shadow">
+                            <div class="text-gray-400 text-xs uppercase font-bold mb-1">Engine Form</div>
+                            <div class="text-2xl font-black" id="engStreak">0</div>
+                        </div>
+                    </div>
+
+                    <div class="w-full mb-6">
+                        <h3
+                            class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-white/10 pb-1">
+                            Theoretical Bankroll Trend</h3>
+                        <div id="engineGraphContainer"
+                            class="grid-item bg-black/20 rounded-2xl border border-white/10 h-48 shadow-inner overflow-hidden relative">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Efficiency Heatmap</h3>
+                        <div id="roulette-heatmap-controls" class="flex bg-black/30 p-1 rounded-lg">
+                            <button id="hm-btn-pat" onclick="app.roulette.toggleHeatmapMode('PATTERNS')"
+                                class="px-3 py-1 text-[10px] font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">PATTERNS</button>
+                            <button id="hm-btn-cat" onclick="app.roulette.toggleHeatmapMode('CATEGORIES')"
+                                class="px-3 py-1 text-[10px] font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">CATEGORIES</button>
+                        </div>
+                    </div>
+                    <div
+                        class="grid-item bg-black/20 rounded-2xl border border-white/10 overflow-hidden shadow-inner mb-2">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-white/5 text-gray-500 border-b border-white/10">
+                                <tr>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3 text-right">Total / Att</th>
+                                    <th class="p-3 text-right">W / L</th>
+                                    <th class="p-3 text-right cursor-pointer hover:text-white transition-colors"
+                                        onclick="toggleHeatmapMetric()"><span id="hm-header-metric">Share %</span> <i
+                                            class="fas fa-sort text-xs ml-1"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody id="patternStatsBody">
+                                <tr>
+                                    <td colspan="4" class="p-4 text-center text-gray-600 italic">No patterns tracked yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-3 bg-white/5 border-t border-white/10 text-right shrink-0">
+                    <button onclick="app.roulette.resetStats()"
+                        class="text-xs text-red-500 hover:text-red-400 underline mr-4 transition-colors">Reset All
+                        Data</button>
+                </div>
+            </div>
+
+            <!-- VIEW: SIMULATION LAB (HIDDEN DEFAULT) -->
+            <div id="simulationView" class="hidden flex-col flex-1 overflow-hidden h-full bg-transparent">
+                <!-- SIM CONFIG BAR -->
+                <div class="p-3 bg-transparent border-b border-white/10 flex justify-between items-center shrink-0">
+                    <button onclick="app.roulette.toggleSimConfig()"
+                        class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition-colors shadow-lg flex items-center gap-2">
+                        <i class="fas fa-sliders-h"></i> Strategy Config
+                    </button>
+                    <div class="text-gray-400 text-xs font-mono" id="simFilterSummary">Active: All Patterns</div>
+                </div>
+
+                <!-- ROULETTE SIM CONFIG DROPDOWN -->
+                <div id="simConfigDropdown"
+                    class="hidden bg-black/60 backdrop-blur-xl border-b border-purple-900/30 p-4 shrink-0 shadow-2xl">
+                    <div class="mb-4 border-b border-white/10 pb-4">
+                        <h4 class="text-purple-400 text-[10px] uppercase font-bold tracking-widest mb-2">Betting
+                            Strategy</h4>
+                        <select id="simProgressionSelect" onchange="changeSimProgression(this.value)"
+                            class="w-full bg-white/5 border border-purple-900/50 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition-colors">
+                            <option value="flat">Flat Betting (1 Unit)</option>
+                            <option value="martingale">Martingale (Double on Loss)</option>
+                            <option value="paroli">Paroli (Double on Win - Max 3)</option>
+                            <option value="fibonacci">Fibonacci (Sequence)</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4
+                                class="text-purple-400 text-[10px] uppercase font-bold tracking-widest mb-2 border-b border-white/10 pb-1">
+                                Bet Types</h4>
+                            <div class="space-y-1">
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-cat-Color">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('cat', 'Color')" id="sim-cat-Color"> <span
+                                        class="text-gray-300 text-xs">Color</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-cat-High/Low">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('cat', 'High/Low')" id="sim-cat-High/Low"> <span
+                                        class="text-gray-300 text-xs">High / Low</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-cat-Odd/Even">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('cat', 'Odd/Even')" id="sim-cat-Odd/Even"> <span
+                                        class="text-gray-300 text-xs">Odd / Even</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-cat-Dozens">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('cat', 'Dozens')" id="sim-cat-Dozens"> <span
+                                        class="text-gray-300 text-xs">Dozens</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-cat-Columns">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('cat', 'Columns')" id="sim-cat-Columns"> <span
+                                        class="text-gray-300 text-xs">Columns</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <h4
+                                class="text-purple-400 text-[10px] uppercase font-bold tracking-widest mb-2 border-b border-gray-700 pb-1">
+                                Trend Patterns</h4>
+                            <div class="grid grid-cols-2 gap-x-4 gap-y-1" id="roulette-sim-patterns">
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-FLOW">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', 'FLOW')" id="sim-pat-FLOW"> <span
+                                        class="text-gray-300 text-xs">Flow</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-ZIG-ZAG">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', 'ZIG-ZAG')" id="sim-pat-ZIG-ZAG"> <span
+                                        class="text-gray-300 text-xs">Zig-Zag</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-FALSE BREAK">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', 'FALSE BREAK')" id="sim-pat-FALSE BREAK"> <span
+                                        class="text-gray-300 text-xs">False Break</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-1-2-3 BUILD">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', '1-2-3 BUILD')" id="sim-pat-1-2-3 BUILD"> <span
+                                        class="text-gray-300 text-xs">1-2-3 Build</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-3-2-1 MIRROR">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', '3-2-1 MIRROR')" id="sim-pat-3-2-1 MIRROR">
+                                    <span class="text-gray-300 text-xs">Mirror</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-1-1-3 BURST">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', '1-1-3 BURST')" id="sim-pat-1-1-3 BURST"> <span
+                                        class="text-gray-300 text-xs">Burst</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-3-1-1 DOWN">
+                                    <input type="checkbox" class="sim-checkbox" checked
+                                        onchange="toggleSimFilter('pat', '3-1-1 DOWN')" id="sim-pat-3-1-1 DOWN"> <span
+                                        class="text-gray-300 text-xs">3-1-1 Down</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-1-1-2 BUILD">
+                                    <input type="checkbox" class="sim-checkbox"
+                                        onchange="toggleSimFilter('pat', '1-1-2 BUILD')" id="sim-pat-1-1-2 BUILD"> <span
+                                        class="text-gray-300 text-xs">1-1-2 Build</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIM DASHBOARD -->
+                <div class="flex-1 overflow-auto p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div
+                            class="grid-item bg-white/5 p-4 rounded-2xl text-center border border-purple-500/20 shadow">
+                            <div class="text-purple-400 text-xs uppercase font-bold mb-1">Simulated Net</div>
+                            <div class="text-2xl font-black text-white" id="simNet">0</div>
+                        </div>
+                        <div
+                            class="grid-item bg-white/5 p-4 rounded-2xl text-center border border-purple-500/20 shadow">
+                            <div class="text-purple-400 text-xs uppercase font-bold mb-1">Simulated Hit Rate</div>
+                            <div class="text-2xl font-black text-white" id="simRate">0%</div>
+                        </div>
+                        <div
+                            class="grid-item bg-white/5 p-4 rounded-2xl text-center border border-purple-500/20 shadow">
+                            <div class="text-purple-400 text-xs uppercase font-bold mb-1">Total Opps</div>
+                            <div class="text-2xl font-black text-purple-300" id="simCount">0</div>
+                        </div>
+                        <div
+                            class="grid-item bg-white/5 p-4 rounded-2xl text-center border border-purple-500/20 shadow">
+                            <div class="text-purple-400 text-xs uppercase font-bold mb-1">Max Drawdown</div>
+                            <div class="text-2xl font-black text-red-400" id="simDrawdown">0</div>
+                        </div>
+                    </div>
+
+                    <div class="w-full mb-6">
+                        <h3
+                            class="text-sm font-bold text-purple-400 uppercase tracking-widest mb-3 border-b border-purple-900/30 pb-1">
+                            Simulated Bankroll Trend</h3>
+                        <div id="simGraphContainer"
+                            class="grid-item bg-black/20 rounded-2xl border border-purple-900/30 h-64 shadow-inner overflow-hidden relative">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ACTUAL BETS MODAL -->
+    <div id="betsModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.toggleBetsModal()">
+        <div
+            class="glass-panel glass-surface tool-container w-11/12 max-w-4xl h-[90vh] rounded-3xl shadow-2xl flex flex-col anim-slide-up overflow-hidden border border-white/20">
+            <div class="p-5 bg-white/5 border-b border-white/10 flex justify-between items-center shrink-0">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="text-blue-500"><i class="fas fa-list-check"></i></span> Actual Bets
+                </h2>
+                <button onclick="toggleBetsModal()" class="text-gray-500 hover:text-white text-xl"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 p-4 bg-white/5 border-b border-white/10 shrink-0">
+                <div class="grid-item text-center">
+                    <div class="text-gray-500 text-[10px] uppercase font-bold">Your Net Units</div>
+                    <div class="text-xl font-black" id="userNetUnits">0</div>
+                </div>
+                <div class="grid-item text-center border-l border-gray-700">
+                    <div class="text-gray-500 text-[10px] uppercase font-bold">Your Hit Rate</div>
+                    <div class="text-xl font-black text-white" id="userHitRate">0%</div>
+                </div>
+                <div class="grid-item text-center border-l border-gray-700">
+                    <div class="text-gray-500 text-[10px] uppercase font-bold">Bets Placed</div>
+                    <div class="text-xl font-black text-blue-400" id="userTotalBets">0</div>
+                </div>
+            </div>
+
+            <!-- Segmented Control -->
+            <div class="p-3 bg-transparent border-b border-white/10 shrink-0">
+                <div class="flex bg-black/30 p-1 rounded-lg max-w-md mx-auto">
+                    <button id="seg-trend" onclick="app.roulette.switchBetsTab('trend')"
+                        class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">GRAPH</button>
+                    <button id="seg-analytics" onclick="app.roulette.switchBetsTab('analytics')"
+                        class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">ANALYTICS</button>
+                    <button id="seg-logs" onclick="app.roulette.switchBetsTab('logs')"
+                        class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">LOGS</button>
+                </div>
+            </div>
+
+            <!-- Tab Content: TREND -->
+            <div id="tab-bets-trend" class="flex-1 flex flex-col p-4 bg-transparent overflow-hidden">
+                <div id="userGraphContainer"
+                    class="grid-item bg-black/20 rounded-2xl border border-white/10 flex-1 shadow-inner overflow-hidden relative w-full h-full">
+                </div>
+            </div>
+
+            <!-- Tab Content: ANALYTICS (NEW) -->
+            <div id="tab-bets-analytics" class="hidden flex-1 flex flex-col p-4 bg-transparent overflow-hidden">
+                <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2 shrink-0">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Your Performance Heatmap</h3>
+                    <div id="roulette-user-heatmap-controls" class="flex bg-black/30 p-1 rounded-lg">
+                        <button id="uhm-btn-pat" onclick="app.roulette.toggleUserHeatmapMode('PATTERNS')"
+                            class="px-3 py-1 text-[10px] font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">PATTERNS</button>
+                        <button id="uhm-btn-cat" onclick="app.roulette.toggleUserHeatmapMode('CATEGORIES')"
+                            class="px-3 py-1 text-[10px] font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">CATEGORIES</button>
+                    </div>
+                </div>
+                <div
+                    class="grid-item bg-black/20 rounded-2xl border border-white/10 overflow-hidden shadow-inner flex-1 relative">
+                    <div class="absolute inset-0 overflow-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead
+                                class="bg-white/5 text-gray-500 border-b border-white/10 sticky top-0 z-10 backdrop-blur-md">
+                                <tr>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3 text-right">Bets</th>
+                                    <th class="p-3 text-right">W / L</th>
+                                    <th class="p-3 text-right">Win Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userHeatmapBody">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: LOGS -->
+            <div id="tab-bets-logs" class="hidden flex-1 overflow-auto p-0 bg-transparent">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-white/5 text-gray-400 sticky top-0 z-10 backdrop-blur-md">
+                        <tr>
+                            <th class="p-4 border-b border-white/10">#</th>
+                            <th class="p-4 border-b border-white/10">Pattern Found</th>
+                            <th class="p-4 border-b border-white/10">Your Bet</th>
+                            <th class="p-4 border-b border-white/10 text-right">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="actualBetsBody" class="divide-y divide-white/5">
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-gray-600 italic">No bets confirmed yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESET WARNING MODAL -->
+    <div id="resetModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.closeResetModal()">
+        <div
+            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col anim-slide-up p-6 text-center border border-red-500/30">
+            <div class="text-red-500 text-5xl mb-4"><i class="fas fa-triangle-exclamation"></i></div>
+            <h2 class="text-2xl font-black text-white mb-2">Wipe Session Data?</h2>
+            <p class="text-gray-400 text-sm mb-6">Are you sure you want to wipe all session data? This action cannot be
+                undone and will clear your saved progress.</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="app.roulette.closeResetModal()"
+                    class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 font-bold rounded-xl transition-colors w-full">Cancel</button>
+                <button onclick="app.roulette.executeReset()"
+                    class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg transition-colors w-full">Yes,
+                    Wipe Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SWITCH MODE WARNING MODAL -->
+    <div id="switchModeModal" class="modal-overlay" onclick="if(event.target === this) app.closeSwitchModeModal()">
+        <div
+            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col anim-slide-up p-6 text-center border border-blue-500/30">
+            <div class="text-blue-500 text-5xl mb-4"><i class="fas fa-exchange-alt"></i></div>
+            <h2 class="text-2xl font-black text-white mb-2">Switch Game Mode?</h2>
+            <p class="text-gray-400 text-sm mb-6">Switching to <span id="targetModeName"
+                    class="text-blue-400 font-black"></span> will change the interface. Your current session data is
+                saved automatically.</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="app.closeSwitchModeModal()"
+                    class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 font-bold rounded-xl transition-colors w-full">Cancel</button>
+                <button onclick="app.executeSwitchMode()"
+                    class="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl shadow-lg transition-colors w-full btn-pulse">Yes,
+                    Switch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PATTERN LOG MODAL -->
+    <div id="patternLogModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.closePatternLog()">
+        <div
+            class="glass-panel glass-surface w-80 rounded-2xl shadow-2xl flex flex-col anim-slide-up overflow-hidden border border-white/20">
+            <div class="p-3 bg-white/5 border-b border-white/10 flex justify-between items-center shrink-0">
+                <h3 id="pl-title" class="font-bold text-white text-sm">Pattern Log</h3>
+                <button onclick="closePatternLog()" class="text-gray-500 hover:text-white"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="max-h-96 overflow-y-auto overscroll-contain bg-transparent">
+                <table class="w-full text-left">
+                    <thead class="bg-white/5 text-gray-500 text-[10px] uppercase sticky top-0 backdrop-blur-md">
+                        <tr>
+                            <th class="p-2">Spin</th>
+                            <th class="p-2">Target</th>
+                            <th class="p-2 text-right">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pl-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU OVERLAY (BLUR) -->
+    <div id="menuOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300"
+        onclick="app.roulette.closeAllMenus(event)"></div>
+
+    <!-- FILTER DROPDOWN (MOVED TO ROOT) -->
+    <div id="filterDropdown"
+        class="hidden fixed w-80 glass-panel glass-surface rounded-2xl shadow-2xl z-50 overflow-hidden anim-slide-up border border-white/20">
+        <div class="flex bg-white/5 border-b border-white/10 items-center">
+            <div
+                class="w-1/2 p-2 text-center text-[10px] font-bold text-blue-400 uppercase tracking-widest border-r border-white/10 bg-blue-900/10">
+                Categories</div>
+            <div
+                class="w-1/2 p-2 text-center text-[10px] font-bold text-purple-400 uppercase tracking-widest bg-purple-900/10">
+                Patterns</div>
+        </div>
+        <div class="flex max-h-[400px] overflow-y-auto overscroll-contain">
+            <!-- Categories Column -->
+            <div class="w-1/2 p-2 flex flex-col gap-1 bg-transparent border-r border-white/10">
+                <label
+                    class="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-lg cursor-pointer transition-colors border-b border-white/10 mb-1"
+                    for="selectAllCategories">
+                    <input type="checkbox" id="selectAllCategories" onchange="toggleCategorySelection(this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-yellow-500 font-bold text-[10px] uppercase tracking-wider flex-1">SELECT
+                        ALL</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-color">
+                    <input type="checkbox" checked onchange="handleFilterChange('color', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">Color <span
+                            id="lbl-filter-color" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-hl">
+                    <input type="checkbox" checked onchange="handleFilterChange('hl', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">High/Low <span
+                            id="lbl-filter-hl" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-oe">
+                    <input type="checkbox" checked onchange="handleFilterChange('oe', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">Odd/Even <span
+                            id="lbl-filter-oe" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <div class="h-px w-full bg-gray-800 my-1"></div>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-doz">
+                    <input type="checkbox" checked onchange="handleFilterChange('doz', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">Dozens <span
+                            id="lbl-filter-doz" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-col">
+                    <input type="checkbox" checked onchange="handleFilterChange('col', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">Columns <span
+                            id="lbl-filter-col" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+            </div>
+            <!-- Patterns Column -->
+            <div class="w-1/2 p-2 flex flex-col gap-1 bg-transparent">
+                <label
+                    class="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-lg cursor-pointer transition-colors border-b border-white/10 mb-1"
+                    for="selectAllPatterns">
+                    <input type="checkbox" id="selectAllPatterns" onchange="togglePatternSelection(this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-yellow-500 font-bold text-[10px] uppercase tracking-wider flex-1">SELECT
+                        ALL</span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-FLOW">
+                    <input type="checkbox" checked onchange="handleFilterChange('FLOW', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-cyan-300 font-bold text-[10px] uppercase tracking-wider flex-1">Flow <span
+                            id="lbl-filter-FLOW" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-ZIG-ZAG">
+                    <input type="checkbox" checked onchange="handleFilterChange('ZIG-ZAG', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-yellow-300 font-bold text-[10px] uppercase tracking-wider flex-1">Zig-Zag <span
+                            id="lbl-filter-ZIG-ZAG" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-FALSE BREAK">
+                    <input type="checkbox" checked onchange="handleFilterChange('FALSE BREAK', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-red-300 font-bold text-[10px] uppercase tracking-wider flex-1">False Break <span
+                            id="lbl-filter-FALSE BREAK" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-1-2-3 BUILD">
+                    <input type="checkbox" checked onchange="handleFilterChange('1-2-3 BUILD', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-emerald-300 font-bold text-[10px] uppercase tracking-wider flex-1">1-2-3 Build
+                        <span id="lbl-filter-1-2-3 BUILD" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-3-2-1 MIRROR">
+                    <input type="checkbox" checked onchange="handleFilterChange('3-2-1 MIRROR', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-purple-300 font-bold text-[10px] uppercase tracking-wider flex-1">Mirror <span
+                            id="lbl-filter-3-2-1 MIRROR" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-1-1-3 BURST">
+                    <input type="checkbox" checked onchange="handleFilterChange('1-1-3 BURST', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-orange-300 font-bold text-[10px] uppercase tracking-wider flex-1">1-1-3 Build
+                        <span id="lbl-filter-1-1-3 BURST" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-3-1-1 DOWN">
+                    <input type="checkbox" checked onchange="handleFilterChange('3-1-1 DOWN', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-pink-300 font-bold text-[10px] uppercase tracking-wider flex-1">3-1-1 Down <span
+                            id="lbl-filter-3-1-1 DOWN" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-1-1-2 BUILD">
+                    <input type="checkbox" checked onchange="handleFilterChange('1-1-2 BUILD', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-indigo-300 font-bold text-[10px] uppercase tracking-wider flex-1">1-1-2 Build
+                        <span id="lbl-filter-1-1-2 BUILD" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN MENU DROPDOWN -->
+    <div id="mainMenuDropdown"
+        class="hidden fixed top-16 right-4 w-64 glass-panel glass-surface rounded-2xl shadow-2xl z-50 overflow-hidden anim-slide-up border border-white/20">
+
+        <!-- GAME MODE -->
+        <div class="p-2 border-b border-white/10 bg-black/10">
+            <div class="flex bg-black/30 p-1 rounded-lg">
+                <button id="btn-mode-roulette" onclick="app.switchGameMode('roulette')"
+                    class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">ROULETTE</button>
+                <button id="btn-mode-baccarat" onclick="app.switchGameMode('baccarat')"
+                    class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">BACCARAT</button>
+            </div>
+        </div>
+
+        <div id="baccarat-menu-items" class="hidden">
+            <label
+                class="flex items-center justify-between px-4 py-4 hover:bg-white/5 cursor-pointer border-b border-white/5 transition-colors">
+                <span class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-3"><i
+                        class="fas fa-link text-white/40 w-5 text-center"></i> Ignore Ties</span>
+                <input type="checkbox" id="toggle-ignore-ties" checked onchange="app.baccarat.runEngine()"
+                    class="accent-[#30D158] w-4 h-4 cursor-pointer">
+            </label>
+            <button onclick="app.baccarat.toggleModal('vault-modal'); app.roulette.toggleMainMenu(event)"
+                class="w-full text-left px-4 py-4 hover:bg-[#FFD60A]/10 border-b border-white/5 transition-colors flex items-center gap-3 bg-[#FFD60A]/5">
+                <i
+                    class="fas fa-vault text-[#FFD60A] w-5 text-center text-lg drop-shadow-[0_0_5px_rgba(255,214,10,0.8)]"></i>
+                <span class="text-sm font-black text-[#FFD60A] uppercase tracking-wider">My Bets (Vault)</span>
+            </button>
+            <button onclick="app.baccarat.toggleModal('log-modal'); app.roulette.toggleMainMenu(event)"
+                class="w-full text-left px-4 py-4 hover:bg-[#32ADE6]/10 border-b border-white/5 transition-colors flex items-center gap-3 bg-[#32ADE6]/5">
+                <i
+                    class="fas fa-list text-[#32ADE6] w-5 text-center text-lg drop-shadow-[0_0_5px_rgba(50,173,230,0.8)]"></i>
+                <span class="text-sm font-black text-[#32ADE6] uppercase tracking-wider">Prediction Logs</span>
+            </button>
+            <button onclick="app.baccarat.toggleModal('sim-modal'); app.roulette.toggleMainMenu(event)"
+                class="w-full text-left px-4 py-4 hover:bg-[#BF5AF2]/10 border-b border-white/5 transition-colors flex items-center gap-3">
+                <i class="fas fa-flask text-[#BF5AF2] w-5 text-center text-lg"></i>
+                <span class="text-sm font-black text-[#E0B0FF] uppercase tracking-wider">Simulation Lab</span>
+            </button>
+            <button onclick="app.baccarat.reset(); app.roulette.toggleMainMenu(event)"
+                class="w-full text-left px-4 py-4 hover:bg-[#FF453A]/10 transition-colors flex items-center gap-3">
+                <i class="fas fa-skull text-[#FF453A] w-5 text-center text-lg"></i>
+                <span class="text-sm font-black text-[#FF453A] uppercase tracking-wider">Reset Shoe</span>
+            </button>
+        </div>
+
+        <div id="roulette-menu-items">
+            <!-- STOPWATCH SECTION -->
+            <div class="p-4 border-b border-white/10 bg-white/5">
+                <div class="flex justify-between items-end mb-3">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Stopwatch</span>
+                    <span id="menuStopwatchDisplay"
+                        class="font-mono text-2xl font-bold text-white digital-font leading-none">00:00:00</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-sw-toggle" onclick="toggleStopwatchState()"
+                        class="flex-1 h-8 bg-[#30D158] hover:bg-[#28c04d] text-white text-xs font-bold rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-play"></i> START
+                    </button>
+                    <button onclick="resetStopwatch()"
+                        class="h-8 w-10 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white text-xs font-bold rounded shadow transition-colors flex items-center justify-center">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ACCORDION: GRID SETTINGS -->
+            <button onclick="toggleAccordion('acc-grid')"
+                class="w-full px-4 py-3 bg-transparent border-b border-white/10 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                <span class="text-xs text-indigo-400 font-bold uppercase tracking-widest">Grid Settings</span>
+                <i id="icon-acc-grid"
+                    class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
+            </button>
+            <div id="acc-grid" class="hidden p-2 bg-black/10 border-b border-white/10">
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm">High / Low</span>
+                    <label class="apple-switch"><input type="checkbox" id="grid-hl" checked
+                            onchange="toggleGridColumn('hl')"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm">Odd / Even</span>
+                    <label class="apple-switch"><input type="checkbox" id="grid-oe" checked
+                            onchange="toggleGridColumn('oe')"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm">Dozens</span>
+                    <label class="apple-switch"><input type="checkbox" id="grid-doz" checked
+                            onchange="toggleGridColumn('doz')"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm">Columns</span>
+                    <label class="apple-switch"><input type="checkbox" id="grid-col" checked
+                            onchange="toggleGridColumn('col')"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- ACCORDION: BANKROLL TARGETS -->
+            <button onclick="toggleAccordion('acc-bankroll')"
+                class="w-full px-4 py-3 bg-transparent border-b border-white/10 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                <span class="text-xs text-yellow-500 font-bold uppercase tracking-widest">Bankroll Targets</span>
+                <i id="icon-acc-bankroll"
+                    class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
+            </button>
+            <div id="acc-bankroll" class="hidden p-3 bg-black/10 border-b border-white/10 flex flex-col gap-2">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-gray-300 text-xs font-bold">Enable Alerts</span>
+                    <label class="apple-switch"><input type="checkbox" id="br-enabled"
+                            onchange="updateBankrollSettings()"><span class="slider"></span></label>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="flex flex-col"><label class="text-[9px] text-green-400 font-bold mb-1">TARGET
+                            (+)</label><input type="number" id="br-profit" value="50"
+                            class="bg-white/10 border border-green-500/30 rounded px-2 py-1 text-white text-xs font-bold text-center focus:border-green-500 outline-none"
+                            onchange="updateBankrollSettings()"></div>
+                    <div class="flex flex-col"><label class="text-[9px] text-red-400 font-bold mb-1">STOP LOSS
+                            (-)</label><input type="number" id="br-loss" value="20"
+                            class="bg-white/10 border border-red-500/30 rounded px-2 py-1 text-white text-xs font-bold text-center focus:border-red-500 outline-none"
+                            onchange="updateBankrollSettings()"></div>
+                </div>
+            </div>
+
+            <!-- ACCORDION: SESSION DATA -->
+            <button onclick="toggleAccordion('acc-data')"
+                class="w-full px-4 py-3 bg-transparent border-b border-white/10 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                <span class="text-xs text-emerald-400 font-bold uppercase tracking-widest">Session Data</span>
+                <i id="icon-acc-data"
+                    class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
+            </button>
+            <div id="acc-data" class="hidden p-2 flex flex-col gap-1 bg-black/10 border-b border-white/10">
+                <button onclick="exportSpins()"
+                    class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg text-left transition-colors w-full">
+                    <i class="fas fa-file-export text-emerald-500 w-4"></i>
+                    <span class="text-gray-300 text-xs font-bold uppercase tracking-wider">Export Spins</span>
+                </button>
+                <button onclick="document.getElementById('importInput').click()"
+                    class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg text-left transition-colors w-full">
+                    <i class="fas fa-file-import text-blue-500 w-4"></i>
+                    <span class="text-gray-300 text-xs font-bold uppercase tracking-wider">Import Spins</span>
+                </button>
+                <input type="file" id="importInput" class="hidden" accept=".json" onchange="importSpins(this.files)">
+
+                <button onclick="showResetModal()"
+                    class="flex items-center gap-3 p-2 hover:bg-red-900/30 rounded-lg text-left transition-colors w-full mt-1">
+                    <i class="fas fa-trash-alt text-red-500 w-4"></i>
+                    <span class="text-red-400 text-xs font-bold uppercase tracking-wider">Reset Session</span>
+                </button>
+            </div>
+
+            <!-- ACCORDION: APPEARANCE SETTINGS -->
+            <button onclick="toggleAccordion('acc-cards')"
+                class="w-full px-4 py-3 bg-transparent border-b border-white/10 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                <span class="text-xs text-blue-400 font-bold uppercase tracking-widest">Appearance Settings</span>
+                <i id="icon-acc-cards"
+                    class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
+            </button>
+            <div id="acc-cards" class="hidden p-2 bg-black/10 border-b border-white/10">
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm flex items-center gap-2"><i
+                            class="fas fa-arrow-trend-up text-gray-500 w-4"></i> Trend Icons</span>
+                    <label class="apple-switch"><input type="checkbox" id="setting-trend-icons"
+                            onchange="toggleTrendIcons()"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm flex items-center gap-2"><i
+                            class="fas fa-border-all text-gray-500 w-4"></i> C Layout</span>
+                    <label class="apple-switch"><input type="checkbox" id="setting-c-layout" checked
+                            onchange="toggleCurvedLayout()"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <!-- ACCORDION: SOUND SETTINGS -->
+            <button onclick="toggleAccordion('acc-sound')"
+                class="w-full px-4 py-3 bg-transparent border-b border-white/10 flex justify-between items-center hover:bg-white/5 transition-colors group">
+                <span class="text-xs text-gray-400 font-bold uppercase tracking-widest">Sound Settings</span>
+                <i id="icon-acc-sound"
+                    class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
+            </button>
+            <div id="acc-sound" class="hidden p-2 bg-black/10">
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm flex items-center gap-2"><i
+                            class="fas fa-bell text-gray-500 w-4"></i> Predictions</span>
+                    <label class="apple-switch"><input type="checkbox" id="sound-pred"
+                            onchange="toggleSound('predictions')"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm flex items-center gap-2"><i
+                            class="fas fa-trophy text-yellow-500 w-4"></i> Wins</span>
+                    <label class="apple-switch"><input type="checkbox" id="sound-wins"
+                            onchange="toggleSound('wins')"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm flex items-center gap-2"><i
+                            class="fas fa-times-circle text-red-500 w-4"></i> Losses</span>
+                    <label class="apple-switch"><input type="checkbox" id="sound-loss"
+                            onchange="toggleSound('losses')"><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- ========================================== -->
+    <!-- BACCARAT MODALS (COPIED FROM BAC V4)       -->
+    <!-- ========================================== -->
+    <div id="baccarat-modals-container" class="hidden">
+        <div id="filters-modal"
+            class="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('filters-modal')">
+            <div class="glass-panel glass-analytics w-full max-w-lg rounded-3xl p-5 modal-content-animated flex flex-col max-h-[85vh]"
+                onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4 shrink-0">
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-black text-white tracking-tight uppercase flex items-center gap-2"><i
+                                class="fas fa-filter text-[#0A84FF]"></i> Active Filters</h3>
+                        <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1">Mute visual
+                            signals</span>
+                    </div>
+                    <button onclick="app.baccarat.toggleModal('filters-modal')"
+                        class="text-white/40 hover:text-white transition-colors text-xl"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div id="filters-list"
+                    class="flex-1 overflow-y-auto overscroll-contain no-scrollbar mt-1 pr-1 space-y-2"></div>
+            </div>
+        </div>
+        <div id="stats-modal"
+            class="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('stats-modal')">
+            <div class="glass-panel glass-analytics w-full max-w-lg rounded-3xl p-5 modal-content-animated flex flex-col h-[85vh]"
+                onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4 shrink-0">
+                    <h3 class="text-lg font-black text-white tracking-tight uppercase flex items-center gap-2"><i
+                            class="fas fa-chart-pie text-[#FFD60A]"></i> Live Analytics</h3>
+                    <button onclick="app.baccarat.toggleModal('stats-modal')"
+                        class="text-white/40 hover:text-white transition-colors text-xl"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="epic-tabs flex p-1.5 mb-4 shrink-0 gap-1 overflow-x-auto overscroll-contain no-scrollbar">
+                    <div id="tab-kpis" onclick="app.baccarat.switchStatsTab('kpis')"
+                        class="stat-tab active shrink-0 px-3">KPIs</div>
+                    <div id="tab-trend" onclick="app.baccarat.switchStatsTab('trend')" class="stat-tab shrink-0 px-3">
+                        Trend</div>
+                    <div id="tab-heatmap" onclick="app.baccarat.switchStatsTab('heatmap')"
+                        class="stat-tab shrink-0 px-3">Heatmap</div>
+                    <div id="tab-golden" onclick="app.baccarat.switchStatsTab('golden')"
+                        class="stat-tab shrink-0 px-3 !text-[#FFD60A]/70 data-[active=true]:!text-[#FFD60A]"><i
+                            class="fas fa-star mr-1"></i> Golden</div>
+                </div>
+                <div class="flex-1 overflow-hidden relative">
+                    <div id="sec-kpis"
+                        class="w-full h-full flex flex-col space-y-4 fade-in overflow-y-auto overscroll-contain no-scrollbar pb-4">
+                        <div
+                            class="epic-glass-card p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+                            <span class="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1">Global Hit
+                                Rate</span>
+                            <div id="kpi-hr" class="text-4xl font-black text-white digital-font">0%</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div
+                                class="epic-glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center">
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Total
+                                    Signals</span>
+                                <div id="kpi-signals" class="text-2xl font-black text-[#0A84FF] digital-font">0</div>
+                            </div>
+                            <div
+                                class="epic-glass-card p-5 rounded-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+                                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Theo
+                                    Net</span>
+                                <div id="kpi-net" class="text-2xl font-black text-white digital-font">0.00</div>
+                            </div>
+                        </div>
+                        <label
+                            class="flex items-center justify-between p-4 bg-black/30 rounded-2xl border border-white/5 cursor-pointer hover:bg-white/5 transition-colors mt-1">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-black text-white uppercase tracking-wider">Exact Net (5%
+                                    Comm)</span>
+                                <span class="text-[9px] text-white/40 font-bold mt-1">Banker wins calculate at
+                                    0.95:1</span>
+                            </div>
+                            <div class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="comm-toggle" checked
+                                    onchange="app.baccarat.toggleCommission()" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-black/60 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#30D158] shadow-inner border border-white/10">
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <div id="sec-trend" class="w-full h-full hidden flex-col fade-in pb-2">
+                        <div
+                            class="flex-1 bg-[#0a0a0c] rounded-2xl border border-white/5 shadow-inner relative overflow-hidden flex flex-col">
+                            <div
+                                class="absolute top-4 left-4 text-[10px] font-bold text-white/30 uppercase tracking-widest z-10">
+                                Net Units</div>
+                            <div id="graph-container" class="flex-1 w-full h-full p-4 relative"></div>
+                        </div>
+                        <div id="trend-hud"
+                            class="h-12 shrink-0 bg-white/5 rounded-xl border border-white/5 mt-3 flex items-center justify-evenly text-xs font-black tracking-widest uppercase">
+                            <span class="text-[#30D158]">W: <span id="hud-w" class="text-sm ml-1">0</span></span>
+                            <span class="text-white/40">|</span>
+                            <span class="text-white/80 flex items-center gap-1">Signals: <span id="hud-h"
+                                    class="text-sm">0</span></span>
+                            <span class="text-white/40">|</span>
+                            <span class="text-[#FF453A]">L: <span id="hud-l" class="text-sm ml-1">0</span></span>
+                        </div>
+                    </div>
+                    <div id="sec-heatmap" class="w-full h-full hidden flex-col fade-in">
+                        <div
+                            class="flex-1 overflow-y-auto overscroll-contain no-scrollbar rounded-2xl border border-white/5 bg-black/20 relative">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-black/60 text-[#8E8E93] sticky top-0 z-10 backdrop-blur-md">
+                                    <tr>
+                                        <th class="p-4 font-black uppercase tracking-wider text-[9px]">Pattern Name</th>
+                                        <th class="p-4 font-black uppercase tracking-wider text-[9px] text-center">Att
+                                        </th>
+                                        <th class="p-4 font-black uppercase tracking-wider text-[9px] text-center">Win
+                                        </th>
+                                        <th class="p-4 font-black uppercase tracking-wider text-[9px] text-right">Win %
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="heatmap-body" class="divide-y divide-white/5"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="sec-golden" class="w-full h-full hidden flex-col fade-in">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 shrink-0 mb-2">
+                            <div
+                                class="bg-black/40 p-2 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center">
+                                <span
+                                    class="text-[8px] font-bold text-[#FFD60A]/70 uppercase tracking-widest mb-1">Golden
+                                    Net</span>
+                                <div id="golden-kpi-net" class="text-xl font-black text-white digital-font">0</div>
+                            </div>
+                            <div
+                                class="bg-black/40 p-2 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center">
+                                <span class="text-[8px] font-bold text-[#FFD60A]/70 uppercase tracking-widest mb-1">Hit
+                                    Rate</span>
+                                <div id="golden-kpi-hr" class="text-xl font-black text-[#30D158] digital-font">0%</div>
+                            </div>
+                            <div
+                                class="bg-black/40 p-2 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center">
+                                <span
+                                    class="text-[8px] font-bold text-[#FFD60A]/60 uppercase tracking-widest mb-1">Total
+                                    Converge</span>
+                                <div id="golden-kpi-opps" class="text-xl font-black text-[#FFD60A] digital-font">0</div>
+                            </div>
+                            <div
+                                class="bg-black/40 p-2 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center">
+                                <span class="text-[8px] font-bold text-[#FF453A]/70 uppercase tracking-widest mb-1">Max
+                                    Drawdown</span>
+                                <div id="golden-kpi-dd" class="text-xl font-black text-[#FF453A] digital-font">0</div>
+                            </div>
+                        </div>
+                        <div
+                            class="h-32 shrink-0 bg-[#0a0a05] rounded-xl border border-[#FFD60A]/20 relative overflow-hidden flex flex-col shadow-inner mb-2">
+                            <div id="golden-graph-container" class="flex-1 w-full h-full pt-2 px-1 pb-1 relative"></div>
+                        </div>
+                        <div
+                            class="flex-1 overflow-y-auto overscroll-contain no-scrollbar rounded-xl border border-[#FFD60A]/20 bg-black/40 relative">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-[#1a180e] text-[#FFD60A]/80 sticky top-0 z-10 backdrop-blur-md">
+                                    <tr>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[8px]">Hand</th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[8px]">Convergence</th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[8px] text-center">Pred
+                                        </th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[8px] text-right">Net
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="golden-ledger-body" class="divide-y divide-[#FFD60A]/10"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sim-modal"
+            class="fixed inset-0 z-[300] bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('sim-modal')">
+            <div class="cosmic-glass glass-analytics w-full max-w-3xl rounded-3xl p-5 flex flex-col h-[90vh] relative overflow-hidden"
+                onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-3 shrink-0">
+                    <div class="flex flex-col">
+                        <h3 class="text-xl font-black text-gold-glow uppercase flex items-center gap-2"
+                            style="background: linear-gradient(180deg, #FFFFFF 0%, #BF5AF2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0px 3px 6px rgba(191, 90, 242, 0.6));">
+                            <i class="fas fa-flask"></i> Sim Lab
+                        </h3>
+                        <span class="text-[9px] font-bold text-[#BF5AF2]/70 uppercase tracking-widest mt-1">Retroactive
+                            Sandbox Analysis</span>
+                    </div>
+                    <button onclick="app.baccarat.toggleModal('sim-modal')"
+                        class="text-[#BF5AF2]/50 hover:text-[#BF5AF2] transition-colors text-2xl"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto overscroll-contain no-scrollbar flex flex-col gap-3 relative w-full pt-1"
+                    id="sim-modal-content">
+                    <div class="flex justify-between items-center shrink-0 relative z-40">
+                        <div class="flex gap-2">
+                            <button onclick="app.baccarat.toggleSimConfig()"
+                                class="bg-[#8b2dbd] text-white px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#BF5AF2] transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(191,90,242,0.4)]">
+                                <i class="fas fa-sliders-h"></i> Config
+                            </button>
+                            <select id="sim-strategy" onchange="app.baccarat.updateSim()"
+                                class="bg-[#1a0f24] text-[#E0B0FF] border border-[#BF5AF2]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#BF5AF2]/20 transition-colors appearance-none text-center">
+                                <option value="flat">Flat (1U)</option>
+                                <option value="martingale">Martingale</option>
+                                <option value="paroli">Paroli</option>
+                                <option value="1326">1-3-2-6</option>
+                            </select>
+                        </div>
+                        <span id="sim-active-text"
+                            class="text-[9px] text-[#BF5AF2]/80 font-mono uppercase tracking-widest">Simulating: 7
+                            Patterns</span>
+                        <div id="sim-config-panel"
+                            class="absolute top-full left-0 mt-3 w-[280px] max-h-[350px] bg-[#12051c]/95 backdrop-blur-3xl z-50 hidden flex-col p-3 rounded-2xl border border-[#BF5AF2]/40 shadow-[0_20px_40px_rgba(0,0,0,0.9),0_0_20px_rgba(191,90,242,0.2)] overflow-hidden">
+                            <div
+                                class="flex justify-between items-center mb-2 shrink-0 px-1 border-b border-[#BF5AF2]/20 pb-2">
+                                <h4 class="text-[11px] font-black text-[#E0B0FF] uppercase tracking-widest"><i
+                                        class="fas fa-sliders-h mr-1.5"></i> Configuration</h4>
+                                <button onclick="app.baccarat.toggleSimConfig()"
+                                    class="text-[#BF5AF2]/60 hover:text-white text-sm"><i
+                                        class="fas fa-times"></i></button>
+                            </div>
+                            <div class="flex-1 overflow-y-auto overscroll-contain no-scrollbar space-y-2 pr-1 pt-1">
+                                <label
+                                    class="flex items-center justify-between p-2.5 bg-[#BF5AF2]/10 rounded-xl border border-[#BF5AF2]/30 cursor-pointer hover:bg-[#BF5AF2]/20 transition-colors shadow-[0_0_10px_rgba(191,90,242,0.1)]">
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[11px] font-black text-[#E0B0FF] uppercase tracking-wider flex items-center gap-1.5"><i
+                                                class="fas fa-link text-[10px]"></i> Tie Logic</span>
+                                        <span
+                                            class="text-[8px] font-bold text-[#BF5AF2]/70 uppercase tracking-widest mt-0.5">ON
+                                            = Ignore Ties</span>
+                                    </div>
+                                    <div class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="sim-toggle-ties" checked
+                                            onchange="app.baccarat.updateSim()" class="sr-only peer neon-toggle">
+                                        <div
+                                            class="w-8 h-4 bg-black/80 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all shadow-inner border border-[#BF5AF2]/30">
+                                        </div>
+                                    </div>
+                                </label>
+                                <div id="sim-filters-list" class="space-y-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
+                        <div
+                            class="bg-[#150a20] p-3 rounded-xl border border-[#BF5AF2]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#BF5AF2]/70 uppercase tracking-widest mb-1">Sim
+                                Net</span>
+                            <div id="sim-kpi-net" class="text-2xl font-black text-white">0</div>
+                        </div>
+                        <div
+                            class="bg-[#150a20] p-3 rounded-xl border border-[#BF5AF2]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#BF5AF2]/70 uppercase tracking-widest mb-1">Sim Hit
+                                Rate</span>
+                            <div id="sim-kpi-hr" class="text-2xl font-black text-white">0%</div>
+                        </div>
+                        <div
+                            class="bg-[#150a20] p-3 rounded-xl border border-[#BF5AF2]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#E0B0FF]/60 uppercase tracking-widest mb-1">Total
+                                Opps</span>
+                            <div id="sim-kpi-opps" class="text-2xl font-black text-[#E0B0FF]">0</div>
+                        </div>
+                        <div
+                            class="bg-[#150a20] p-3 rounded-xl border border-[#BF5AF2]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#FF453A]/70 uppercase tracking-widest mb-1">Max
+                                Drawdown</span>
+                            <div id="sim-kpi-dd" class="text-2xl font-black text-[#FF453A]">0</div>
+                        </div>
+                    </div>
+                    <div class="shrink-0 flex flex-col mt-1">
+                        <span
+                            class="text-[10px] font-black text-[#E0B0FF] uppercase tracking-widest mb-2 ml-1">Simulated
+                            Bankroll Trend</span>
+                        <div
+                            class="h-40 bg-[#0c0512] rounded-t-xl border-t border-l border-r border-[#BF5AF2]/20 relative overflow-hidden flex flex-col">
+                            <div id="sim-graph-container" class="flex-1 w-full h-full pt-3 px-2 pb-0 relative"></div>
+                        </div>
+                        <div
+                            class="h-10 bg-[#1a0f24] rounded-b-xl border border-[#BF5AF2]/30 flex items-center justify-between px-4 text-[10px] font-black tracking-widest uppercase shadow-md">
+                            <div class="flex flex-col items-center"><span
+                                    class="text-white/40 text-[8px] mb-0.5">WINS</span><span id="sim-hud-w"
+                                    class="text-[#30D158] text-xs">0</span></div>
+                            <div
+                                class="bg-[#2a1a3a] px-4 py-1 rounded-md border border-[#BF5AF2]/20 flex flex-col items-center">
+                                <span class="text-[#BF5AF2]/60 text-[8px] mb-0.5">SPINS</span><span id="sim-hud-h"
+                                    class="text-white text-xs">0</span>
+                            </div>
+                            <div class="flex flex-col items-center"><span
+                                    class="text-white/40 text-[8px] mb-0.5">LOSSES</span><span id="sim-hud-l"
+                                    class="text-[#FF453A] text-xs">0</span></div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex-1 min-h-[160px] flex flex-col bg-[#12081a] rounded-xl border border-[#BF5AF2]/20 mt-2 overflow-hidden shadow-inner">
+                        <div class="overflow-y-auto overscroll-contain no-scrollbar relative w-full h-full">
+                            <table class="w-full text-left text-sm">
+                                <thead
+                                    class="bg-[#1e102d] text-[#BF5AF2]/80 sticky top-0 z-10 backdrop-blur-md shadow-md">
+                                    <tr>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px]">Pattern Data</th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">Att
+                                        </th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">Win
+                                        </th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-right">Win %
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sim-heatmap-body" class="divide-y divide-[#BF5AF2]/10"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="vault-modal"
+            class="fixed inset-0 z-[400] bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('vault-modal')">
+            <div class="vault-glass w-full max-w-3xl rounded-3xl p-5 flex flex-col h-[90vh] relative overflow-hidden"
+                onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-3 shrink-0">
+                    <div class="flex flex-col">
+                        <h3 class="text-xl font-black text-gold-glow uppercase flex items-center gap-2"><i
+                                class="fas fa-vault"></i> My Bets</h3>
+                        <span class="text-[9px] font-bold text-[#FFD60A]/70 uppercase tracking-widest mt-1">Real-World
+                            Bankroll</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="vault-strategy" onchange="app.baccarat.renderVault()"
+                            class="bg-[#1a180e] text-[#FFD60A] border border-[#FFD60A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FFD60A]/20 transition-colors appearance-none text-center">
+                            <option value="flat">Flat (1U)</option>
+                            <option value="martingale">Martingale</option>
+                            <option value="paroli">Paroli</option>
+                            <option value="1326">1-3-2-6</option>
+                        </select>
+                        <button onclick="app.baccarat.toggleModal('vault-modal')"
+                            class="text-[#FFD60A]/50 hover:text-[#FFD60A] transition-colors text-2xl"><i
+                                class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-y-auto overscroll-contain no-scrollbar flex flex-col gap-3 relative w-full pt-1"
+                    id="vault-modal-content">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
+                        <div
+                            class="bg-[#14120a] p-3 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#FFD60A]/70 uppercase tracking-widest mb-1">Actual
+                                Net</span>
+                            <div id="vault-kpi-net" class="text-2xl font-black text-white">0</div>
+                        </div>
+                        <div
+                            class="bg-[#14120a] p-3 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#FFD60A]/70 uppercase tracking-widest mb-1">Hit
+                                Rate</span>
+                            <div id="vault-kpi-hr" class="text-2xl font-black text-[#30D158]">0%</div>
+                        </div>
+                        <div
+                            class="bg-[#14120a] p-3 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#FFD60A]/60 uppercase tracking-widest mb-1">Total
+                                Bets</span>
+                            <div id="vault-kpi-opps" class="text-2xl font-black text-[#FFD60A]">0</div>
+                        </div>
+                        <div
+                            class="bg-[#14120a] p-3 rounded-xl border border-[#FFD60A]/20 flex flex-col items-center justify-center text-center shadow-lg">
+                            <span class="text-[9px] font-bold text-[#FF453A]/70 uppercase tracking-widest mb-1">Max
+                                Drawdown</span>
+                            <div id="vault-kpi-dd" class="text-2xl font-black text-[#FF453A]">0</div>
+                        </div>
+                    </div>
+                    <div class="shrink-0 flex flex-col mt-1">
+                        <span class="text-[10px] font-black text-[#FFD60A] uppercase tracking-widest mb-2 ml-1">Actual
+                            Bankroll Trend</span>
+                        <div
+                            class="h-40 bg-[#0a0a05] rounded-xl border border-[#FFD60A]/20 relative overflow-hidden flex flex-col shadow-inner">
+                            <div id="vault-graph-container" class="flex-1 w-full h-full pt-3 px-2 pb-2 relative"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex-1 min-h-[160px] flex flex-col bg-[#0f0e08] rounded-xl border border-[#FFD60A]/20 mt-2 overflow-hidden shadow-inner">
+                        <div class="overflow-y-auto overscroll-contain no-scrollbar relative w-full h-full">
+                            <table class="w-full text-left text-sm">
+                                <thead
+                                    class="bg-[#1a180e] text-[#FFD60A]/80 sticky top-0 z-10 backdrop-blur-md shadow-md border-b border-[#FFD60A]/20">
+                                    <tr>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px]">Hand #</th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px]">Pattern Snipe
+                                        </th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">Pred
+                                        </th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">
+                                            Result</th>
+                                        <th class="p-3 font-black uppercase tracking-wider text-[9px] text-right">Net
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vault-ledger-body" class="divide-y divide-[#FFD60A]/10"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="log-modal"
+            class="fixed inset-0 z-[500] bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('log-modal')">
+            <div class="glass-panel w-full max-w-3xl rounded-3xl p-5 flex flex-col h-[90vh] relative overflow-hidden border border-[#32ADE6]/30 shadow-[0_40px_80px_-10px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(50,173,230,0.2),0_0_50px_rgba(50,173,230,0.1)]"
+                onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-4 shrink-0">
+                    <div class="flex flex-col">
+                        <h3 class="text-xl font-black uppercase flex items-center gap-2"
+                            style="background: linear-gradient(180deg, #FFFFFF 0%, #32ADE6 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0px 3px 6px rgba(50,173,230,0.5));">
+                            <i class="fas fa-list text-[#32ADE6]"></i> Prediction Logs
+                        </h3>
+                        <span class="text-[9px] font-bold text-[#32ADE6]/70 uppercase tracking-widest mt-1">Complete
+                            Engine Ledger</span>
+                    </div>
+                    <button onclick="app.baccarat.toggleModal('log-modal')"
+                        class="text-[#32ADE6]/50 hover:text-[#32ADE6] transition-colors text-2xl"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div
+                    class="flex-1 min-h-[200px] flex flex-col bg-[#050b14] rounded-xl border border-[#32ADE6]/20 mt-1 overflow-hidden shadow-inner">
+                    <div class="overflow-y-auto overscroll-contain no-scrollbar relative w-full h-full">
+                        <table class="w-full text-left text-sm">
+                            <thead
+                                class="bg-[#0a1526] text-[#32ADE6]/80 sticky top-0 z-10 backdrop-blur-md shadow-md border-b border-[#32ADE6]/20">
+                                <tr>
+                                    <th class="p-3 font-black uppercase tracking-wider text-[9px]">Hand #</th>
+                                    <th class="p-3 font-black uppercase tracking-wider text-[9px]">Pattern</th>
+                                    <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">Pred</th>
+                                    <th class="p-3 font-black uppercase tracking-wider text-[9px] text-center">Result
+                                    </th>
+                                    <th class="p-3 font-black uppercase tracking-wider text-[9px] text-right">Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="log-ledger-body" class="divide-y divide-[#32ADE6]/10"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="reset-modal-baccarat"
+            class="fixed inset-0 z-[900] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
+            onclick="app.baccarat.toggleModal('reset-modal-baccarat')">
+            <div class="glass-panel w-full max-w-md rounded-3xl p-6 modal-content-animated flex flex-col text-center"
+                onclick="event.stopPropagation()">
+                <div class="text-5xl mb-4 text-[#FF453A]"><i class="fas fa-triangle-exclamation"></i></div>
+                <h2 class="text-2xl font-black text-white mb-2">Reset Current Shoe?</h2>
+                <p class="text-sm text-white/60 mb-6">This will clear all hand history and statistics for the current
+                    shoe. This action cannot be undone.</p>
+                <div class="flex gap-4">
+                    <button onclick="app.baccarat.toggleModal('reset-modal-baccarat')"
+                        class="flex-1 btn-ios bg-white/10 text-white font-bold py-3 rounded-xl">Cancel</button>
+                    <button onclick="app.baccarat.executeReset()"
+                        class="flex-1 btn-ios bg-[#FF453A] text-white font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(255,69,58,0.4)]">Yes,
+                        Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="js/main.js"></script>
 </body>
+
 </html>
