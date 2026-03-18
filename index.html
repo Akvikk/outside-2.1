@@ -492,6 +492,24 @@
                                         onchange="toggleSimFilter('pat', '1-1-2 BUILD')" id="sim-pat-1-1-2 BUILD"> <span
                                         class="text-gray-300 text-xs">1-1-2 Build</span>
                                 </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-GP 2x2">
+                                    <input type="checkbox" class="sim-checkbox" checked=""
+                                        onchange="toggleSimFilter('pat', 'GP 2x2')" id="sim-pat-GP 2x2"> <span
+                                        class="text-gray-300 text-xs">GP 2x2</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-GP 3x3">
+                                    <input type="checkbox" class="sim-checkbox" checked=""
+                                        onchange="toggleSimFilter('pat', 'GP 3x3')" id="sim-pat-GP 3x3"> <span
+                                        class="text-gray-300 text-xs">GP 3x3</span>
+                                </label>
+                                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
+                                    for="sim-pat-GP 4x4">
+                                    <input type="checkbox" class="sim-checkbox" checked=""
+                                        onchange="toggleSimFilter('pat', 'GP 4x4')" id="sim-pat-GP 4x4"> <span
+                                        class="text-gray-300 text-xs">GP 4x4</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -870,6 +888,27 @@
                         class="filter-checkbox">
                     <span class="text-indigo-300 font-bold text-[10px] uppercase tracking-wider flex-1">1-1-2 Build
                         <span id="lbl-filter-1-1-2 BUILD" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-GP 2x2">
+                    <input type="checkbox" checked="" onchange="handleFilterChange('GP 2x2', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-rose-300 font-bold text-[10px] uppercase tracking-wider flex-1">GP 2x2
+                        <span id="lbl-filter-GP 2x2" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-GP 3x3">
+                    <input type="checkbox" checked="" onchange="handleFilterChange('GP 3x3', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-rose-400 font-bold text-[10px] uppercase tracking-wider flex-1">GP 3x3
+                        <span id="lbl-filter-GP 3x3" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"
+                    for="filter-GP 4x4">
+                    <input type="checkbox" checked="" onchange="handleFilterChange('GP 4x4', this.checked)"
+                        class="filter-checkbox">
+                    <span class="text-rose-500 font-bold text-[10px] uppercase tracking-wider flex-1">GP 4x4
+                        <span id="lbl-filter-GP 4x4" class="text-gray-500 ml-1">[-]</span></span>
                 </label>
             </div>
         </div>
