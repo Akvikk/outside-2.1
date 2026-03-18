@@ -42,20 +42,20 @@ export default class HistoryGrid {
         if (!tbody) return;
         const tr = document.createElement('tr');
         const bgNum = spin.val === 0 ? 'bg-green-600 text-white' : (spin.color === 'R' ? 'bg-red-600 text-white' : 'bg-black text-white');
-        const sHL = spin.hl === 'H' ? 'background-color:var(--col-high)' : (spin.hl === 'L' ? 'background-color:var(--col-low)' : '');
-        const sOE = spin.oe === 'Odd' ? 'background-color:var(--col-odd)' : (spin.oe === 'Even' ? 'background-color:var(--col-even)' : '');
-        const sDZ = spin.doz === 'D1' ? 'background-color:var(--col-d1)' : (spin.doz === 'D2' ? 'background-color:var(--col-d2); color: #000; text-shadow: none' : (spin.doz === 'D3' ? 'background-color:var(--col-d3); color: #000; text-shadow: none' : ''));
-        const sCL = spin.col === 'C1' ? 'background-color:var(--col-c1)' : (spin.col === 'C2' ? 'background-color:var(--col-c2); color: #000; text-shadow: none' : (spin.col === 'C3' ? 'background-color:var(--col-c3); color: #000; text-shadow: none' : ''));
+        const cHL = spin.hl === 'H' ? 'cat-hl-high' : (spin.hl === 'L' ? 'cat-hl-low' : '');
+        const cOE = spin.oe === 'Odd' ? 'cat-oe-odd' : (spin.oe === 'Even' ? 'cat-oe-even' : '');
+        const cDZ = spin.doz === 'D1' ? 'cat-doz-d1' : (spin.doz === 'D2' ? 'cat-doz-d2' : (spin.doz === 'D3' ? 'cat-doz-d3' : ''));
+        const cCL = spin.col === 'C1' ? 'cat-col-c1' : (spin.col === 'C2' ? 'cat-col-c2' : (spin.col === 'C3' ? 'cat-col-c3' : ''));
         const visibleBets = (spin.bets || []).filter(bet => this.state.activeFilters[bet.pattern] !== false && this.state.activeFilters[bet.category === 'High/Low' ? 'hl' : (bet.category === 'Odd/Even' ? 'oe' : (bet.category === 'Dozens' ? 'doz' : (bet.category === 'Columns' ? 'col' : 'color')))]);
         const pObj = this.calculatePredictionResult(visibleBets, spin);
         const zTxt = spin.val === 0 ? '<span style="color:var(--zero-green); font-weight:900">ZERO</span>' : '';
         tr.innerHTML = `
             <td class="data-cell w-[8%] text-gray-400 border-white/10 text-xs font-mono">${spin.spinNumber}</td>
             <td class="data-cell w-[10%] ${bgNum} text-lg border-white/20">${spin.val}</td>
-            ${this.state.gridSettings.hl ? `<td class="data-cell w-[18%]" style="${sHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
-            ${this.state.gridSettings.oe ? `<td class="data-cell w-[18%]" style="${sOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (spin.oe === 'Even' ? (this.isCompactMobile ? 'E' : 'Even') : spin.oe))}</td>` : ''}
-            ${this.state.gridSettings.doz ? `<td class="data-cell w-[12%]" style="${sDZ}">${zTxt || spin.doz}</td>` : ''}
-            ${this.state.gridSettings.col ? `<td class="data-cell w-[12%]" style="${sCL}">${zTxt || spin.col}</td>` : ''}
+            ${this.state.gridSettings.hl ? `<td class="data-cell w-[18%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
+            ${this.state.gridSettings.oe ? `<td class="data-cell w-[18%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (spin.oe === 'Even' ? (this.isCompactMobile ? 'E' : 'Even') : spin.oe))}</td>` : ''}
+            ${this.state.gridSettings.doz ? `<td class="data-cell w-[12%] ${cDZ}">${zTxt || spin.doz}</td>` : ''}
+            ${this.state.gridSettings.col ? `<td class="data-cell w-[12%] ${cCL}">${zTxt || spin.col}</td>` : ''}
             <td class="data-cell w-[22%] bg-black/40 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>`;
         tbody.appendChild(tr);
     }

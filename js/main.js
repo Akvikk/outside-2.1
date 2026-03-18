@@ -245,7 +245,9 @@ class AppOrchestrator {
         if (btnD) btnD.className = mode === 'dragontiger' ? "flex-1 w-full py-2 text-xs font-bold rounded-md transition-all bg-gradient-to-r from-[#FF453A] to-[#FFD60A] text-white shadow-lg" : inAct;
 
         if (isInitial || oldMode === mode) {
-            setVisible(uiGroups.roulette, mode === 'roulette'); setVisible(uiGroups.baccarat, mode === 'baccarat'); setVisible(uiGroups.dragontiger, mode === 'dragontiger');
+            const allIds = [...new Set([...uiGroups.roulette, ...uiGroups.baccarat, ...uiGroups.dragontiger])];
+            setVisible(allIds, false);
+            setVisible(uiGroups[mode], true);
             if (mode === 'roulette') { this.roulette.reRenderHistory(); this.roulette.ui.renderDashboard(); this.roulette.ui.updateFilterEfficiencies(); }
             else if (mode === 'baccarat') { this.baccarat.render(); this.baccarat.runEngine(); }
             else if (mode === 'dragontiger') { this.dragontiger.render(); this.dragontiger.runEngine(); }
@@ -277,13 +279,13 @@ class AppOrchestrator {
             else if (mode === 'dragontiger') { this.dragontiger.render(); this.dragontiger.runEngine(); }
             
             document.body.classList.remove('theme-roulette', 'theme-baccarat', 'theme-dragontiger'); document.body.classList.add(`theme-${mode}`);
-            if (newView) { newView.classList.add('pro-enter'); setTimeout(() => newView.classList.add('camera-shake'), 50); }
-        }, 300);
+            if (newView) { newView.classList.add('pro-enter'); }
+        }, 400);
 
         setTimeout(() => {
             if(shutter) shutter.classList.remove('flash');
             if(overlay) { overlay.style.transition = 'opacity 400ms ease-out'; overlay.style.opacity = '0'; }
-        }, 350);
+        }, 450);
 
         setTimeout(() => {
             if(overlay) {
@@ -291,9 +293,9 @@ class AppOrchestrator {
                 overlay.querySelectorAll('.glow, .void-signature').forEach(g => g.classList.remove('visible'));
             }
             if (title) title.classList.remove('visible');
-            document.querySelectorAll('.pro-exit, .pro-enter, .camera-shake').forEach(el => { el.classList.remove('pro-exit', 'pro-enter', 'camera-shake'); });
+            document.querySelectorAll('.pro-exit, .pro-enter').forEach(el => { el.classList.remove('pro-exit', 'pro-enter'); });
             document.body.classList.remove('cinematic-locked');
-        }, 850);
+        }, 1050);
     }
 
     handleSpin(manualVal = null, suppressRender = false) {
@@ -314,7 +316,13 @@ class AppOrchestrator {
 
     toggleFilterMenu(e) {
         const anchorEl = (e && (e.currentTarget || e.target)) || document.getElementById('filterBtn');
-        if (this.currentMode === 'roulette') this.roulette.toggleFilterMenu(e);
+        if (this.currentMode === 'roulette') {
+            if (e) e.stopPropagation(); 
+            const menu = document.getElementById('filterDropdown'); 
+            const overlay = document.getElementById('menuOverlay'); 
+            if (menu) menu.classList.toggle('hidden'); 
+            if (overlay) overlay.classList.toggle('hidden'); 
+        }
         else if (this.currentMode === 'baccarat') {
             const opening = document.getElementById('filters-modal')?.classList.contains('hidden');
             this.baccarat.toggleModal('filters-modal');
