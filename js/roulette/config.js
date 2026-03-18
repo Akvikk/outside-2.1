@@ -46,7 +46,10 @@ export const PATTERN_CONFIG = [
     { key: '3-2-1 MIRROR', label: 'Mirror' },
     { key: '1-1-3 BURST', label: '1-1-3 Build' },
     { key: '3-1-1 DOWN', label: '3-1-1 Down' },
-    { key: '1-1-2 BUILD', label: '1-1-2 Build', default: false }
+    { key: '1-1-2 BUILD', label: '1-1-2 Build', default: false },
+    { key: 'GP 2x2', label: 'Group March 2x2', category: 'Block Completion' },
+    { key: 'GP 3x3', label: 'Group March 3x3', category: 'Block Completion' },
+    { key: 'GP 4x4', label: 'Group March 4x4', category: 'Block Completion' }
 ];
 
 export const MUTUAL_EXCLUSIONS = {

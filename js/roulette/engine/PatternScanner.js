@@ -6,8 +6,9 @@ import Mirror321 from './patterns/Mirror321.js';
 import Burst113 from './patterns/Burst113.js';
 import Down311 from './patterns/Down311.js';
 import Build112 from './patterns/Build112.js';
+import GroupMarch from './patterns/GroupMarch.js';
 
-const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311, Build112];
+const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311, Build112, GroupMarch];
 
 export default class PatternScanner {
     constructor(state) {

@@ -5,8 +5,9 @@ import Build123 from './patterns/Build123.js';
 import Mirror321 from './patterns/Mirror321.js';
 import Burst113 from './patterns/Burst113.js';
 import Down311 from './patterns/Down311.js';
+import GroupMarch from './patterns/GroupMarch.js';
 
-const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311];
+const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311, GroupMarch];
 
 export default class PatternScanner {
     static createContext(seq, contextName) {
