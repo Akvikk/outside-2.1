@@ -1,52 +1,41 @@
-import DragonTigerState from './DragonTigerState.js';
+import BaccaratState from './BaccaratState.js';
 import PatternScanner from './engine/PatternScanner.js';
 import ConvergenceCalc from './engine/ConvergenceCalc.js';
-import DragonTigerUI from './ui/DragonTigerUI.js';
+import BaccaratUI from './ui/BaccaratUI.js';
 import StorageService from '../shared/StorageService.js';
 import AudioService from '../shared/AudioService.js';
+import Progression from './engine/Progression.js';
 
-export default class DragonTigerController {
+export default class BaccaratController {
     constructor(eventBus) {
         this.eventBus = eventBus;
-        this.state = new DragonTigerState();
-        this.ui = new DragonTigerUI(this, this.state);
+        this.state = new BaccaratState();
+        this.ui = new BaccaratUI(this, this.state);
         this.audio = new AudioService();
     }
 
     loadLocal() {
         try {
-            const data = StorageService.load('dt_v4_session');
+            const data = StorageService.load('bac_v4_session');
             if (!data) return;
             if (Array.isArray(data.history)) this.state.history = data.history;
             if (data.stats) this.state.stats = data.stats;
             if (data.patternStats) this.state.patternStats = data.patternStats;
-            if (Array.isArray(data.myBetsHistory)) {
-                this.state.myBetsHistory = data.myBetsHistory.map(bet =>
-                    (bet && bet.status === 'PUSH' && bet.result === 'X')
-                        ? { ...bet, status: 'LOSS', net: -0.5 }
-                        : bet
-                );
-            }
-            if (Array.isArray(data.goldenBetsHistory)) {
-                this.state.goldenBetsHistory = data.goldenBetsHistory.map(bet =>
-                    (bet && bet.status === 'PUSH' && bet.result === 'X')
-                        ? { ...bet, status: 'LOSS', net: -0.5 }
-                        : bet
-                );
-            }
+            if (Array.isArray(data.myBetsHistory)) this.state.myBetsHistory = data.myBetsHistory;
+            if (Array.isArray(data.goldenBetsHistory)) this.state.goldenBetsHistory = data.goldenBetsHistory;
             if (data.filters) this.state.filters = data.filters;
             if (data.simFilters) this.state.simFilters = data.simFilters;
             if (data.commissionExact !== undefined) this.state.commissionExact = data.commissionExact;
             
-            const cToggle = document.getElementById('dt-comm-toggle');
+            const cToggle = document.getElementById('comm-toggle');
             if(cToggle) cToggle.checked = this.state.commissionExact;
         } catch (e) {
-            console.error("DragonTiger state corrupted, starting fresh", e);
+            console.error("Baccarat state corrupted, starting fresh", e);
         }
     }
 
     saveLocal() {
-        StorageService.save('dt_v4_session', {
+        StorageService.save('bac_v4_session', {
             history: this.state.history.slice(-2000), stats: this.state.stats, patternStats: this.state.patternStats,
             myBetsHistory: this.state.myBetsHistory.slice(-2000), goldenBetsHistory: this.state.goldenBetsHistory.slice(-2000),
             filters: this.state.filters, simFilters: this.state.simFilters, commissionExact: this.state.commissionExact
@@ -57,19 +46,17 @@ export default class DragonTigerController {
         if (navigator.vibrate) navigator.vibrate(10);
         let patternsResolved = [], isGlobalWin = false, goldenBetData = null;
 
-        if (this.state.currentPrediction?.candidates) {
+        if (this.state.currentPrediction?.candidates && result !== 'T') {
             const gCand = this.state.currentPrediction.candidates.find(c => c.isGolden);
             if (gCand) {
-                const isTie = result === 'X';
                 const isWin = gCand.pred === result;
-                goldenBetData = { handNum: this.state.history.length + 1, convergence: gCand.rawName, pred: gCand.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: isWin ? 1 : (isTie ? -0.5 : -1) };
+                goldenBetData = { handNum: this.state.history.length + 1, convergence: gCand.rawName, pred: gCand.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: isWin ? ((gCand.pred === 'B' && this.state.commissionExact) ? 0.95 : 1) : -1 };
                 this.state.goldenBetsHistory.push(goldenBetData);
             }
         }
 
-        const processSeq = (document.getElementById('dt-toggle-ignore-ties')?.checked) ? this.state.history.map((h, i) => ({ val: h.val, index: i })).filter(h => h.val !== 'X') : this.state.history.map((h, i) => ({ val: h.val, index: i }));
-        if (processSeq.length >= 3) {
-            const isTieResult = result === 'X';
+        const processSeq = (document.getElementById('toggle-ignore-ties')?.checked) ? this.state.history.map((h, i) => ({ val: h.val, index: i })).filter(h => h.val !== 'T') : this.state.history.map((h, i) => ({ val: h.val, index: i }));
+        if (processSeq.length >= 3 && result !== 'T') {
             let cands = [...PatternScanner.scan(processSeq, "Vertical"), ...PatternScanner.scan(processSeq.filter(h => h.index % 6 === this.state.history.length % 6), "Horizontal")];
             const seen = new Set();
             cands.forEach(c => {
@@ -78,7 +65,7 @@ export default class DragonTigerController {
                     const isWin = c.pred === result;
                     if(!this.state.patternStats[c.rawName]) this.state.patternStats[c.rawName] = {w:0, l:0};
                     isWin ? this.state.patternStats[c.rawName].w++ : this.state.patternStats[c.rawName].l++;
-                    patternsResolved.push({ name: c.rawName, win: isWin, pred: c.pred, tie: isTieResult });
+                    patternsResolved.push({ name: c.rawName, win: isWin, pred: c.pred });
                     if (isWin) isGlobalWin = true;
                 }
             });
@@ -86,8 +73,8 @@ export default class DragonTigerController {
 
         let myBetData = null;
         if (this.state.activeLockedBet) {
-            const isTie = result === 'X', isWin = this.state.activeLockedBet.pred === result;
-            myBetData = { handNum: this.state.history.length + 1, pattern: this.state.activeLockedBet.pattern, pred: this.state.activeLockedBet.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: isWin ? 1 : (isTie ? -0.5 : -1) };
+            const isPush = result === 'T', isWin = this.state.activeLockedBet.pred === result;
+            myBetData = { handNum: this.state.history.length + 1, pattern: this.state.activeLockedBet.pattern, pred: this.state.activeLockedBet.pred, result: result, status: isPush ? 'PUSH' : (isWin ? 'WIN' : 'LOSS'), net: isPush ? 0 : (isWin ? (this.state.activeLockedBet.pred === 'B' && this.state.commissionExact ? 0.95 : 1) : -1) };
             this.state.myBetsHistory.push(myBetData);
             this.state.activeLockedBet = null;
         }
@@ -98,17 +85,17 @@ export default class DragonTigerController {
         requestAnimationFrame(() => {
             this.runEngine();
             this.render();
-            if (!document.getElementById('dt-stats-modal')?.classList.contains('hidden')) this.renderStats();
-            if (!document.getElementById('dt-filters-modal')?.classList.contains('hidden')) this.renderFilters();
-            if (!document.getElementById('dt-sim-modal')?.classList.contains('hidden')) this.updateSim();
-            if (!document.getElementById('dt-vault-modal')?.classList.contains('hidden')) this.renderVault();
-            if (!document.getElementById('dt-log-modal')?.classList.contains('hidden')) this.renderLogs();
+            if (!document.getElementById('stats-modal')?.classList.contains('hidden')) this.renderStats();
+            if (!document.getElementById('filters-modal')?.classList.contains('hidden')) this.renderFilters();
+            if (!document.getElementById('sim-modal')?.classList.contains('hidden')) this.updateSim();
+            if (!document.getElementById('vault-modal')?.classList.contains('hidden')) this.renderVault();
+            if (!document.getElementById('log-modal')?.classList.contains('hidden')) this.renderLogs();
             this.saveLocal();
         });
     }
 
     runEngine() {
-        const processSeq = (document.getElementById('dt-toggle-ignore-ties')?.checked) ? this.state.history.map((h, i) => ({ val: h.val, index: i })).filter(h => h.val !== 'X') : this.state.history.map((h, i) => ({ val: h.val, index: i }));
+        const processSeq = (document.getElementById('toggle-ignore-ties')?.checked) ? this.state.history.map((h, i) => ({ val: h.val, index: i })).filter(h => h.val !== 'T') : this.state.history.map((h, i) => ({ val: h.val, index: i }));
         if (processSeq.length < 3) { this.state.currentHighlightMap.clear(); this.state.currentPrediction = null; this.ui.dashboard.renderEmpty('Analyzing data...'); return; }
 
         let cands = [...PatternScanner.scan(processSeq, "Vertical"), ...PatternScanner.scan(processSeq.filter(h => h.index % 6 === this.state.history.length % 6), "Horizontal")];
@@ -144,9 +131,9 @@ export default class DragonTigerController {
     undo() {
         if (this.state.history.length === 0) return;
         const last = this.state.history.pop();
-        if (last.val === 'D') this.state.stats.p--;
-        if (last.val === 'T') this.state.stats.b--;
-        if (last.val === 'X') this.state.stats.t--;
+        if (last.val === 'P') this.state.stats.p--;
+        if (last.val === 'B') this.state.stats.b--;
+        if (last.val === 'T') this.state.stats.t--;
         this.state.stats.total--;
         if (last.patternList) {
             last.patternList.forEach(p => {
@@ -164,16 +151,16 @@ export default class DragonTigerController {
 
         this.render();
         this.runEngine();
-        if (!document.getElementById('dt-stats-modal')?.classList.contains('hidden')) this.renderStats();
-        if (!document.getElementById('dt-filters-modal')?.classList.contains('hidden')) this.renderFilters();
-        if (!document.getElementById('dt-sim-modal')?.classList.contains('hidden')) this.updateSim();
-        if (!document.getElementById('dt-vault-modal')?.classList.contains('hidden')) this.renderVault();
-        if (!document.getElementById('dt-log-modal')?.classList.contains('hidden')) this.renderLogs();
+        if (!document.getElementById('stats-modal')?.classList.contains('hidden')) this.renderStats();
+        if (!document.getElementById('filters-modal')?.classList.contains('hidden')) this.renderFilters();
+        if (!document.getElementById('sim-modal')?.classList.contains('hidden')) this.updateSim();
+        if (!document.getElementById('vault-modal')?.classList.contains('hidden')) this.renderVault();
+        if (!document.getElementById('log-modal')?.classList.contains('hidden')) this.renderLogs();
         this.saveLocal();
     }
 
     reset() {
-        this.toggleModal('reset-modal-dragontiger');
+        this.toggleModal('reset-modal-baccarat');
     }
 
     executeReset() {
@@ -189,12 +176,12 @@ export default class DragonTigerController {
         this.render();
         this.runEngine();
 
-        document.getElementById('dt-stats-modal')?.classList.add('hidden');
-        document.getElementById('dt-filters-modal')?.classList.add('hidden');
-        document.getElementById('dt-sim-modal')?.classList.add('hidden');
-        document.getElementById('dt-vault-modal')?.classList.add('hidden');
-        document.getElementById('dt-log-modal')?.classList.add('hidden');
-        this.toggleModal('reset-modal-dragontiger'); 
+        document.getElementById('stats-modal')?.classList.add('hidden');
+        document.getElementById('filters-modal')?.classList.add('hidden');
+        document.getElementById('sim-modal')?.classList.add('hidden');
+        document.getElementById('vault-modal')?.classList.add('hidden');
+        document.getElementById('log-modal')?.classList.add('hidden');
+        this.toggleModal('reset-modal-baccarat'); 
 
         this.saveLocal();
     }
@@ -203,11 +190,11 @@ export default class DragonTigerController {
         const el = document.getElementById(id);
         if(el) el.classList.toggle('hidden');
         if (el && !el.classList.contains('hidden')) {
-            if (id === 'dt-stats-modal') this.renderStats();
-            if (id === 'dt-filters-modal') this.renderFilters();
-            if (id === 'dt-sim-modal') this.updateSim();
-            if (id === 'dt-vault-modal') this.renderVault();
-            if (id === 'dt-log-modal') this.renderLogs();
+            if (id === 'stats-modal') this.renderStats();
+            if (id === 'filters-modal') this.renderFilters();
+            if (id === 'sim-modal') this.updateSim();
+            if (id === 'vault-modal') this.renderVault();
+            if (id === 'log-modal') this.renderLogs();
         }
     }
 
@@ -238,7 +225,7 @@ export default class DragonTigerController {
     }
 
     toggleSimConfig() {
-        const panel = document.getElementById('dt-sim-config-panel');
+        const panel = document.getElementById('sim-config-panel');
         if(panel) {
             if (panel.classList.contains('hidden')) {
                 panel.classList.remove('hidden');
@@ -255,20 +242,27 @@ export default class DragonTigerController {
         this.updateSim();
         this.saveLocal();
     }
+    
+    toggleCommission() {
+        this.state.commissionExact = document.getElementById('comm-toggle')?.checked || false;
+        this.renderStats();
+        this.renderVault();
+        this.saveLocal();
+    }
 
     switchStatsTab(tabId) {
-        document.querySelectorAll('.dt-stat-tab').forEach(t => {
+        document.querySelectorAll('.stat-tab').forEach(t => {
             t.classList.remove('active');
             t.setAttribute('data-active', 'false');
         });
-        const activeTab = document.getElementById(`dt-tab-${tabId}`);
+        const activeTab = document.getElementById(`tab-${tabId}`);
         if(activeTab) {
             activeTab.classList.add('active');
             activeTab.setAttribute('data-active', 'true');
         }
 
         ['kpis', 'trend', 'heatmap', 'golden'].forEach(id => {
-            const el = document.getElementById(`dt-sec-${id}`);
+            const el = document.getElementById(`sec-${id}`);
             if(el) {
                 if (id === tabId) { el.classList.remove('hidden'); el.classList.add('flex'); }
                 else { el.classList.add('hidden'); el.classList.remove('flex'); }
@@ -282,5 +276,5 @@ export default class DragonTigerController {
     renderVault() { this.ui.modals.renderVault(); }
     renderLogs() { this.ui.modals.renderLogs(); }
     renderStats() { this.ui.modals.renderStats(); }
-    closePatternLog() { document.getElementById('dt-patternLogModal').style.display = 'none'; }
+    closePatternLog() { document.getElementById('bac-patternLogModal').style.display = 'none'; }
 }

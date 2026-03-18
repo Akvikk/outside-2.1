@@ -29,38 +29,12 @@ class AppOrchestrator {
     }
 
     init() {
-        this.loadGlobalState();
+        try { this.loadGlobalState(); } catch (e) { console.error(e); }
 
-        // Setup common UI helpers expected by inline HTML handlers
-        const injectHelpers = (controller) => {
-            controller.toggleModal = (id) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                if (el.classList.contains('hidden') || el.style.display === 'none' || el.style.display === '') {
-                    el.classList.remove('hidden');
-                    el.style.display = 'flex';
-                } else {
-                    el.classList.add('hidden');
-                    el.style.display = 'none';
-                }
-            };
-            controller.toggleMenu = (e) => {
-                if (e) e.stopPropagation();
-                const menu = document.getElementById('mainMenuDropdown');
-                const overlay = document.getElementById('menuOverlay');
-                if (menu) menu.classList.toggle('hidden');
-                if (overlay) overlay.classList.toggle('hidden');
-            };
-        };
-
-        injectHelpers(this.roulette);
-        injectHelpers(this.baccarat);
-        injectHelpers(this.dragontiger);
-
-        // Load saved data for each domain
-        this.roulette.loadLocal();
-        this.baccarat.loadLocal();
-        this.dragontiger.loadLocal();
+        // Load saved data safely (prevents corrupted old data from crashing the app)
+        try { this.roulette.loadLocal(); } catch (e) { console.error('Roulette load error:', e); }
+        try { this.baccarat.loadLocal(); } catch (e) { console.error('Baccarat load error:', e); }
+        try { this.dragontiger.loadLocal(); } catch (e) { console.error('DragonTiger load error:', e); }
 
         // Allow Enter in spin input
         const spinInput = document.getElementById('spinInput');
@@ -71,9 +45,14 @@ class AppOrchestrator {
             });
         }
 
-        this.initParallax();
-        this.switchGameMode(this.currentMode, true);
-        this.bindEvents();
+        try { this.initParallax(); } catch (e) {}
+        
+        try {
+            this.switchGameMode(this.currentMode, true);
+        } catch (e) {
+            console.error('Failed to switch game mode during init:', e);
+        }
+        try { this.bindEvents(); } catch (e) {}
     }
 
     bindEvents() {
@@ -393,7 +372,42 @@ window.toggleFilterMenu = (e) => window.app.toggleFilterMenu(e);
 window.toggleAnalytics = () => window.app.toggleAnalytics();
 window.toggleBetsModal = () => window.app.toggleBetsModal();
 window.closeAllMenus = (e) => window.app.roulette.closeAllMenus(e);
+window.toggleMainMenu = (e) => window.app.roulette.toggleMainMenu(e);
+window.toggleAccordion = (id) => window.app.roulette.toggleAccordion(id);
+window.toggleGridColumn = (key) => window.app.roulette.toggleGridColumn(key);
+window.updateBankrollSettings = () => window.app.roulette.updateBankrollSettings();
+window.exportSpins = () => window.app.roulette.exportSpins();
+window.importSpins = (files) => window.app.roulette.importSpins(files);
+window.toggleTrendIcons = () => window.app.roulette.toggleTrendIcons();
+window.toggleCurvedLayout = () => window.app.roulette.toggleCurvedLayout();
+window.toggleSound = (key) => window.app.roulette.toggleSound(key);
+window.showResetModal = () => window.app.roulette.showResetModal();
+window.toggleHeatmapMetric = () => window.app.roulette.toggleHeatmapMetric();
+window.switchAnalyticsMode = (mode) => window.app.roulette.switchAnalyticsMode(mode);
+window.changeSimProgression = (val) => window.app.roulette.changeSimProgression(val);
+window.toggleSimFilter = (type, key) => window.app.roulette.toggleSimFilter(type, key);
+window.toggleCategorySelection = (checked) => window.app.roulette.toggleCategorySelection(checked);
+window.togglePatternSelection = (checked) => window.app.roulette.togglePatternSelection(checked);
+window.handleFilterChange = (key, checked) => window.app.roulette.handleFilterChange(key, checked);
+window.closePatternLog = () => window.app.roulette.closePatternLog();
 
-document.addEventListener('DOMContentLoaded', () => {
+window.createRipple = function(event) {
+    const button = event.currentTarget;
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    circle.style.width = circle.style.height = `${diameter}px`;
+    const rect = button.getBoundingClientRect();
+    circle.style.left = `${event.clientX - rect.left - radius}px`;
+    circle.style.top = `${event.clientY - rect.top - radius}px`;
+    circle.classList.add("ripple-span");
+    const existing = button.querySelector(".ripple-span");
+    if (existing) existing.remove();
+    button.appendChild(circle);
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.app.init());
+} else {
     window.app.init();
-});
+}

@@ -48,3 +48,8 @@ export const PATTERN_CONFIG = [
     { key: '3-1-1 DOWN', label: '3-1-1 Down' },
     { key: '1-1-2 BUILD', label: '1-1-2 Build', default: false }
 ];
+
+export const MUTUAL_EXCLUSIONS = {
+    'FLOW': 'ZIG-ZAG',
+    'ZIG-ZAG': 'FLOW'
+};
