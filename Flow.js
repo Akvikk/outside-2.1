@@ -1,14 +1,14 @@
 export default class Flow {
-    static check(m) {
-        if (m.s1 >= 4) {
-            return {
-                pred: m.pEnd,
-                name: `FLOW (${m.contextName})`,
-                rawName: 'FLOW',
-                indices: Array.from({ length: 4 }, (_, i) => m.idx(m.end - i)),
-                isGolden: false
-            };
+    static check1to1(seq, categoryName, typeA, typeB) {
+        const n = seq.length;
+        if (n >= 4) {
+            const last4 = seq.slice(-4);
+            if (last4.every(v => v === typeA) && (n === 4 || seq[n - 5] !== typeA))
+                return { category: categoryName, patternName: 'FLOW', sub: 'Streak Follow', targetToken: typeA };
+            else if (last4.every(v => v === typeB) && (n === 4 || seq[n - 5] !== typeB))
+                return { category: categoryName, patternName: 'FLOW', sub: 'Streak Follow', targetToken: typeB };
         }
         return null;
     }
+    static check2to1() { return null; }
 }

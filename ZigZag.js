@@ -1,15 +1,23 @@
 export default class ZigZag {
-    static check(m) {
-        if (m.len >= 3 && m.val(m.end) !== 'X' && m.val(m.end - 1) !== 'X' && m.val(m.end - 2) !== 'X') {
-            if (m.val(m.end) !== m.val(m.end - 1) && m.val(m.end - 1) !== m.val(m.end - 2)) {
-                return {
-                    pred: m.pEnd === 'D' ? 'T' : 'D',
-                    name: `ZIG-ZAG (${m.contextName})`,
-                    rawName: 'ZIG-ZAG',
-                    indices: [m.idx(m.end), m.idx(m.end - 1), m.idx(m.end - 2)],
-                    isGolden: false
-                };
+    static check1to1(seq, categoryName, typeA, typeB) {
+        const n = seq.length;
+        if (n >= 4) {
+            const s0 = seq[n - 4], s1 = seq[n - 3], s2 = seq[n - 2], s3 = seq[n - 1];
+            const isChopStart = n === 4 || seq[n - 5] !== s1;
+            if (s0 !== s1 && s1 !== s2 && s2 !== s3 && isChopStart) {
+                const prediction = s3 === typeA ? typeB : typeA;
+                return { category: categoryName, patternName: 'ZIG-ZAG', sub: 'Chop Start', targetToken: prediction };
             }
+        }
+        return null;
+    }
+    static check2to1(seq, categoryName) {
+        const n = seq.length;
+        if (n >= 4) {
+            const last4 = seq.slice(-4);
+            const isPure4 = n > 4 ? seq[n - 5] !== seq[n - 4] : true;
+            if (isPure4 && last4[0] === last4[2] && last4[1] === last4[3] && last4[0] !== last4[1]) { if (n === 4 || seq[n - 5] !== last4[1]) return { category: categoryName, patternName: 'ZIG-ZAG', sub: 'Strict Chop', targetToken: last4[0] }; }
+            else if (isPure4 && last4[0] === last4[2] && last4[1] !== last4[0] && last4[3] !== last4[0]) { return { category: categoryName, patternName: 'ZIG-ZAG', sub: 'Anchor Follow', targetToken: last4[0] }; }
         }
         return null;
     }

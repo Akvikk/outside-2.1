@@ -46,7 +46,7 @@ export default class BankrollManager {
         });
     }
 
-    static resolveUserBets(state, spinObj, eventBus) {
+    static resolveUserBets(state, spinObj) {
         let spinWins = 0, spinLosses = 0;
         state.pendingBets.filter(b => b.confirmed).forEach(bet => {
             const isWin = this.isBetWin(spinObj, bet.category, bet.target);

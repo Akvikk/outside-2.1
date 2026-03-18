@@ -1,15 +1,17 @@
 export default class Down311 {
-    static check(m) {
-        if (m.s1 === 1 && m.s2 === 3 && m.pMid !== 'X' && m.pEnd !== m.pMid) {
-            if (m.isPure(m.midEnd - m.s2 + 1, m.pMid)) {
-                return {
-                    pred: m.pMid,
-                    name: `3-1-1 DOWN (${m.contextName})`,
-                    rawName: '3-1-1 DOWN',
-                    indices: [m.idx(m.end), m.idx(m.midEnd), m.idx(m.midEnd - 1), m.idx(m.midEnd - 2)],
-                    isGolden: false
-                };
-            }
+    static check1to1(seq, categoryName, typeA, typeB) {
+        const n = seq.length;
+        if (n >= 5) {
+            const s0 = seq[n - 5], s1 = seq[n - 4], s2 = seq[n - 3], s3 = seq[n - 2], s4 = seq[n - 1];
+            if (s0 !== s1 && s1 === s2 && s2 === s3 && s3 !== s4) return { category: categoryName, patternName: '3-1-1 DOWN', sub: 'Momentum Death', targetToken: s1 };
+        }
+        return null;
+    }
+    static check2to1(seq, categoryName) {
+        const n = seq.length;
+        if (n >= 4) {
+            const last4 = seq.slice(-4);
+            if ((n > 4 ? seq[n - 5] !== seq[n - 4] : true) && last4[0] === last4[1] && last4[1] === last4[2] && last4[2] !== last4[3]) return { category: categoryName, patternName: '3-1-1 DOWN', sub: 'Streak Return', targetToken: last4[2] };
         }
         return null;
     }
