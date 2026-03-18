@@ -81,7 +81,7 @@ export default class RouletteController {
     handleSpin(manualVal = null, suppressRender = false) {
         const inputField = document.getElementById('spinInput');
         let val = manualVal !== null ? parseInt(manualVal) : parseInt(inputField?.value);
-        if (navigator.vibrate) navigator.vibrate(10);
+        if (navigator.vibrate && !suppressRender) navigator.vibrate(10);
 
         if (isNaN(val) || val < 0 || val > 36) {
             if (manualVal === null && inputField) {
@@ -94,7 +94,7 @@ export default class RouletteController {
 
         try {
             const data = WHEEL_DATA[val];
-            const spinObj = { id: Date.now(), spinNumber: this.state.history.length + 1, val: val, ...data };
+            const spinObj = { id: Date.now() + this.state.history.length, spinNumber: this.state.history.length + 1, val: val, ...data };
             spinObj.bets = [...this.state.backgroundBets];
 
             const userResults = BankrollManager.resolveUserBets(this.state, spinObj);
@@ -104,7 +104,7 @@ export default class RouletteController {
             this.mutateChaseSet(this.state.bgEngineChases, spinObj);
 
             this.state.history.push(spinObj);
-            this.ui.renderRow(spinObj);
+            if (!suppressRender) this.ui.renderRow(spinObj);
             this.checkNewChases();
 
             const alerts = this.scanner.scanPatterns(false, this.state.engineChases).filter(a => this.state.activeFilters[a.patternName] !== false);
@@ -112,9 +112,11 @@ export default class RouletteController {
                 id: index, triggerSpin: spinObj.spinNumber, pattern: alert.patternName, category: alert.category, target: alert.targetToken, sub: alert.sub, confirmed: false
             }));
 
-            if (userResults.wins > 0) this.audio.playWin(this.state.soundSettings.wins);
-            else if (userResults.losses > 0) this.audio.playLoss(this.state.soundSettings.losses);
-            else if (this.state.pendingBets.length > 0) this.audio.playPrediction(this.state.soundSettings.predictions);
+            if (!suppressRender) {
+                if (userResults.wins > 0) this.audio.playWin(this.state.soundSettings.wins);
+                else if (userResults.losses > 0) this.audio.playLoss(this.state.soundSettings.losses);
+                else if (this.state.pendingBets.length > 0) this.audio.playPrediction(this.state.soundSettings.predictions);
+            }
 
             const bgAlerts = this.scanner.scanPatterns(true, this.state.bgEngineChases);
             this.state.backgroundBets = bgAlerts.map(alert => ({ pattern: alert.patternName, category: alert.category, target: alert.targetToken, sub: alert.sub }));
@@ -161,7 +163,14 @@ export default class RouletteController {
     }
 
     toggleBetConfirmation(index) { if (this.state.pendingBets[index]) { this.state.pendingBets[index].confirmed = !this.state.pendingBets[index].confirmed; this.ui.renderDashboard(); this.saveLocal(); } }
-    reRenderHistory() { const tbody = document.getElementById('historyBody'); if (tbody) tbody.innerHTML = ''; this.state.history.forEach(spin => this.ui.renderRow(spin)); }
+    
+    reRenderHistory() { 
+        const tbody = document.getElementById('historyBody'); 
+        if (tbody) tbody.innerHTML = ''; 
+        const displaySpins = this.state.history.length > 500 ? this.state.history.slice(-500) : this.state.history;
+        displaySpins.forEach(spin => this.ui.renderRow(spin)); 
+    }
+    
     recalculateAllStats() {
         this.state.engineStatsMaster = this.state.createStatObject(); this.state.engineStats1to1 = this.state.createStatObject(); this.state.engineStats2to1 = this.state.createStatObject();
         this.state.history.forEach(spin => { if (!spin.bets) return; spin.bets.forEach(bet => { const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target); const result = isWin ? 'WIN' : 'LOSS'; BankrollManager.updateStatObj(this.state.engineStatsMaster, bet, result); if (['Color', 'High/Low', 'Odd/Even'].includes(bet.category)) BankrollManager.updateStatObj(this.state.engineStats1to1, bet, result); else if (['Dozens', 'Columns'].includes(bet.category)) BankrollManager.updateStatObj(this.state.engineStats2to1, bet, result); }); });
@@ -173,8 +182,45 @@ export default class RouletteController {
     toggleIgnoreZero() { this.state.ignoreZero = !this.state.ignoreZero; this.saveLocal(); }
     toggleGridColumn(key) { this.state.gridSettings[key] = !this.state.gridSettings[key]; this.saveLocal(); this.reRenderHistory(); }
     updateBankrollSettings() { this.state.bankrollTargets.enabled = document.getElementById('br-enabled')?.checked || false; this.state.bankrollTargets.profit = parseInt(document.getElementById('br-profit')?.value) || 50; this.state.bankrollTargets.loss = parseInt(document.getElementById('br-loss')?.value) || 20; this.saveLocal(); }
-    exportSpins() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state.history.map(s => s.val))); const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", `roulette_spins_${new Date().getTime()}.json`); document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove(); }
-    importSpins(files) { if (files.length === 0) return; const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if (Array.isArray(imported)) { imported.forEach(val => this.handleSpin(val, true)); this.ui.renderDashboard(); this.ui.showToast("Spins imported successfully", "success"); } } catch (err) { this.ui.showToast("Failed to parse import file", "error"); } }; reader.readAsText(files[0]); }
+    
+    exportSpins() {
+        const data = JSON.stringify(this.state.history.map(s => s.val));
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `roulette_spins_${new Date().getTime()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    importSpins(files) {
+        if (files.length === 0) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (Array.isArray(imported)) {
+                    imported.forEach(val => this.handleSpin(val, true));
+                    this.saveLocal();
+                    this.reRenderHistory();
+                    this.ui.renderDashboard();
+                    if (document.getElementById('analyticsModal')?.style.display === 'flex') this.ui.updateAnalyticsUI();
+                    if (document.getElementById('betsModal')?.style.display === 'flex') this.ui.updateActualBetsUI();
+                    setTimeout(() => { const anchor = document.getElementById('scrollAnchor'); if (anchor) anchor.scrollIntoView({ behavior: 'smooth' }); }, 50);
+                    this.ui.showToast(`Imported ${imported.length} spins successfully`, "success");
+                }
+            } catch (err) {
+                this.ui.showToast("Failed to parse import file", "error");
+            }
+            const input = document.getElementById('importInput');
+            if (input) input.value = '';
+        };
+        reader.readAsText(files[0]);
+    }
+
     toggleTrendIcons() { this.state.showTrendIcons = !this.state.showTrendIcons; this.saveLocal(); this.ui.renderDashboard(); }
     toggleCurvedLayout() { this.state.curvedLayout = !this.state.curvedLayout; this.saveLocal(); }
     toggleSound(key) { this.state.soundSettings[key] = !this.state.soundSettings[key]; this.saveLocal(); }
@@ -221,6 +267,101 @@ export default class RouletteController {
         if (document.getElementById('analyticsModal')?.style.display === 'flex' && this.state.simState.mode === 'perimeter') {
             this.ui.updatePerimeterUI();
         }
+    }
+
+    runSimulation() {
+        const mockState = new RouletteState();
+        mockState.activeFilters = { ...this.state.activeFilters };
+        mockState.simState = JSON.parse(JSON.stringify(this.state.simState));
+        const mockScanner = new PatternScanner(mockState);
+        
+        let simStats = {
+            totalWins: 0,
+            totalLosses: 0,
+            netUnits: 0,
+            totalBets: 0,
+            bankrollHistory: [0],
+            patternStats: {},
+            maxDrawdown: 0
+        };
+        let peak = 0;
+        const progState = {};
+        const fibSeq = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987];
+
+        this.state.history.forEach((actualSpin, i) => {
+            const val = actualSpin.val;
+            const data = WHEEL_DATA[val];
+            const spinObj = { id: i, spinNumber: i + 1, val: val, ...data };
+            
+            mockState.pendingBets.forEach(bet => {
+                const isWin = BankrollManager.isBetWin(spinObj, bet.category, bet.target);
+                const winReward = (bet.category === 'Dozens' || bet.category === 'Columns') ? 2 : 1;
+                
+                if (!progState[bet.pattern]) progState[bet.pattern] = { size: 1, paroliWins: 0, fibIdx: 0 };
+                const p = progState[bet.pattern];
+                const currentBet = p.size;
+
+                simStats.totalBets++;
+                if (isWin) {
+                    simStats.totalWins++;
+                    simStats.netUnits += (winReward * currentBet);
+                } else {
+                    simStats.totalLosses++;
+                    simStats.netUnits -= currentBet;
+                }
+                
+                simStats.bankrollHistory.push(simStats.netUnits);
+                if (simStats.netUnits > peak) peak = simStats.netUnits;
+                const drawdown = peak - simStats.netUnits;
+                if (drawdown > simStats.maxDrawdown) simStats.maxDrawdown = drawdown;
+
+                if (!simStats.patternStats[bet.pattern]) {
+                    simStats.patternStats[bet.pattern] = { w: 0, l: 0, t: 0 };
+                }
+                simStats.patternStats[bet.pattern].t++;
+                if (isWin) simStats.patternStats[bet.pattern].w++;
+                else simStats.patternStats[bet.pattern].l++;
+
+                const mode = mockState.simState.progression;
+                if (mode === 'martingale') {
+                    p.size = isWin ? 1 : p.size * 2;
+                } else if (mode === 'paroli') {
+                    if (isWin) {
+                        p.paroliWins++;
+                        if (p.paroliWins >= 3) { p.size = 1; p.paroliWins = 0; }
+                        else { p.size *= 2; }
+                    } else { p.size = 1; p.paroliWins = 0; }
+                } else if (mode === 'fibonacci') {
+                    if (isWin) p.fibIdx = Math.max(0, p.fibIdx - 2);
+                    else p.fibIdx = Math.min(fibSeq.length - 1, p.fibIdx + 1);
+                    p.size = fibSeq[p.fibIdx];
+                } else {
+                    p.size = 1;
+                }
+            });
+
+            if (mockState.engineChases['Dozens']) {
+                if (spinObj.doz === mockState.engineChases['Dozens'].target) mockState.engineChases['Dozens'] = null;
+                else { mockState.engineChases['Dozens'].attemptsLeft--; if (mockState.engineChases['Dozens'].attemptsLeft <= 0) mockState.engineChases['Dozens'] = null; }
+            }
+            if (mockState.engineChases['Columns']) {
+                if (spinObj.col === mockState.engineChases['Columns'].target) mockState.engineChases['Columns'] = null;
+                else { mockState.engineChases['Columns'].attemptsLeft--; if (mockState.engineChases['Columns'].attemptsLeft <= 0) mockState.engineChases['Columns'] = null; }
+            }
+
+            mockState.history.push(spinObj);
+
+            const subset = mockState.history.slice(-50);
+            const ghostDoz = mockScanner.preparePatternSeq(subset.map(s => s.doz), 'Z');
+            const ghostCol = mockScanner.preparePatternSeq(subset.map(s => s.col), 'Z');
+
+            if (mockState.activeFilters.doz && mockState.activeFilters['FALSE BREAK'] !== false && !mockState.engineChases['Dozens']) { let fb = mockScanner.analyze2to1Sequence(ghostDoz, 'Dozens').find(a => a.patternName === 'FALSE BREAK'); if (fb) mockState.engineChases['Dozens'] = { target: fb.targetToken, attemptsLeft: 3 }; }
+            if (mockState.activeFilters.col && mockState.activeFilters['FALSE BREAK'] !== false && !mockState.engineChases['Columns']) { let fb = mockScanner.analyze2to1Sequence(ghostCol, 'Columns').find(a => a.patternName === 'FALSE BREAK'); if (fb) mockState.engineChases['Columns'] = { target: fb.targetToken, attemptsLeft: 3 }; }
+
+            const alerts = mockScanner.scanPatterns(false, mockState.engineChases).filter(a => mockState.simState.filters[a.patternName] !== false);
+            mockState.pendingBets = alerts.map((alert, index) => ({ id: index, triggerSpin: spinObj.spinNumber, pattern: alert.patternName, category: alert.category, target: alert.targetToken }));
+        });
+        return simStats;
     }
 
     closePatternLog() { document.getElementById('patternLogModal').style.display = 'none'; }

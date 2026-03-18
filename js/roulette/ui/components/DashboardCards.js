@@ -62,6 +62,7 @@ export default class DashboardCards {
         });
 
         const perimeterStats = BankrollManager.calculatePerimeterStats(this.state);
+        const pLimit = this.state.perimeterLimit || 14;
 
         this.state.pendingBets.forEach((bet, index) => {
             const div = document.createElement('div');
@@ -72,28 +73,28 @@ export default class DashboardCards {
             
             const localStat = perimeterStats[bet.pattern];
             const isHot = localStat && localStat.rate > 0;
+            const localHits = localStat ? localStat.w : 0;
 
             const styleClass = Formatters.getStyle(bet.target);
             const rawBetName = 'BET ' + Formatters.getName(bet.category, bet.target);
-            const categoryLabel = isCompact ? Formatters.compactCategoryLabel(bet.category) : bet.category;
             const betLabel = isCompact ? Formatters.compactTokenLabel(rawBetName.replace('BET ', '')) : rawBetName;
             const patternLabel = isCompact ? Formatters.compactPatternLabel(bet.pattern) : bet.pattern;
 
-            div.className = `grid-item p-2 pl-2.5 flex flex-col justify-between relative overflow-hidden select-none cursor-pointer ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-2 ring-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : ''}`;
+            div.className = `grid-item relative overflow-hidden rounded-lg border border-white/10 bg-white/5 backdrop-blur-md p-2 pl-3 flex flex-col gap-1 select-none cursor-pointer ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-2 ring-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : ''}`;
             div.style.flex = "1 1 120px"; div.style.maxWidth = "280px";
             div.setAttribute('ondblclick', `app.roulette.toggleBetConfirmation(${index})`);
 
             div.innerHTML = `
-                <div class="w-full flex justify-between items-start relative z-10 gap-1">
-                    <div class="flex flex-wrap items-center gap-1 flex-1 overflow-hidden opacity-90">
-                        <span class="text-[8px] uppercase font-bold tracking-widest opacity-80 bg-black bg-opacity-40 px-1 rounded truncate">${categoryLabel}</span>
-                        ${isHot ? '<span class="text-[8px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-900/40 px-1 rounded border border-emerald-500/30 whitespace-nowrap"><i class="fas fa-fire mr-0.5"></i>HOT</span>' : ''}
-                    </div>
-                    <div class="z-20 shrink-0"><input type="checkbox" class="bet-checkbox" ${bet.confirmed ? 'checked' : ''} onclick="app.roulette.toggleBetConfirmation(${index})"></div>
+                <div class="absolute top-2 right-2 z-20">
+                    <input type="checkbox" class="bet-checkbox" ${bet.confirmed ? 'checked' : ''} onclick="app.roulette.toggleBetConfirmation(${index})">
                 </div>
-                <div class="flex flex-col text-left mt-1 relative z-10 min-w-0">
-                    <div class="flex items-center justify-between gap-1 min-w-0"><span class="text-sm font-black leading-none truncate text-white drop-shadow-md">${betLabel}</span><span class="text-[9px] shrink-0 font-bold text-yellow-300 opacity-90">${catRate}%</span></div>
-                    <div class="flex items-center justify-between mt-0.5 min-w-0"><span class="text-[8px] font-bold text-blue-300 truncate">${patternLabel}</span><span class="text-[9px] font-mono text-gray-300 shrink-0">${patRate}%</span></div>
+                <div class="flex justify-between items-center pr-6 relative z-10 min-w-0">
+                    <span class="text-base font-black truncate text-white drop-shadow-md">${betLabel}</span>
+                    <span class="text-xs font-black text-yellow-400 shrink-0">${catRate}%</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-gray-300 relative z-10 min-w-0">
+                    <span class="truncate pr-2 font-bold">${patternLabel} <span class="opacity-70 font-mono font-normal">| ${patRate}%</span></span>
+                    <span class="font-mono shrink-0 ${localHits > 0 ? 'text-[#30D158] font-bold' : 'text-gray-500'}">${localHits}/${pLimit}</span>
                 </div>`;
             dashboard.appendChild(div);
         });
