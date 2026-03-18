@@ -1,5 +1,5 @@
 /**
- * Baccarat Configuration
+ * Dragon Tiger Configuration
  * Stores constants, payouts, and pattern definitions.
  * NO state or logic lives here.
  */
@@ -15,6 +15,6 @@ export const PATTERN_CONFIG = [
 ];
 
 export const PAYOUT_RATES = {
-    BANKER_COMMISSION: 0.95,
-    DEFAULT: 1.00
+    DEFAULT: 1.00,
+    TIE_PENALTY: 0.50
 };
