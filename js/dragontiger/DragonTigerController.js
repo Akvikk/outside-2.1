@@ -62,7 +62,13 @@ export default class DragonTigerController {
             if (gCand) {
                 const isTie = result === 'X';
                 const isWin = gCand.pred === result;
-                goldenBetData = { handNum: this.state.history.length + 1, convergence: gCand.rawName, pred: gCand.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: isWin ? 1 : (isTie ? -0.5 : -1) };
+                let netPayout = -1;
+                if (isWin) {
+                    netPayout = gCand.pred === 'X' ? 8 : 1;
+                } else if (isTie) {
+                    netPayout = -0.5;
+                }
+                goldenBetData = { handNum: this.state.history.length + 1, convergence: gCand.rawName, pred: gCand.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: netPayout };
                 this.state.goldenBetsHistory.push(goldenBetData);
             }
         }
@@ -87,13 +93,23 @@ export default class DragonTigerController {
         let myBetData = null;
         if (this.state.activeLockedBet) {
             const isTie = result === 'X', isWin = this.state.activeLockedBet.pred === result;
-            myBetData = { handNum: this.state.history.length + 1, pattern: this.state.activeLockedBet.pattern, pred: this.state.activeLockedBet.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: isWin ? 1 : (isTie ? -0.5 : -1) };
+            let netPayout = -1;
+            if (isWin) {
+                netPayout = this.state.activeLockedBet.pred === 'X' ? 8 : 1;
+            } else if (isTie) {
+                netPayout = -0.5;
+            }
+            myBetData = { handNum: this.state.history.length + 1, pattern: this.state.activeLockedBet.pattern, pred: this.state.activeLockedBet.pred, result: result, status: isWin ? 'WIN' : 'LOSS', net: netPayout };
             this.state.myBetsHistory.push(myBetData);
             this.state.activeLockedBet = null;
         }
 
         this.state.history.push({ val: result, isWin: isGlobalWin, patternList: patternsResolved, myBetResolved: !!myBetData, goldenBetResolved: !!goldenBetData });
-        this.state.stats[result.toLowerCase()]++; this.state.stats.total++;
+        
+        if (result === 'D') this.state.stats.p++;
+        else if (result === 'T') this.state.stats.b++;
+        else if (result === 'X') this.state.stats.t++;
+        this.state.stats.total++;
 
         requestAnimationFrame(() => {
             this.runEngine();
