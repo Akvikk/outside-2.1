@@ -3,7 +3,7 @@
  * Handles logic for Tie markers cascading on the same column.
  */
 export default class RoadGenerator {
-    static generateBigRoad(history, tieToken = 'T') {
+    static generateBigRoad(history, tieToken = 'X') {
         let roadData = [], currentCol = [], lastMain = null;
 
         history.forEach(h => {

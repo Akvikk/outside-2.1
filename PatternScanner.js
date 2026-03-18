@@ -17,7 +17,7 @@ export default class PatternScanner {
         const getStreak = (endIdx) => {
             if (endIdx < 0 || endIdx >= len) return 0;
             const baseVal = val(endIdx);
-            if (baseVal === 'T' || baseVal === null) return 0;
+            if (baseVal === 'X' || baseVal === null) return 0;
             let count = 1;
             for (let i = endIdx - 1; i >= 0; i--) {
                 if (val(i) === baseVal) count++; else break;
@@ -25,7 +25,7 @@ export default class PatternScanner {
             return count;
         };
 
-        const getOpposite = (color) => color === 'P' ? 'B' : (color === 'B' ? 'P' : null);
+        const getOpposite = (color) => color === 'D' ? 'T' : (color === 'T' ? 'D' : null);
         const isPure = (startIdx, patternColor) => {
             if (startIdx <= 0) return false;
             return val(startIdx - 1) === getOpposite(patternColor);
@@ -33,7 +33,7 @@ export default class PatternScanner {
 
         const end = len - 1;
         const pEnd = val(end);
-        if (pEnd === 'T' || pEnd === null) return null;
+        if (pEnd === 'X' || pEnd === null) return null;
 
         const s1 = getStreak(end);
         const midEnd = end - s1;

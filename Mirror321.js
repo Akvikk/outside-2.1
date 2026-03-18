@@ -1,6 +1,6 @@
 export default class Mirror321 {
     static check(m) {
-        if (m.s1 === 2 && m.s2 === 3 && m.pMid !== 'T' && m.pEnd !== m.pMid) {
+        if (m.s1 === 2 && m.s2 === 3 && m.pMid !== 'X' && m.pEnd !== m.pMid) {
             if (m.isPure(m.midEnd - m.s2 + 1, m.pMid)) {
                 return {
                     pred: m.pMid,

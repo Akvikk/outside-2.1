@@ -16,8 +16,8 @@ export default class Simulator {
         let simFiredSignals = {}, retroHistory = [];
 
         fullHistory.forEach((step, index) => {
-            const currentSeq = ignoreTies ? retroHistory.filter(h => h.val !== 'T') : [...retroHistory];
-            if (currentSeq.length >= 3 && step.val !== 'T') {
+            const currentSeq = ignoreTies ? retroHistory.filter(h => h.val !== 'X') : [...retroHistory];
+            if (currentSeq.length >= 3 && step.val !== 'X') {
                 let vCands = PatternScanner.scan(currentSeq, "Vertical");
                 const rows = 6, nextRowIdx = index % rows;
                 const rowSeq = currentSeq.filter(h => h.index % rows === nextRowIdx);
@@ -42,15 +42,20 @@ export default class Simulator {
                 uniqueActive = ConvergenceCalc.calculate(uniqueActive);
 
                 if (uniqueActive.length > 0) {
-                    const isPush = step.val === 'T'; let handNet = 0;
+                    const isPush = step.val === 'X'; let handNet = 0;
                     if (!isPush) {
                         uniqueActive.forEach(cand => {
                             if (!simStats[cand.rawName]) simStats[cand.rawName] = { w: 0, l: 0 };
-                            if (cand.pred === step.val) { simHits++; handNet += currentBet * ((cand.pred === 'B') ? 0.95 : 1); simStats[cand.rawName].w++; } 
+                            if (cand.pred === step.val) { simHits++; handNet += currentBet; simStats[cand.rawName].w++; } 
                             else { simMisses++; handNet -= currentBet; simStats[cand.rawName].l++; }
                         });
                         simNet += handNet; let progWin = handNet > 0;
                         const nxt = Progression.calculate(progWin, isPush, currentBet, strategy, seqIdx);
+                        currentBet = nxt.bet; seqIdx = nxt.seq;
+                    } else {
+                        uniqueActive.forEach(cand => { if (!simStats[cand.rawName]) simStats[cand.rawName] = { w: 0, l: 0 }; simMisses++; handNet -= currentBet * 0.5; simStats[cand.rawName].l++; });
+                        simNet += handNet; let progWin = false;
+                        const nxt = Progression.calculate(progWin, false, currentBet, strategy, seqIdx);
                         currentBet = nxt.bet; seqIdx = nxt.seq;
                     }
                     simBankroll.push(simNet); if (simNet > peak) peak = simNet; let drawdown = simNet - peak; if (drawdown < maxDrawdown) maxDrawdown = drawdown;

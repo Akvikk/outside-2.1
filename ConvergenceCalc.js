@@ -1,10 +1,10 @@
 /**
- * Handles Golden Bet fusion logic.
+ * Handles Golden Bet fusion logic for Dragon Tiger.
  * Groups predictions by outcome and merges them if 2+ patterns converge.
  */
 export default class ConvergenceCalc {
     static calculate(candidates) {
-        const grouped = { 'P': [], 'B': [], 'T': [] };
+        const grouped = { 'D': [], 'T': [], 'X': [] };
         candidates.forEach(c => grouped[c.pred].push(c));
 
         const result = [];
