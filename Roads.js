@@ -4,7 +4,7 @@ export default class Roads {
     constructor(controller, state) { this.controller = controller; this.state = state; }
 
     renderBeadPlate(highlightOnly = false) {
-        const container = document.getElementById('bead-plate');
+        const container = document.getElementById('dt-bead-plate');
         if (!container) return;
         let grid = container.querySelector('.road-grid');
         if (!grid) { grid = document.createElement('div'); grid.className = 'road-grid flex-1'; container.appendChild(grid); }
@@ -29,8 +29,11 @@ export default class Roads {
             const cell = cells[i];
             if (i < this.state.history.length) {
                 const h = this.state.history[i]; let bead = cell.firstChild;
-                if (!bead) { bead = document.createElement('div'); bead.className = `bead bead-${h.val.toLowerCase()}`; bead.innerText = h.val; cell.appendChild(bead); } 
-                else if (!highlightOnly) { if (bead.innerText !== h.val) { bead.className = `bead bead-${h.val.toLowerCase()}`; bead.innerText = h.val; } }
+                let bClass = `bead bead-${h.val.toLowerCase()}`;
+                if (h.val === 'T') bClass = 'bead bead-dt-t';
+                
+                if (!bead) { bead = document.createElement('div'); bead.className = bClass; bead.innerText = h.val; cell.appendChild(bead); } 
+                else if (!highlightOnly) { if (bead.innerText !== h.val) { bead.className = bClass; bead.innerText = h.val; } }
                 
                 const existRing = Array.from(bead.classList).find(c => c.startsWith('highlight-ring-'));
                 const newRing = this.state.currentHighlightMap.has(i) ? `highlight-ring-${this.state.currentHighlightMap.get(i)}` : null;
@@ -41,9 +44,9 @@ export default class Roads {
     }
 
     renderBigRoad() {
-        const container = document.getElementById('big-road');
+        const container = document.getElementById('dt-big-road');
         if (!container) return;
-        const roadData = RoadGenerator.generateBigRoad(this.state.history, 'T');
+        const roadData = RoadGenerator.generateBigRoad(this.state.history, 'X');
         let grid = container.querySelector('.road-grid');
         if (!grid) { grid = document.createElement('div'); grid.className = 'road-grid h-full'; container.appendChild(grid); }
 
