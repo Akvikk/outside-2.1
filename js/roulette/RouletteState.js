@@ -1,4 +1,5 @@
 import { PATTERN_CONFIG } from './config.js';
+import BankrollManager from './engine/BankrollManager.js';
 
 export default class RouletteState {
     constructor() {
@@ -6,6 +7,8 @@ export default class RouletteState {
         this.pendingBets = [];
         this.backgroundBets = [];
         this.confirmedBetLog = [];
+        
+        this.perimeterLimit = 14;
 
         this.activeFilters = { color: true, hl: true, oe: true, doz: true, col: true };
         PATTERN_CONFIG.forEach(p => { this.activeFilters[p.key] = p.default !== false; });
@@ -48,4 +51,29 @@ export default class RouletteState {
     }
 
     getRecentHistory(count = 50) { return this.history.length > count ? this.history.slice(-count) : this.history; }
+
+    getPerimeterStats() {
+        const subset = this.history.slice(-this.perimeterLimit);
+        const stats = {};
+
+        subset.forEach(spin => {
+            if (!spin.bets) return;
+            spin.bets.forEach(bet => {
+                const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target);
+                if (!stats[bet.pattern]) {
+                    stats[bet.pattern] = { w: 0, l: 0, rate: 0 };
+                }
+                if (isWin) {
+                    stats[bet.pattern].w++;
+                } else {
+                    stats[bet.pattern].l++;
+                }
+            });
+        });
+        for (const pattern in stats) {
+            const total = stats[pattern].w + stats[pattern].l;
+            stats[pattern].rate = total > 0 ? Math.round((stats[pattern].w / total) * 100) : 0;
+        }
+        return stats;
+    }
 }

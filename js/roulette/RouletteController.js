@@ -31,7 +31,8 @@ export default class RouletteController {
             activeFilters: this.state.activeFilters, simState: this.state.simState, engineChases: this.state.engineChases, bgEngineChases: this.state.bgEngineChases,
             engineStatsMaster: this.state.engineStatsMaster, engineStats1to1: this.state.engineStats1to1, engineStats2to1: this.state.engineStats2to1, userStats: this.state.userStats, 
             showTrendIcons: this.state.showTrendIcons, ghostMode: this.state.ghostMode, ignoreZero: this.state.ignoreZero, curvedLayout: this.state.curvedLayout, 
-            bankrollTargets: this.state.bankrollTargets, gridSettings: this.state.gridSettings, soundSettings: this.state.soundSettings
+            bankrollTargets: this.state.bankrollTargets, gridSettings: this.state.gridSettings, soundSettings: this.state.soundSettings,
+            perimeterLimit: this.state.perimeterLimit
         };
         StorageService.save('roulette_session', data);
         const icon = document.getElementById('saveIndicator');
@@ -63,6 +64,13 @@ export default class RouletteController {
                 if (data.curvedLayout !== undefined) this.state.curvedLayout = data.curvedLayout;
                 if (data.gridSettings) this.state.gridSettings = data.gridSettings;
                 if (data.bankrollTargets) Object.assign(this.state.bankrollTargets, data.bankrollTargets);
+                if (data.perimeterLimit !== undefined) {
+                    this.state.perimeterLimit = data.perimeterLimit;
+                    const slider = document.getElementById('perimeter-slider');
+                    const numInput = document.getElementById('perimeter-input');
+                    if (slider) slider.value = data.perimeterLimit;
+                    if (numInput) numInput.value = data.perimeterLimit;
+                }
 
                 this.reRenderHistory();
                 this.ui.renderDashboard();

@@ -290,6 +290,14 @@
                         class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
                         <span class="text-purple-500"><i class="fas fa-flask"></i></span> Simulation
                     </h2>
+                    <h2 id="head-perimeter" onclick="switchAnalyticsMode('perimeter')"
+                        class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
+                        <span class="text-emerald-500"><i class="fas fa-satellite-dish"></i></span> Perimeter Radar
+                    </h2>
+                    <h2 id="head-perimeter" onclick="switchAnalyticsMode('perimeter')"
+                        class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
+                        <span class="text-emerald-500"><i class="fas fa-satellite-dish"></i></span> Perimeter Radar
+                    </h2>
                 </div>
                 <button onclick="toggleAnalytics()" class="btn-close-lg"><i class="fas fa-times"></i></button>
             </div>
@@ -480,6 +488,52 @@
                         <div id="simGraphContainer"
                             class="grid-item bg-black/20 rounded-2xl border border-purple-900/30 h-64 shadow-inner overflow-hidden relative">
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PERIMETER RADAR (NEW) -->
+            <div id="perimeterView" class="hidden flex-col flex-1 overflow-hidden h-full bg-transparent">
+                <div class="p-6 flex-1 overflow-auto">
+                    <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
+                        Localized Pattern Momentum
+                    </h3>
+                    <div class="grid-item bg-black/20 rounded-2xl border border-white/10 overflow-hidden shadow-inner">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-white/5 text-gray-500 border-b border-white/10 sticky top-0 backdrop-blur-md z-10">
+                                <tr>
+                                    <th class="p-3">Pattern</th>
+                                    <th class="p-3 text-center">W / L</th>
+                                    <th class="p-3 text-right">Win Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="perimeterRadarBody" class="divide-y divide-white/5">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PERIMETER RADAR (NEW) -->
+            <div id="perimeterView" class="hidden flex-col flex-1 overflow-hidden h-full bg-transparent">
+                <div class="p-6 flex-1 overflow-auto">
+                    <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">
+                        Localized Pattern Momentum
+                    </h3>
+                    <div class="grid-item bg-black/20 rounded-2xl border border-white/10 overflow-hidden shadow-inner">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-white/5 text-gray-500 border-b border-white/10 sticky top-0 backdrop-blur-md z-10">
+                                <tr>
+                                    <th class="p-3">Pattern</th>
+                                    <th class="p-3 text-center">W / L</th>
+                                    <th class="p-3 text-right">Win Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="perimeterRadarBody" class="divide-y divide-white/5">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -900,6 +954,20 @@
                     <label class="apple-switch mt-1 shrink-0"><input type="checkbox" id="setting-ignore-zero" checked=""
                             onchange="app.roulette.toggleIgnoreZero()"><span class="slider"></span></label>
                 </div>
+                <div class="flex items-start justify-between p-2 hover:bg-white/5 rounded-lg transition-colors gap-3">
+                    <div class="flex flex-col w-full">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300 text-sm">Perimeter Window</span>
+                            <input type="number" id="perimeter-input" min="14" max="100" value="14" 
+                                onchange="app.roulette.updatePerimeter(this.value)"
+                                class="w-14 bg-black/40 border border-white/10 rounded px-1 py-1 text-xs text-white text-center focus:outline-none focus:border-[#007AFF] transition-colors">
+                        </div>
+                        <span class="text-[10px] text-gray-500 mb-2">Recent spins for pattern momentum</span>
+                        <input type="range" id="perimeter-slider" min="14" max="100" value="14" 
+                            oninput="app.roulette.updatePerimeter(this.value)"
+                            class="w-full accent-[#007AFF]">
+                    </div>
+                </div>
             </div>
 
             <!-- ACCORDION: GRID SETTINGS -->
@@ -997,6 +1065,20 @@
                             class="fas fa-border-all text-gray-500 w-4"></i> C Layout</span>
                     <label class="apple-switch"><input type="checkbox" id="setting-c-layout" checked=""
                             onchange="toggleCurvedLayout()"><span class="slider"></span></label>
+                </div>
+                <div class="flex items-start justify-between p-2 hover:bg-white/5 rounded-lg transition-colors gap-3">
+                    <div class="flex flex-col w-full">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300 text-sm">Perimeter Window</span>
+                            <input type="number" id="perimeter-input" min="14" max="100" value="14" 
+                                onchange="app.roulette.updatePerimeter(this.value)"
+                                class="w-14 bg-black/40 border border-white/10 rounded px-1 py-1 text-xs text-white text-center focus:outline-none focus:border-[#007AFF] transition-colors">
+                        </div>
+                        <span class="text-[10px] text-gray-500 mb-2">Recent spins for pattern momentum</span>
+                        <input type="range" id="perimeter-slider" min="14" max="100" value="14" 
+                            oninput="app.roulette.updatePerimeter(this.value)"
+                            class="w-full accent-[#007AFF]">
+                    </div>
                 </div>
             </div>
 
