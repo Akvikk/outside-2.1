@@ -5,79 +5,57 @@ import Build123 from './patterns/Build123.js';
 import Mirror321 from './patterns/Mirror321.js';
 import Burst113 from './patterns/Burst113.js';
 import Down311 from './patterns/Down311.js';
-import Build112 from './patterns/Build112.js';
 
-const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311, Build112];
+const PATTERNS = [Flow, ZigZag, FalseBreak, Build123, Mirror321, Burst113, Down311];
 
 export default class PatternScanner {
-    constructor(state) {
-        this.state = state;
+    static createContext(seq, contextName) {
+        const len = seq.length;
+        const val = (i) => (i >= 0 && i < len) ? seq[i].val : null;
+        const idx = (i) => (i >= 0 && i < len) ? seq[i].index : -1;
+        
+        const getStreak = (endIdx) => {
+            if (endIdx < 0 || endIdx >= len) return 0;
+            const baseVal = val(endIdx);
+            if (baseVal === 'T' || baseVal === null) return 0;
+            let count = 1;
+            for (let i = endIdx - 1; i >= 0; i--) {
+                if (val(i) === baseVal) count++; else break;
+            }
+            return count;
+        };
+
+        const getOpposite = (color) => color === 'P' ? 'B' : (color === 'B' ? 'P' : null);
+        const isPure = (startIdx, patternColor) => {
+            if (startIdx <= 0) return false;
+            return val(startIdx - 1) === getOpposite(patternColor);
+        };
+
+        const end = len - 1;
+        const pEnd = val(end);
+        if (pEnd === 'T' || pEnd === null) return null;
+
+        const s1 = getStreak(end);
+        const midEnd = end - s1;
+        const pMid = val(midEnd);
+        const s2 = getStreak(midEnd);
+        const firstEnd = midEnd - s2;
+        const pFirst = val(firstEnd);
+        const s3 = getStreak(firstEnd);
+
+        return { end, pEnd, s1, midEnd, pMid, s2, firstEnd, pFirst, s3, val, idx, isPure, contextName, len };
     }
 
-    preparePatternSeq(rawSeq, zeroToken) {
-        if (this.state.ignoreZero) return rawSeq.filter(v => v !== zeroToken);
-        const lastZeroIdx = rawSeq.lastIndexOf(zeroToken);
-        const sliced = lastZeroIdx === -1 ? rawSeq : rawSeq.slice(lastZeroIdx + 1);
-        return sliced.filter(v => v !== zeroToken);
-    }
+    static scan(seq, contextName) {
+        if (seq.length < 3) return [];
+        const m = this.createContext(seq, contextName);
+        if (!m) return [];
 
-    analyze1to1Sequence(seq, categoryName, typeA, typeB) {
-        let found = [];
+        let cands = [];
         for (let Pattern of PATTERNS) {
-            let res = Pattern.check1to1(seq, categoryName, typeA, typeB);
-            if (res) {
-                found.push(res);
-                if (res.patternName === 'ZIG-ZAG') break;
-            }
+            const res = Pattern.check(m);
+            if (res) cands.push(res);
         }
-        return found;
-    }
-
-    analyze2to1Sequence(seq, categoryName) {
-        let found = [];
-        for (let Pattern of PATTERNS) {
-            let res = Pattern.check2to1(seq, categoryName);
-            if (res) {
-                found.push(res);
-                if (res.patternName === 'ZIG-ZAG') return found;
-            }
-        }
-        return found;
-    }
-
-    scanPatterns(ignoreFilters = false, chasesObj = this.state.engineChases) {
-        let alerts = [];
-        const subset = this.state.getRecentHistory(50);
-
-        if (ignoreFilters || this.state.activeFilters.color) {
-            const seq = this.preparePatternSeq(subset.map(s => s.color), 'G');
-            alerts = alerts.concat(this.analyze1to1Sequence(seq, 'Color', 'R', 'B'));
-        }
-        if (ignoreFilters || this.state.activeFilters.hl) {
-            const seq = this.preparePatternSeq(subset.map(s => s.hl), 'Z');
-            alerts = alerts.concat(this.analyze1to1Sequence(seq, 'High/Low', 'H', 'L'));
-        }
-        if (ignoreFilters || this.state.activeFilters.oe) {
-            const oeSeq = subset.map(s => s.oe === 'Odd' ? 'O' : (s.oe === 'Even' ? 'E' : 'Z'));
-            const seq = this.preparePatternSeq(oeSeq, 'Z');
-            alerts = alerts.concat(this.analyze1to1Sequence(seq, 'Odd/Even', 'O', 'E'));
-        }
-        if (ignoreFilters || this.state.activeFilters.doz) {
-            if (chasesObj['Dozens']) {
-                alerts.push({ category: 'Dozens', patternName: 'FALSE BREAK', sub: `Chase Attempt ${4 - chasesObj['Dozens'].attemptsLeft}/3`, targetToken: chasesObj['Dozens'].target });
-            } else {
-                const seq = this.preparePatternSeq(subset.map(s => s.doz), 'Z');
-                alerts = alerts.concat(this.analyze2to1Sequence(seq, 'Dozens'));
-            }
-        }
-        if (ignoreFilters || this.state.activeFilters.col) {
-            if (chasesObj['Columns']) {
-                alerts.push({ category: 'Columns', patternName: 'FALSE BREAK', sub: `Chase Attempt ${4 - chasesObj['Columns'].attemptsLeft}/3`, targetToken: chasesObj['Columns'].target });
-            } else {
-                const seq = this.preparePatternSeq(subset.map(s => s.col), 'Z');
-                alerts = alerts.concat(this.analyze2to1Sequence(seq, 'Columns'));
-            }
-        }
-        return alerts;
+        return cands;
     }
 }
