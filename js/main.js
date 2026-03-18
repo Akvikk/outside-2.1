@@ -395,11 +395,13 @@ class AppOrchestrator {
     toggleFilterMenu(e) {
         const anchorEl = (e && (e.currentTarget || e.target)) || document.getElementById('filterBtn');
         if (this.currentMode === 'roulette') {
+            const opening = document.getElementById('filterDropdown')?.classList.contains('hidden');
             if (e) e.stopPropagation(); 
             const menu = document.getElementById('filterDropdown'); 
             const overlay = document.getElementById('menuOverlay'); 
             if (menu) menu.classList.toggle('hidden'); 
             if (overlay) overlay.classList.toggle('hidden'); 
+            if (opening) requestAnimationFrame(() => { this.positionCompactPopover('filterDropdown', anchorEl); });
         }
         else if (this.currentMode === 'baccarat') {
             const opening = document.getElementById('filters-modal')?.classList.contains('hidden');

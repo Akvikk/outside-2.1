@@ -170,7 +170,6 @@ export default class RouletteController {
     // ==========================================
     // UI BINDING METHODS (From Monolith)
     // ==========================================
-    toggleGhostMode() { this.state.ghostMode = !this.state.ghostMode; this.saveLocal(); this.ui.renderDashboard(); }
     toggleIgnoreZero() { this.state.ignoreZero = !this.state.ignoreZero; this.saveLocal(); }
     toggleGridColumn(key) { this.state.gridSettings[key] = !this.state.gridSettings[key]; this.saveLocal(); this.reRenderHistory(); }
     updateBankrollSettings() { this.state.bankrollTargets.enabled = document.getElementById('br-enabled')?.checked || false; this.state.bankrollTargets.profit = parseInt(document.getElementById('br-profit')?.value) || 50; this.state.bankrollTargets.loss = parseInt(document.getElementById('br-loss')?.value) || 20; this.saveLocal(); }
@@ -205,17 +204,45 @@ export default class RouletteController {
         if (MUTUAL_EXCLUSIONS && MUTUAL_EXCLUSIONS[filterKey] && isChecked) { const ex = MUTUAL_EXCLUSIONS[filterKey]; this.state.activeFilters[ex] = false; const el = document.getElementById(`filter-${ex}`); if (el) el.checked = false; }
         this.ui.renderDashboard(); this.saveLocal();
     }
+
+    updatePerimeter(val) {
+        let num = parseInt(val);
+        if (isNaN(num) || num < 14) num = 14;
+        if (num > 100) num = 100;
+        this.state.perimeterLimit = num;
+        
+        const slider = document.getElementById('perimeter-slider');
+        const input = document.getElementById('perimeter-input');
+        if (slider && slider.value != num) slider.value = num;
+        if (input && input.value != num) input.value = num;
+        
+        this.saveLocal();
+        this.ui.renderDashboard();
+        if (document.getElementById('analyticsModal')?.style.display === 'flex' && this.state.simState.mode === 'perimeter') {
+            this.ui.updatePerimeterUI();
+        }
+    }
+
     closePatternLog() { document.getElementById('patternLogModal').style.display = 'none'; }
     undoSpin() { if (this.state.history.length === 0) return; this.state.history.pop(); this.recalculateAllStats(); this.saveLocal(); this.reRenderHistory(); this.ui.renderDashboard(); if (document.getElementById('analyticsModal')?.style.display === 'flex') this.ui.updateAnalyticsUI(); }
     resetStats() { this.executeReset(); }
     toggleAnalytics() { this.toggleModal('analyticsModal'); if(document.getElementById('analyticsModal').style.display==='flex'){ this.ui.updateAnalyticsUI(); } }
     switchAnalyticsMode(mode) {
         this.state.simState.mode = mode;
-        document.getElementById('analyticsView').style.display = mode === 'analytics' ? 'flex' : 'none';
-        document.getElementById('simulationView').style.display = mode === 'simulation' ? 'flex' : 'none';
-        document.getElementById('head-analytics').className = mode === 'analytics' ? "text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2" : "text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300";
-        document.getElementById('head-simulation').className = mode === 'simulation' ? "text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2" : "text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300";
+        const views = ['analytics', 'simulation', 'perimeter'];
+        views.forEach(m => {
+            const viewEl = document.getElementById(`${m}View`);
+            if (viewEl) viewEl.style.display = mode === m ? 'flex' : 'none';
+            
+            const headEl = document.getElementById(`head-${m}`);
+            if (headEl) {
+                headEl.className = mode === m 
+                    ? "text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2" 
+                    : "text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300";
+            }
+        });
         if (mode === 'simulation') this.ui.updateSimulationUI();
+        if (mode === 'perimeter' && this.ui.updatePerimeterUI) this.ui.updatePerimeterUI();
     }
     toggleBetsModal() { this.toggleModal('betsModal'); if(document.getElementById('betsModal').style.display==='flex'){ this.ui.updateActualBetsUI(); } }
     toggleModal(id) { const el = document.getElementById(id); if (!el) return; if (el.classList.contains('hidden') || el.style.display === 'none' || el.style.display === '') { el.classList.remove('hidden'); el.style.display = 'flex'; } else { el.classList.add('hidden'); el.style.display = 'none'; } }
