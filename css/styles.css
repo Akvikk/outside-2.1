@@ -1,4 +1,4 @@
-﻿﻿:﻿﻿:root {
+﻿﻿﻿﻿:﻿﻿:root {
 
     --ios-blue: #0A84FF;
     --ios-green: #30D158;
@@ -1818,8 +1818,8 @@ html {
 
     /* ── Roulette prediction rail on mobile ── */
     #roulette-dashboard {
-        height: 92px !important;
-        min-height: 92px !important;
+        height: 72px !important;
+        min-height: 72px !important;
         padding: 6px 8px !important;
         gap: 6px !important;
         align-items: stretch !important;
