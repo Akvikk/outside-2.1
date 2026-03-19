@@ -480,6 +480,24 @@ window.handleFilterChange = (key, checked) => window.app.roulette.handleFilterCh
 window.closePatternLog = () => window.app.roulette.closePatternLog();
 window.updatePerimeter = (val) => window.app.roulette.updatePerimeter(val);
 
+window.clearVault = (mode) => {
+    if (confirm('Are you sure you want to clear all recorded bets in the Vault?')) {
+        const ctrl = window.app[mode];
+        if (ctrl && ctrl.state) {
+            ctrl.state.confirmedBetLog = [];
+            ctrl.state.userStats = { totalWins: 0, totalLosses: 0, netUnits: 0, currentStreak: 0, totalBets: 0, bankrollHistory: [0] };
+            if (typeof ctrl.saveLocal === 'function') ctrl.saveLocal();
+            
+            if (mode === 'roulette' && ctrl.ui && typeof ctrl.ui.updateActualBetsUI === 'function') {
+                ctrl.ui.updateActualBetsUI();
+            } else if (typeof ctrl.renderVault === 'function') {
+                ctrl.renderVault();
+            }
+            window.app.showToast("Vault cleared", "success");
+        }
+    }
+};
+
 window.createRipple = function(event) {
     const button = event.currentTarget;
     const circle = document.createElement("span");

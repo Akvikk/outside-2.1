@@ -224,7 +224,7 @@ export default class RouletteController {
     toggleTrendIcons() { this.state.showTrendIcons = !this.state.showTrendIcons; this.saveLocal(); this.ui.renderDashboard(); }
     toggleCurvedLayout() { this.state.curvedLayout = !this.state.curvedLayout; this.saveLocal(); }
     toggleSound(key) { this.state.soundSettings[key] = !this.state.soundSettings[key]; this.saveLocal(); }
-    showResetModal() { this.toggleModal('resetModal'); }
+    showResetModal() { this.closeAllMenus(); this.toggleModal('resetModal'); }
     closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
     executeReset() { this.state.history = []; this.state.pendingBets = []; this.state.backgroundBets = []; this.state.confirmedBetLog = []; this.recalculateAllStats(); this.state.userStats = { totalWins: 0, totalLosses: 0, netUnits: 0, currentStreak: 0, totalBets: 0, bankrollHistory: [0] }; this.saveLocal(); this.reRenderHistory(); this.ui.renderDashboard(); this.closeResetModal(); this.ui.showToast("Session reset", "success"); }
     toggleHeatmapMode(mode) { this.state.heatmapMode = mode; this.ui.updateAnalyticsUI(); }

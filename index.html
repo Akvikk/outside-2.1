@@ -98,13 +98,13 @@
 
         <!-- BACCARAT PREDICTION DASHBOARD -->
         <div id="baccarat-dashboard"
-            class="hidden flex flex-1 items-center justify-start overflow-x-auto overscroll-contain no-scrollbar h-full py-2 pl-1 min-w-0">
+            class="hidden flex flex-1 items-center justify-start overflow-x-auto overflow-y-hidden overscroll-contain no-scrollbar h-full py-2 pl-1 min-w-0">
             <div
                 class="scanning-text uppercase font-bold text-xs opacity-60 w-full flex items-center justify-center h-full">
                 Scanning for patterns...</div>
         </div>
         <div id="dragontiger-dashboard"
-            class="hidden flex flex-1 items-center justify-start overflow-x-auto overscroll-contain no-scrollbar h-full py-2 pl-1 min-w-0">
+            class="hidden flex flex-1 items-center justify-start overflow-x-auto overflow-y-hidden overscroll-contain no-scrollbar h-full py-2 pl-1 min-w-0">
             <div
                 class="scanning-text uppercase font-bold text-xs opacity-60 w-full flex items-center justify-center h-full">
                 Scanning for patterns...</div>
@@ -151,7 +151,7 @@
 
     <!-- PATTERN DASHBOARD (ALERTS) - HORIZONTAL SCROLL -->
     <div id="roulette-dashboard"
-        class="hidden flex glass-surface glass-surface--dashboard p-1.5 sm:p-2.5 overflow-x-auto whitespace-nowrap no-scrollbar items-center justify-start gap-2 sm:gap-3 bg-transparent h-[68px] sm:h-[76px] border-b border-white/5 shrink-0 relative z-10 transition-all duration-300">
+        class="hidden flex glass-surface glass-surface--dashboard p-1.5 sm:p-2.5 overflow-x-auto overflow-y-hidden whitespace-nowrap no-scrollbar items-center justify-start gap-2 sm:gap-3 bg-transparent min-h-[68px] sm:min-h-[76px] border-b border-white/5 shrink-0 relative z-10 transition-all duration-300">
         <!-- JS will render cards or placeholder here -->
     </div>
 
@@ -521,7 +521,13 @@
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-blue-500"><i class="fas fa-list-check"></i></span> Actual Bets
                 </h2>
-                <button onclick="toggleBetsModal()" class="btn-close-lg"><i class="fas fa-times"></i></button>
+                <div class="flex items-center gap-3">
+                    <button onclick="clearVault('roulette')"
+                        class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
+                        <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
+                    </button>
+                    <button onclick="toggleBetsModal()" class="btn-close-lg"><i class="fas fa-times"></i></button>
+                </div>
             </div>
 
             <div class="grid grid-cols-3 gap-4 p-4 bg-white/5 border-b border-white/10 shrink-0">
@@ -612,7 +618,7 @@
     </div>
 
     <!-- RESET WARNING MODAL -->
-    <div id="resetModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.closeResetModal()">
+    <div id="resetModal" class="modal-overlay z-[900]" onclick="if(event.target === this) app.roulette.closeResetModal()">
         <div
             class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col anim-slide-up p-6 text-center border border-red-500/30">
             <div class="text-red-500 text-5xl mb-4"><i class="fas fa-triangle-exclamation"></i></div>
@@ -1395,6 +1401,10 @@
                         <option value="paroli">Paroli</option>
                         <option value="1326">1-3-2-6</option>
                     </select>
+                    <button onclick="clearVault('baccarat')"
+                        class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
+                        <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
+                    </button>
                     <button onclick="app.baccarat.toggleModal('vault-modal')"
                         class="text-[#FFD60A]/50 hover:text-[#FFD60A] transition-colors text-2xl"><i
                             class="fas fa-times"></i></button>
@@ -1831,6 +1841,10 @@
                         <option value="paroli">Paroli</option>
                         <option value="1326">1-3-2-6</option>
                     </select>
+                    <button onclick="clearVault('dragontiger')"
+                        class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
+                        <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
+                    </button>
                     <button onclick="app.dragontiger.toggleModal('dt-vault-modal')"
                         class="text-[#FFD60A]/50 hover:text-[#FFD60A] transition-colors text-2xl"><i
                             class="fas fa-times"></i></button>

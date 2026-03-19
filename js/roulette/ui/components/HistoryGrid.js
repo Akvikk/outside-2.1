@@ -63,6 +63,6 @@ export default class HistoryGrid {
             ${this.state.gridSettings.col ? `<td class="data-cell w-[12%] ${cCL}">${zTxt || spin.col}</td>` : ''}
             <td class="data-cell w-[22%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
         `;
-        tbody.prepend(tr);
+        tbody.appendChild(tr);
     }
 }

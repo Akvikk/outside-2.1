@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿:﻿﻿:root {
+﻿﻿﻿﻿﻿﻿﻿﻿:﻿﻿:root {
 
     --ios-blue: #0A84FF;
     --ios-green: #30D158;
@@ -791,7 +791,7 @@ input:checked+.slider:before {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 100;
+    z-index: 9999;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1812,16 +1812,18 @@ html {
 
     /* ── Roulette prediction rail on mobile ── */
     #roulette-dashboard {
-        height: 72px !important;
+        height: auto !important;
         min-height: 72px !important;
-        padding: 6px 8px !important;
-        gap: 6px !important;
-        align-items: stretch !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        align-items: center !important;
+        overflow-y: hidden !important;
     }
 
     #roulette-dashboard .grid-item {
-        padding: 0.45rem 0.55rem !important;
+        padding: 8px 10px !important;
         border-radius: 12px !important;
+        height: auto !important;
     }
 
     #roulette-dashboard .bet-checkbox {
@@ -1909,17 +1911,23 @@ html {
     }
 
     /* ── Baccarat Dashboard (prediction cards bar) ── */
-    #baccarat-dashboard {
-        padding: 4px 4px !important;
-        min-height: 56px;
+    #baccarat-dashboard,
+    #dragontiger-dashboard {
+        padding: 6px 8px !important;
+        min-height: 64px !important;
+        height: auto !important;
+        overflow-y: hidden !important;
+        align-items: center !important;
     }
 
-    #baccarat-dashboard .pred-card {
+    #baccarat-dashboard .pred-card,
+    #dragontiger-dashboard .pred-card {
         min-width: 140px !important;
         max-width: 160px !important;
         padding: 8px 10px !important;
         border-radius: 12px !important;
         font-size: 11px !important;
+        height: auto !important;
     }
 
     /* ── Baccarat View Container ── */
