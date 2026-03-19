@@ -68,8 +68,6 @@ export default class DashboardCards {
             const div = document.createElement('div');
             const pStat = patStats[bet.pattern];
             const patRate = (pStat && (pStat.w + pStat.l > 0)) ? Math.round((pStat.w / (pStat.w + pStat.l)) * 100) : 0;
-            const cStat = this.state.engineStatsMaster.categoryStats ? this.state.engineStatsMaster.categoryStats[bet.category] : null;
-            const catRate = (cStat && (cStat.w + cStat.l > 0)) ? Math.round((cStat.w / (cStat.w + cStat.l)) * 100) : 0;
             
             const localStat = perimeterStats[bet.pattern];
             const isHot = localStat && localStat.rate > 0;
