@@ -55,10 +55,15 @@ export default class RouletteState {
     getPerimeterStats() {
         const subset = this.history.slice(-this.perimeterLimit);
         const stats = {};
+        const catMap = { 'Color': 'color', 'High/Low': 'hl', 'Odd/Even': 'oe', 'Dozens': 'doz', 'Columns': 'col' };
 
         subset.forEach(spin => {
             if (!spin.bets) return;
             spin.bets.forEach(bet => {
+                const cKey = catMap[bet.category] || bet.category;
+                if (!(this.activeFilters[bet.category] === true || this.activeFilters[cKey] === true)) return;
+                if (this.activeFilters[bet.pattern] === false) return;
+
                 const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target);
                 if (!stats[bet.pattern]) {
                     stats[bet.pattern] = { w: 0, l: 0, rate: 0 };

@@ -11,9 +11,6 @@ export default class PerimeterRadar {
         const view = document.getElementById('perimeterView');
         if (!view) return;
 
-        const pStats = BankrollManager.calculatePerimeterStats(this.state);
-        const patterns = Object.keys(pStats).sort((a, b) => pStats[b].rate - pStats[a].rate);
-
         const limit = this.state.perimeterLimit || 14;
         const subset = this.state.history.slice(-limit);
         
@@ -22,23 +19,43 @@ export default class PerimeterRadar {
         let totalLosses = 0;
         let netUnits = 0;
         let bankrollHistory = [0];
+        let pStats = {};
+
+        const catMap = { 'Color': 'color', 'High/Low': 'hl', 'Odd/Even': 'oe', 'Dozens': 'doz', 'Columns': 'col' };
 
         subset.forEach(spin => {
-            if (!spin.bets) return;
-            spin.bets.forEach(bet => {
-                const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target);
-                const winReward = (bet.category === 'Dozens' || bet.category === 'Columns') ? 2 : 1;
-                totalBets++;
-                if (isWin) {
-                    totalWins++;
-                    netUnits += winReward;
-                } else {
+            if (spin.bets) {
+                spin.bets.forEach(bet => {
+                    const cKey = catMap[bet.category] || bet.category;
+                    if (!(this.state.activeFilters[bet.category] === true || this.state.activeFilters[cKey] === true)) return;
+                    if (this.state.activeFilters[bet.pattern] === false) return;
+
+                    const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target);
+                    const winReward = (bet.category === 'Dozens' || bet.category === 'Columns') ? 2 : 1;
+                    
+                    if (!pStats[bet.pattern]) pStats[bet.pattern] = { w: 0, l: 0, rate: 0 };
+                    
+                    totalBets++;
+                    if (isWin) {
+                        totalWins++;
+                        netUnits += winReward;
+                        pStats[bet.pattern].w++;
+                    } else {
                         totalLosses++;
-                    netUnits -= 1;
-                }
-                    bankrollHistory.push(netUnits);
-            });
+                        netUnits -= 1;
+                        pStats[bet.pattern].l++;
+                    }
+                });
+            }
+            bankrollHistory.push(netUnits);
         });
+
+        Object.keys(pStats).forEach(p => {
+            const total = pStats[p].w + pStats[p].l;
+            pStats[p].rate = total > 0 ? Math.round((pStats[p].w / total) * 100) : 0;
+        });
+
+        const patterns = Object.keys(pStats).sort((a, b) => pStats[b].rate - pStats[a].rate);
 
         const hitRate = totalBets > 0 ? Math.round((totalWins / totalBets) * 100) : 0;
         const netColor = netUnits > 0 ? 'text-[#30D158]' : (netUnits < 0 ? 'text-[#FF453A]' : 'text-white');

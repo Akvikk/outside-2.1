@@ -478,6 +478,7 @@ window.toggleCategorySelection = (checked) => window.app.roulette.toggleCategory
 window.togglePatternSelection = (checked) => window.app.roulette.togglePatternSelection(checked);
 window.handleFilterChange = (key, checked) => window.app.roulette.handleFilterChange(key, checked);
 window.closePatternLog = () => window.app.roulette.closePatternLog();
+window.updatePerimeter = (val) => window.app.roulette.updatePerimeter(val);
 
 window.createRipple = function(event) {
     const button = event.currentTarget;
