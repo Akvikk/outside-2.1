@@ -80,22 +80,26 @@ export default class DashboardCards {
             const betLabel = isCompact ? Formatters.compactTokenLabel(rawBetName.replace('BET ', '')) : rawBetName;
             const patternLabel = isCompact ? Formatters.compactPatternLabel(bet.pattern) : bet.pattern;
 
-            div.className = `grid-item relative overflow-hidden rounded-lg border border-white/10 bg-white/5 backdrop-blur-md p-2 pl-3 flex flex-col gap-1 select-none cursor-pointer ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-2 ring-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : ''}`;
-            div.style.flex = "1 1 120px"; div.style.maxWidth = "280px";
+            div.className = `grid-item relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-lg p-3 flex flex-col gap-1.5 select-none cursor-pointer transition-transform hover:scale-105 hover:shadow-xl duration-300 ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-2 ring-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : ''}`;
+            div.style.flex = "1 1 100px"; div.style.maxWidth = "220px";
             div.setAttribute('ondblclick', `app.roulette.toggleBetConfirmation(${index})`);
 
             div.innerHTML = `
-                <div class="absolute top-2 right-2 z-20">
-                    <input type="checkbox" class="bet-checkbox" ${bet.confirmed ? 'checked' : ''} onclick="app.roulette.toggleBetConfirmation(${index})">
+                <div class="absolute top-2.5 right-2.5 z-20">
+                    <input type="checkbox" class="bet-checkbox shadow-md" ${bet.confirmed ? 'checked' : ''} onclick="app.roulette.toggleBetConfirmation(${index})">
                 </div>
-                <div class="flex justify-between items-center pr-6 relative z-10 min-w-0">
-                    <span class="text-base font-black truncate text-white drop-shadow-md">${betLabel}</span>
-                    <span class="text-xs font-black text-yellow-400 shrink-0">${catRate}%</span>
+                <div class="flex justify-between items-start pr-8 relative z-10 min-w-0">
+                    <span class="text-[9px] uppercase tracking-widest font-bold text-white/60 mb-0.5">${bet.category}</span>
                 </div>
-                <div class="flex justify-between items-center text-[10px] text-gray-300 relative z-10 min-w-0">
-                    <span class="truncate pr-2 font-bold">${patternLabel} <span class="opacity-70 font-mono font-normal">| ${patRate}%</span></span>
-                    <span class="font-mono shrink-0 ${localHits > 0 ? 'text-[#30D158] font-bold' : 'text-gray-500'}">${localHits}/${pLimit}</span>
-                </div>`;
+                <div class="flex justify-between items-end relative z-10 min-w-0">
+                    <span class="text-lg font-black truncate text-white drop-shadow-lg tracking-tight">${betLabel}</span>
+                    <span class="text-[11px] font-black text-yellow-400 shrink-0 bg-black/60 px-2 py-0.5 rounded border border-white/20 shadow-md">${catRate}%</span>
+                </div>
+                <div class="flex justify-between items-center text-[10px] text-gray-200 relative z-10 min-w-0 mt-1.5 pt-2 border-t border-white/10">
+                    <span class="truncate pr-2 font-bold"><i class="fas fa-chart-line opacity-50 mr-1"></i>${patternLabel} <span class="font-mono font-bold text-white ml-0.5 drop-shadow">| ${patRate}%</span></span>
+                    <span class="font-mono text-[11px] shrink-0 px-1.5 py-0.5 rounded tracking-wide ${localHits > 0 ? 'bg-emerald-500/30 text-emerald-300 font-black border border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.4)]' : 'bg-black/50 text-gray-300 font-bold border border-white/10'}">${localHits}/${pLimit}</span>
+                </div>
+                <div class="absolute -bottom-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-2xl pointer-events-none z-0"></div>`;
             dashboard.appendChild(div);
         });
     }
