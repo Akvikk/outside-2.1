@@ -33,17 +33,18 @@ export default class PerimeterRadar {
                     const isWin = BankrollManager.isBetWin(spin, bet.category, bet.target);
                     const winReward = (bet.category === 'Dozens' || bet.category === 'Columns') ? 2 : 1;
                     
-                    if (!pStats[bet.pattern]) pStats[bet.pattern] = { w: 0, l: 0, rate: 0 };
+                    const compositeKey = `${bet.pattern} [${bet.category}]`;
+                    if (!pStats[compositeKey]) pStats[compositeKey] = { w: 0, l: 0, rate: 0, rawPattern: bet.pattern, rawCategory: bet.category };
                     
                     totalBets++;
                     if (isWin) {
                         totalWins++;
                         netUnits += winReward;
-                        pStats[bet.pattern].w++;
+                        pStats[compositeKey].w++;
                     } else {
                         totalLosses++;
                         netUnits -= 1;
-                        pStats[bet.pattern].l++;
+                        pStats[compositeKey].l++;
                     }
                 });
             }

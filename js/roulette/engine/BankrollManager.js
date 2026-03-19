@@ -45,11 +45,12 @@ export default class BankrollManager {
             if (!spin.bets) return;
             spin.bets.forEach(bet => {
                 const isWin = this.isBetWin(spin, bet.category, bet.target);
-                if (!stats[bet.pattern]) {
-                    stats[bet.pattern] = { w: 0, l: 0, rate: 0 };
+                const compositeKey = `${bet.pattern} [${bet.category}]`;
+                if (!stats[compositeKey]) {
+                    stats[compositeKey] = { w: 0, l: 0, rate: 0 };
                 }
-                if (isWin) stats[bet.pattern].w++;
-                else stats[bet.pattern].l++;
+                if (isWin) stats[compositeKey].w++;
+                else stats[compositeKey].l++;
             });
         });
         for (const pattern in stats) {

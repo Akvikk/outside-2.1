@@ -56,8 +56,9 @@ export default class DashboardCards {
             if (!spin.bets) return;
             spin.bets.forEach(bet => {
                 if (!(this.state.activeFilters[bet.category] === true || this.state.activeFilters[catMap[bet.category]] === true)) return;
-                if (!patStats[bet.pattern]) patStats[bet.pattern] = { w: 0, l: 0 };
-                if (BankrollManager.isBetWin(spin, bet.category, bet.target)) patStats[bet.pattern].w++; else patStats[bet.pattern].l++;
+                const compositeKey = `${bet.pattern} [${bet.category}]`;
+                if (!patStats[compositeKey]) patStats[compositeKey] = { w: 0, l: 0 };
+                if (BankrollManager.isBetWin(spin, bet.category, bet.target)) patStats[compositeKey].w++; else patStats[compositeKey].l++;
             });
         });
 
@@ -66,10 +67,11 @@ export default class DashboardCards {
 
         this.state.pendingBets.forEach((bet, index) => {
             const div = document.createElement('div');
-            const pStat = patStats[bet.pattern];
+            const compositeKey = `${bet.pattern} [${bet.category}]`;
+            const pStat = patStats[compositeKey];
             const patRate = (pStat && (pStat.w + pStat.l > 0)) ? Math.round((pStat.w / (pStat.w + pStat.l)) * 100) : 0;
             
-            const localStat = perimeterStats[bet.pattern];
+            const localStat = perimeterStats[compositeKey];
             const isHot = localStat && localStat.rate > 0;
             const localHits = localStat ? localStat.w : 0;
 
