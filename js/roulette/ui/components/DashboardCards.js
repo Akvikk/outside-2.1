@@ -65,15 +65,24 @@ export default class DashboardCards {
         const perimeterStats = BankrollManager.calculatePerimeterStats(this.state);
         const pLimit = this.state.perimeterLimit || 14;
 
+        let renderedCount = 0;
+
         this.state.pendingBets.forEach((bet, index) => {
-            const div = document.createElement('div');
             const compositeKey = `${bet.pattern} [${bet.category}]`;
+            
+            const localStat = perimeterStats[compositeKey];
+            const localHits = localStat ? localStat.w : 0;
+
+            // STRICT PERIMETER FILTER: Only consider bets that have passed (won) in the recent perimeter
+            if (localHits === 0) return;
+
+            renderedCount++;
+
+            const div = document.createElement('div');
             const pStat = patStats[compositeKey];
             const patRate = (pStat && (pStat.w + pStat.l > 0)) ? Math.round((pStat.w / (pStat.w + pStat.l)) * 100) : 0;
             
-            const localStat = perimeterStats[compositeKey];
             const isHot = localStat && localStat.rate > 0;
-            const localHits = localStat ? localStat.w : 0;
 
             const styleClass = Formatters.getStyle(bet.target);
             const rawBetName = 'BET ' + Formatters.getName(bet.category, bet.target);
@@ -109,5 +118,9 @@ export default class DashboardCards {
                 <div class="absolute -bottom-6 -right-6 w-20 h-20 bg-white/10 rounded-full blur-2xl pointer-events-none z-0"></div>`;
             dashboard.appendChild(div);
         });
+
+        if (renderedCount === 0 && this.state.pendingBets.length > 0) {
+            dashboard.innerHTML = `<div class="grid-item w-full flex flex-col items-center justify-center text-gray-500 py-2 border border-dashed border-white/10 rounded-xl"><span class="font-mono text-xs uppercase tracking-widest text-gray-500">Awaiting Proven Signals...</span></div>`;
+        }
     }
 }
