@@ -1,0 +1,94 @@
+/* ==========================================================================
+   PREDICTION CARDS & GRID ITEMS
+   ========================================================================== */
+
+.grid-item {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.004)),
+        var(--card-bg-weak);
+    border: 1px solid var(--card-border);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(10px);
+}
+
+.card-confirmed {
+    background: rgba(48, 209, 88, 0.15) !important;
+    border: 1px solid rgba(48, 209, 88, 0.5) !important;
+    box-shadow: 0 4px 12px rgba(48, 209, 88, 0.15) !important;
+    backdrop-filter: blur(10px);
+}
+
+.card-best {
+    border: 1px solid rgba(48, 209, 88, 0.6) !important;
+    background: linear-gradient(145deg, rgba(48, 209, 88, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.card-worst {
+    border: 1px solid rgba(255, 69, 58, 0.6) !important;
+    background: linear-gradient(145deg, rgba(255, 69, 58, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.card-confidence {
+    border: 1px solid rgba(255, 214, 10, 0.6) !important;
+    box-shadow: 0 0 15px rgba(255, 214, 10, 0.15) !important;
+    background: linear-gradient(145deg, rgba(255, 214, 10, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.card-style {
+    border-width: 1px;
+    border-style: solid;
+    background-size: 100% 100%;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.style-red { border-color: rgba(255, 97, 110, 0.62); background: linear-gradient(135deg, rgba(159, 30, 41, 0.9), rgba(96, 17, 29, 0.9)) !important; color: #ffd8dd; }
+.style-black { border-color: rgba(148, 162, 184, 0.45); background: linear-gradient(135deg, rgba(46, 52, 65, 0.92), rgba(24, 28, 38, 0.92)) !important; color: #f4f6fc; }
+.style-orange { border-color: rgba(255, 158, 81, 0.62); background: linear-gradient(135deg, rgba(177, 88, 22, 0.9), rgba(106, 54, 14, 0.9)) !important; color: #ffe9d3; }
+.style-blue { border-color: rgba(97, 171, 255, 0.62); background: linear-gradient(135deg, rgba(19, 92, 182, 0.9), rgba(12, 58, 122, 0.9)) !important; color: #d9ebff; }
+.style-purple { border-color: rgba(198, 132, 255, 0.62); background: linear-gradient(135deg, rgba(111, 53, 170, 0.9), rgba(66, 31, 102, 0.9)) !important; color: #f3e7ff; }
+.style-pink { border-color: rgba(255, 130, 194, 0.6); background: linear-gradient(135deg, rgba(171, 52, 113, 0.9), rgba(102, 31, 67, 0.9)) !important; color: #ffe4f3; }
+.style-cyan { border-color: rgba(74, 214, 239, 0.64); background: linear-gradient(135deg, rgba(8, 136, 159, 0.9), rgba(8, 79, 96, 0.9)) !important; color: #ddfafe; }
+.style-gray { border-color: rgba(181, 187, 197, 0.56); background: linear-gradient(135deg, rgba(99, 106, 120, 0.92), rgba(63, 68, 78, 0.92)) !important; color: #f3f4f8; }
+.style-yellow { border-color: rgba(255, 222, 95, 0.65); background: linear-gradient(135deg, rgba(182, 140, 15, 0.92), rgba(114, 88, 10, 0.92)) !important; color: #fff4c8; }
+
+/* PREMIUM TRANSITIONS */
+html { scroll-behavior: smooth; }
+
+.pred-card, .btn-apple, .btn-ios {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pred-card:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.03) inset; z-index: 50; }
+.btn-apple:active, .btn-ios:active { transform: scale(0.97) !important; transition-duration: 0.1s !important; }
+
+.pred-card {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, filter 0.4s ease;
+    will-change: transform, box-shadow, filter; position: relative; overflow: hidden; background: rgba(12, 15, 22, 0.55);
+    backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); color: white; flex-shrink: 0;
+    border-radius: 18px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3), 0 10px 25px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.pred-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.05); filter: brightness(1.1); z-index: 20; }
+.pred-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 40%, rgba(0, 0, 0, 0.3) 100%); pointer-events: none; }
+.pred-card::after { display: none; }
+
+.pred-card-p { background: linear-gradient(160deg, rgba(10, 132, 255, 0.8) 0%, rgba(0, 85, 170, 0.6) 100%); border: 1px solid rgba(10, 132, 255, 0.6); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(10, 132, 255, 0.3), 0 0 40px rgba(10, 132, 255, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(10, 132, 255, 0.1); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+.pred-card-b, .pred-card-d { background: linear-gradient(160deg, rgba(255, 69, 58, 0.8) 0%, rgba(170, 34, 26, 0.6) 100%); border: 1px solid rgba(255, 69, 58, 0.6); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(255, 69, 58, 0.3), 0 0 40px rgba(255, 69, 58, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(255, 69, 58, 0.1); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+.pred-card-dragon { background: linear-gradient(135deg, #FF453A 0%, #7f1d1d 100%); border: 1px solid rgba(255, 69, 58, 0.5); box-shadow: 0 4px 10px rgba(255, 69, 58, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
+.pred-card-tiger { background: linear-gradient(135deg, #FFD60A 0%, #b45309 100%); border: 1px solid rgba(255, 214, 10, 0.5); box-shadow: 0 4px 10px rgba(255, 214, 10, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4); color: #1a0f00; }
+.pred-card-tiger .text-white { color: #1a0f00 !important; }
+.pred-card-tiger .text-white\/80 { color: rgba(26, 15, 0, 0.7) !important; }
+.pred-card-gold, .pred-card-t { background: linear-gradient(180deg, rgba(255, 214, 10, 0.85) 0%, rgba(204, 153, 0, 0.7) 100%); border: 1px solid rgba(255, 214, 10, 0.8); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 30px rgba(255, 214, 10, 0.4), 0 0 60px rgba(255, 214, 10, 0.15), inset 0 0 15px rgba(255, 214, 10, 0.25); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); transform: scale(1.02); z-index: 5; }
+.pred-card-x { background: linear-gradient(160deg, rgba(48, 209, 88, 0.8) 0%, rgba(26, 128, 48, 0.6) 100%); border: 1px solid rgba(48, 209, 88, 0.6); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(48, 209, 88, 0.3), 0 0 40px rgba(48, 209, 88, 0.15), inset 0 1px 3px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(48, 209, 88, 0.1); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); }
+.pred-card-locked { border: 2px solid #30D158 !important; box-shadow: 0 0 15px rgba(48, 209, 88, 0.4), inset 0 0 10px rgba(48, 209, 88, 0.2) !important; transform: scale(1.04) translateY(-1px); z-index: 10; }
+
+/* Zero-hit Prediction Cards */
+.pred-card-zero {
+    opacity: 0.5;
+}
+.pred-card-zero:hover {
+    opacity: 0.9;
+}
