@@ -1177,6 +1177,14 @@ html {
     z-index: 10;
 }
 
+/* Zero-hit Prediction Cards */
+.pred-card-zero {
+    opacity: 0.5;
+}
+.pred-card-zero:hover {
+    opacity: 0.9;
+}
+
 
 .road-container {
     background: rgba(5, 8, 18, 0.6);
