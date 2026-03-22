@@ -5,6 +5,12 @@ export default class PerimeterRadar {
     constructor(controller, state) {
         this.controller = controller;
         this.state = state;
+        this.displayMode = 'spins'; // 'spins' or 'profit'
+    }
+
+    toggleMode() {
+        this.displayMode = this.displayMode === 'spins' ? 'profit' : 'spins';
+        this.render();
     }
 
     render() {
@@ -12,8 +18,10 @@ export default class PerimeterRadar {
         if (!view) return;
 
         const limit = this.state.perimeterLimit || 14;
-        const subset = this.state.history.slice(-limit);
         
+        // The Fix: Rolling spins for "spins" mode, ENTIRE history for "profit" mode
+        const subset = this.displayMode === 'profit' ? this.state.history : this.state.history.slice(-limit);
+
         let totalBets = 0;
         let totalWins = 0;
         let totalLosses = 0;
@@ -34,17 +42,19 @@ export default class PerimeterRadar {
                     const winReward = (bet.category === 'Dozens' || bet.category === 'Columns') ? 2 : 1;
                     
                     const compositeKey = `${bet.pattern} [${bet.category}]`;
-                    if (!pStats[compositeKey]) pStats[compositeKey] = { w: 0, l: 0, rate: 0, rawPattern: bet.pattern, rawCategory: bet.category };
+                    if (!pStats[compositeKey]) pStats[compositeKey] = { w: 0, l: 0, net: 0, rate: 0, rawPattern: bet.pattern, rawCategory: bet.category };
                     
                     totalBets++;
                     if (isWin) {
                         totalWins++;
                         netUnits += winReward;
                         pStats[compositeKey].w++;
+                        pStats[compositeKey].net += winReward;
                     } else {
                         totalLosses++;
                         netUnits -= 1;
                         pStats[compositeKey].l++;
+                        pStats[compositeKey].net -= 1;
                     }
                 });
             }
@@ -56,7 +66,12 @@ export default class PerimeterRadar {
             pStats[p].rate = total > 0 ? Math.round((pStats[p].w / total) * 100) : 0;
         });
 
-        const patterns = Object.keys(pStats).sort((a, b) => pStats[b].rate - pStats[a].rate);
+        const patterns = Object.keys(pStats).sort((a, b) => {
+            if (this.displayMode === 'profit') {
+                return pStats[b].net - pStats[a].net;
+            }
+            return pStats[b].rate - pStats[a].rate;
+        });
 
         const hitRate = totalBets > 0 ? Math.round((totalWins / totalBets) * 100) : 0;
         const netColor = netUnits > 0 ? 'text-[#30D158]' : (netUnits < 0 ? 'text-[#FF453A]' : 'text-white');
@@ -68,10 +83,22 @@ export default class PerimeterRadar {
         } else {
             listHTML = patterns.map(p => {
                 const stat = pStats[p];
-                const isHot = stat.rate > 0;
-                let rateColor = 'text-yellow-400';
-                if (stat.rate >= 55) rateColor = 'text-[#30D158]';
-                else if (stat.rate <= 45) rateColor = 'text-[#FF453A]';
+                
+                let isHot = false;
+                let rightSideHTML = '';
+                
+                if (this.displayMode === 'profit') {
+                    isHot = stat.net > 0;
+                    const nColor = stat.net > 0 ? 'text-[#30D158]' : (stat.net < 0 ? 'text-[#FF453A]' : 'text-gray-400');
+                    const nSign = stat.net > 0 ? '+' : '';
+                    rightSideHTML = `<span class="font-bold ${nColor} bg-white/5 border border-white/10 px-2 py-1 rounded-md text-xs shadow-sm">${nSign}${stat.net}</span>`;
+                } else {
+                    isHot = stat.rate > 0;
+                    let rateColor = 'text-yellow-400';
+                    if (stat.rate >= 55) rateColor = 'text-[#30D158]';
+                    else if (stat.rate <= 45) rateColor = 'text-[#FF453A]';
+                    rightSideHTML = `<span class="font-bold ${rateColor} bg-white/5 border border-white/10 px-2 py-1 rounded-md text-xs shadow-sm">${stat.rate}%</span>`;
+                }
 
                 return `
                     <div class="flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5">
@@ -83,7 +110,7 @@ export default class PerimeterRadar {
                             <span class="text-[#30D158]">${stat.w}</span> - <span class="text-[#FF453A]">${stat.l}</span>
                         </div>
                         <div class="w-20 text-right">
-                            <span class="font-bold ${rateColor} bg-white/5 border border-white/10 px-2 py-1 rounded-md text-xs shadow-sm">${stat.rate}%</span>
+                            ${rightSideHTML}
                         </div>
                     </div>
                 `;
@@ -93,10 +120,12 @@ export default class PerimeterRadar {
         view.innerHTML = `
             <div class="p-6 flex-1 overflow-auto flex flex-col gap-6">
                 <div class="flex justify-between items-center border-b border-white/10 pb-2 shrink-0">
-                    <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-widest">
-                        Localized Momentum
+                    <h3 class="text-sm font-bold ${this.displayMode === 'profit' ? 'text-amber-400' : 'text-emerald-400'} uppercase tracking-widest">
+                        ${this.displayMode === 'profit' ? 'Overall Profitability' : 'Localized Momentum'}
                     </h3>
-                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-black/40 px-2 py-1 rounded border border-white/10">LAST ${limit} SPINS</span>
+                    <button id="btn-perimeter-toggle" class="text-[10px] font-bold text-gray-400 hover:text-white uppercase tracking-widest bg-black/40 hover:bg-black/60 px-2 py-1 rounded border border-white/10 transition-colors flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-exchange-alt"></i> ${this.displayMode === 'profit' ? 'ALL PERIMETER BETS' : `LAST ${limit} SPINS`}
+                    </button>
                 </div>
 
                 <!-- TOP KPI HEADER -->
@@ -125,7 +154,7 @@ export default class PerimeterRadar {
                     <div class="flex items-center justify-between px-4 py-3 bg-white/5 text-white/50 text-[10px] tracking-widest uppercase border-b border-white/10 sticky top-0 z-10 backdrop-blur-md">
                         <div class="flex-1">Pattern</div>
                         <div class="w-24 text-center">W / L</div>
-                        <div class="w-20 text-right">Win Rate</div>
+                        <div class="w-20 text-right">${this.displayMode === 'profit' ? 'Net Units' : 'Win Rate'}</div>
                     </div>
                     <div class="overflow-y-auto no-scrollbar flex-1 pb-2">
                         ${listHTML}
@@ -135,5 +164,10 @@ export default class PerimeterRadar {
         `;
 
         TrendGraph.drawAdvancedGraph(bankrollHistory, totalWins, totalLosses, 'perimeterGraphContainer');
+
+        const toggleBtn = document.getElementById('btn-perimeter-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => this.toggleMode());
+        }
     }
 }

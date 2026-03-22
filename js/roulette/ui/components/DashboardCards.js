@@ -73,9 +73,6 @@ export default class DashboardCards {
             const localStat = perimeterStats[compositeKey];
             const localHits = localStat ? localStat.w : 0;
 
-            // STRICT PERIMETER FILTER: Only consider bets that have passed (won) in the recent perimeter
-            if (localHits === 0) return;
-
             renderedCount++;
 
             const div = document.createElement('div');
