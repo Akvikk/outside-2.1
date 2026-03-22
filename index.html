@@ -11,19 +11,17 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    colors: {
+                        'ios-blue': '#0A84FF',
+                        'ios-green': '#30D158',
+                        'ios-red': '#FF453A',
+                        'ios-yellow': '#FFD60A',
+                        'ios-purple': '#BF5AF2',
+                        'ios-gray': '#98989D',
+                        'bg-dark': '#090307',
+                        'glass-bg': 'rgba(14, 12, 18, 0.82)'
+                    },
                     keyframes: {
-                        'aurora-drift': {
-                            '0%, 100%': { backgroundPosition: '0% 50%' },
-                            '25%': { backgroundPosition: '50% 0%' },
-                            '50%': { backgroundPosition: '100% 50%' },
-                            '75%': { backgroundPosition: '50% 100%' },
-                        },
-                        'float-blob': {
-                            '0%': { transform: 'translate(0, 0) scale(1)' },
-                            '33%': { transform: 'translate(10vw, -10vh) scale(1.1)' },
-                            '66%': { transform: 'translate(-10vw, 15vh) scale(0.9)' },
-                            '100%': { transform: 'translate(5vw, 5vh) scale(1.05)' },
-                        },
                         'scale-in': {
                             'from': { transform: 'scale(0.95) translateZ(0)', opacity: '0' },
                             'to': { transform: 'scale(1) translateZ(0)', opacity: '1' },
@@ -42,8 +40,6 @@
                         }
                     },
                     animation: {
-                        'aurora-drift': 'aurora-drift 28s ease-in-out infinite alternate',
-                        'float-blob': 'float-blob 25s ease-in-out infinite alternate',
                         'scale-in': 'scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both',
                         'slide-up': 'slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'pulse-glow': 'pulse-glow 2s cubic-bezier(0.16, 1, 0.3, 1) infinite',
@@ -67,7 +63,7 @@
     </style>
 </head>
 
-<body class="h-[100dvh] flex flex-col overflow-hidden text-sm app-bg animate-aurora-drift" onclick="closeAllMenus(event)">
+<body class="h-[100dvh] flex flex-col overflow-hidden text-sm app-bg text-[#f4f6fb] font-sans antialiased" onclick="closeAllMenus(event)">
 
     <!-- CINEMATIC TRANSITION SYSTEM -->
     <canvas id="cinematic-particles"></canvas>
@@ -117,9 +113,9 @@
 
     <!-- AMBIENT SHIFTING BACKGROUND BLOBS -->
     <div id="ambient-blobs">
-        <div class="blob animate-float-blob blob-1"></div>
-        <div class="blob animate-float-blob blob-2"></div>
-        <div class="blob animate-float-blob blob-3"></div>
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
     <!-- TOP CONTROL BAR / BACCARAT DASHBOARD -->
@@ -259,17 +255,17 @@
                 <button onclick="createRipple(event); app.baccarat.input('P')"
                     class="btn-ios btn-p flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
                     <span class="text-xl sm:text-2xl font-black text-white tracking-tighter">PLAYER</span>
-                    <span class="text-[9px] sm:text-[10px] label-light text-white/50 mt-1">1:1</span>
+                    <span class="text-[9px] sm:text-[10px] font-extralight tracking-widest uppercase text-white/50 mt-1">1:1</span>
                 </button>
                 <button onclick="createRipple(event); app.baccarat.input('T')"
                     class="btn-ios btn-t w-[65px] sm:w-[90px] h-[52px] sm:h-[68px] rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
                     <span class="text-sm sm:text-base font-black text-white">TIE</span>
-                    <span class="text-[8px] sm:text-[9px] label-light text-white/50 mt-0.5">8:1</span>
+                    <span class="text-[8px] sm:text-[9px] font-extralight tracking-widest uppercase text-white/50 mt-0.5">8:1</span>
                 </button>
                 <button onclick="createRipple(event); app.baccarat.input('B')"
                     class="btn-ios btn-b flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden group">
                     <span class="text-xl sm:text-2xl font-black text-white tracking-tighter">BANKER</span>
-                    <span class="text-[9px] sm:text-[10px] label-light text-white/50 mt-1">0.95:1</span>
+                    <span class="text-[9px] sm:text-[10px] font-extralight tracking-widest uppercase text-white/50 mt-1">0.95:1</span>
                 </button>
             </div>
         </div>
@@ -302,19 +298,19 @@
                     class="btn-ios btn-b flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl shadow-2xl relative overflow-hidden group">
                     <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
                         <span class="text-xl sm:text-2xl font-black text-white tracking-tighter">DRAGON</span>
-                        <span class="text-[9px] sm:text-[10px] label-light text-white/50 mt-1">1:1</span>
+                        <span class="text-[9px] sm:text-[10px] font-extralight tracking-widest uppercase text-white/50 mt-1">1:1</span>
                     </div>
                 </button>
                 <button onclick="createRipple(event); app.dragontiger.input('X')"
                     class="btn-ios btn-t w-[65px] sm:w-[90px] h-[52px] sm:h-[68px] rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-lg relative overflow-hidden">
                     <span class="text-sm sm:text-base font-black text-white">TIE</span>
-                    <span class="text-[8px] sm:text-[9px] label-light text-white/50 mt-0.5">8:1</span>
+                    <span class="text-[8px] sm:text-[9px] font-extralight tracking-widest uppercase text-white/50 mt-0.5">8:1</span>
                 </button>
                 <button onclick="createRipple(event); app.dragontiger.input('T')"
                     class="btn-ios btn-gold flex-1 h-[60px] sm:h-[80px] rounded-2xl sm:rounded-3xl shadow-2xl relative overflow-hidden group">
                     <div class="relative z-10 flex flex-col items-center justify-center w-full h-full">
                         <span class="text-xl sm:text-2xl font-black text-[black] tracking-tighter">TIGER</span>
-                        <span class="text-[9px] sm:text-[10px] label-light text-[black]/50 mt-1">1:1</span>
+                        <span class="text-[9px] sm:text-[10px] font-extralight tracking-widest uppercase text-[black]/50 mt-1">1:1</span>
                     </div>
                 </button>
             </div>
@@ -329,15 +325,15 @@
             <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
                 <div class="flex items-center gap-8">
                     <h2 id="head-analytics" onclick="switchAnalyticsMode('analytics')"
-                        class="text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2">
+                        class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-yellow-500 pb-[2px] text-white flex items-center gap-2">
                         <span class="text-yellow-500"><i class="fas fa-chart-pie"></i></span> Engine Analytics
                     </h2>
                     <h2 id="head-perimeter" onclick="switchAnalyticsMode('perimeter')"
-                        class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
+                        class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-transparent pb-[2px] text-gray-500 hover:text-gray-300 flex items-center gap-2">
                         <span class="text-emerald-500"><i class="fas fa-satellite-dish"></i></span> Perimeter Radar
                     </h2>
                     <h2 id="head-simulation" onclick="switchAnalyticsMode('simulation')"
-                        class="text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300">
+                        class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-transparent pb-[2px] text-gray-500 hover:text-gray-300 flex items-center gap-2">
                         <span class="text-purple-500"><i class="fas fa-flask"></i></span> Simulation
                     </h2>
                 </div>

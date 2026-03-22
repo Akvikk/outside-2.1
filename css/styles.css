@@ -71,6 +71,15 @@ body.app-bg {
         repeating-linear-gradient(90deg, rgba(255, 35, 89, 0.035) 0, rgba(255, 35, 89, 0.035) 1px, transparent 1px, transparent 22px);
     background-size: 140% 140%, 140% 140%, 100% 100%, 100% 100%;
     background-position: 0% 50%, 100% 50%, center, center;
+    animation: aurora-drift 28s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 50% 0%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 100%; }
+    100% { background-position: 0% 50%; }
 }
 
 body.theme-roulette {
@@ -120,6 +129,7 @@ body.theme-dragontiger {
     border-radius: 50%;
     filter: blur(100px);
     will-change: transform;
+    animation: floatBlob 25s ease-in-out infinite alternate;
     transition: background 1.5s ease;
 }
 
@@ -150,6 +160,13 @@ body.theme-dragontiger {
     left: 30%;
     animation-duration: 40s;
     animation-delay: -15s;
+}
+
+@keyframes floatBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(10vw, -10vh) scale(1.1); }
+    66% { transform: translate(-10vw, 15vh) scale(0.9); }
+    100% { transform: translate(5vw, 5vh) scale(1.05); }
 }
 
 /* Subtle film grain overlay */
@@ -226,27 +243,6 @@ body.app-bg::after {
 
 
 
-
-body {
-    color: var(--text-main);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-}
-
-/* Typography hierarchy utilities */
-.label-light {
-    font-weight: 200;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.value-heavy {
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-}
 
 /* Ripple effect for buttons */
 @keyframes btn-ripple {
@@ -590,68 +586,6 @@ body {
     background: linear-gradient(145deg, rgba(255, 214, 10, 0.1), rgba(255, 255, 255, 0.05));
 }
 
-.badge-gold {
-    background-color: #fbbf24;
-    color: black;
-    font-weight: 900;
-    padding: 1px 4px;
-    border-radius: 3px;
-    font-size: 0.55rem;
-    margin-left: 4px;
-    display: inline-block;
-    animation: pulse-opacity 1.5s infinite;
-}
-
-
-.badge-hot {
-    background-color: #22c55e;
-    color: black;
-    font-weight: 900;
-    padding: 1px 4px;
-    border-radius: 3px;
-    font-size: 0.55rem;
-    margin-left: 4px;
-    animation: pulse-opacity 1.5s infinite;
-    display: inline-block;
-}
-
-.badge-cold {
-    background-color: #ef4444;
-    color: white;
-    font-weight: 900;
-    padding: 1px 4px;
-    border-radius: 3px;
-    font-size: 0.55rem;
-    margin-left: 4px;
-    display: inline-block;
-}
-
-.active-tab {
-    border-bottom: 2px solid #eab308;
-    padding-bottom: 2px;
-    color: white;
-}
-
-.inactive-tab {
-    border-bottom: 2px solid transparent;
-    padding-bottom: 2px;
-    color: #6b7280;
-}
-
-.active-sim-tab {
-    border-bottom: 2px solid #a855f7;
-    padding-bottom: 2px;
-    color: white;
-}
-
-
-.input-error {
-    background-color: #7f1d1d !important;
-    border-color: #ef4444 !important;
-    color: white !important;
-}
-
-
 .apple-switch {
     position: relative;
     display: inline-block;
@@ -839,12 +773,6 @@ body[data-layout="square"] .header-cell {
 body[data-layout="square"] table {
     border-collapse: collapse !important;
     border-spacing: 0 !important;
-}
-
-
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 .anim-slide-up,
@@ -1379,14 +1307,6 @@ html {
     box-shadow: 0 40px 80px -10px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(50, 173, 230, 0.2), 0 0 50px rgba(50, 173, 230, 0.1);
 }
 
-.text-gold-glow {
-    background: linear-gradient(180deg, #FFFFFF 0%, #FFD60A 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0px 3px 6px rgba(255, 214, 10, 0.5));
-}
-
 .stat-tab {
     flex: 1;
     padding: 10px 0;
@@ -1673,14 +1593,6 @@ html {
     #roulette-dashboard .bet-checkbox {
         width: 1.05em;
         height: 1.05em;
-    }
-
-    #roulette-dashboard .badge-gold,
-    #roulette-dashboard .badge-hot,
-    #roulette-dashboard .badge-cold {
-        font-size: 0.47rem !important;
-        padding: 1px 3px !important;
-        margin-left: 2px !important;
     }
 
     #roulette-dashboard.mobile-overflow-hint::before {

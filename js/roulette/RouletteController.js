@@ -91,9 +91,9 @@ export default class RouletteController {
 
         if (isNaN(val) || val < 0 || val > 36) {
             if (manualVal === null && inputField) {
-                inputField.classList.add('input-error');
+                inputField.classList.add('!bg-red-900', '!border-red-500', '!text-white');
                 if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-                setTimeout(() => { inputField.classList.remove('input-error'); inputField.value = ''; inputField.focus(); }, 300);
+                setTimeout(() => { inputField.classList.remove('!bg-red-900', '!border-red-500', '!text-white'); inputField.value = ''; inputField.focus(); }, 300);
             }
             return;
         }
@@ -385,8 +385,8 @@ export default class RouletteController {
             const headEl = document.getElementById(`head-${m}`);
             if (headEl) {
                 headEl.className = mode === m 
-                    ? "text-xl font-bold cursor-pointer transition-colors active-tab flex items-center gap-2" 
-                    : "text-xl font-bold cursor-pointer transition-colors inactive-tab flex items-center gap-2 hover:text-gray-300";
+                    ? "text-xl font-bold cursor-pointer transition-colors border-b-2 border-yellow-500 pb-[2px] text-white flex items-center gap-2" 
+                    : "text-xl font-bold cursor-pointer transition-colors border-b-2 border-transparent pb-[2px] text-gray-500 hover:text-gray-300 flex items-center gap-2";
             }
         });
         if (mode === 'simulation') this.ui.updateSimulationUI();
