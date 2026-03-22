@@ -464,6 +464,7 @@ window.toggleMainMenu = (e) => window.app.roulette.toggleMainMenu(e);
 window.toggleAccordion = (id) => window.app.roulette.toggleAccordion(id);
 window.toggleGridColumn = (key) => window.app.roulette.toggleGridColumn(key);
 window.updateBankrollSettings = () => window.app.roulette.updateBankrollSettings();
+window.togglePerimeterOnly = () => window.app.roulette.togglePerimeterOnly();
 window.exportSpins = () => window.app.roulette.exportSpins();
 window.importSpins = (files) => window.app.roulette.importSpins(files);
 window.toggleTrendIcons = () => window.app.roulette.toggleTrendIcons();

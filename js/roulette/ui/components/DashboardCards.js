@@ -65,6 +65,15 @@ export default class DashboardCards {
         const perimeterStats = BankrollManager.calculatePerimeterStats(this.state);
         const pLimit = this.state.perimeterLimit || 14;
 
+        // Sort predictions by highest win probability to lowest
+        this.state.pendingBets.sort((a, b) => {
+            const statA = patStats[`${a.pattern} [${a.category}]`] || { w: 0, l: 0 };
+            const statB = patStats[`${b.pattern} [${b.category}]`] || { w: 0, l: 0 };
+            const rateA = (statA.w + statA.l > 0) ? (statA.w / (statA.w + statA.l)) : 0;
+            const rateB = (statB.w + statB.l > 0) ? (statB.w / (statB.w + statB.l)) : 0;
+            return rateB - rateA;
+        });
+
         let renderedCount = 0;
 
         this.state.pendingBets.forEach((bet, index) => {
@@ -72,21 +81,26 @@ export default class DashboardCards {
             
             const localStat = perimeterStats[compositeKey];
             const localHits = localStat ? localStat.w : 0;
-
-            renderedCount++;
-
-            const div = document.createElement('div');
             const pStat = patStats[compositeKey];
             const patRate = (pStat && (pStat.w + pStat.l > 0)) ? Math.round((pStat.w / (pStat.w + pStat.l)) * 100) : 0;
             
             const isHot = localStat && localStat.rate > 0;
+
+            // Strict Perimeter Filter: skip rendering if active and no momentum
+            if (this.state.perimeterOnly && !isHot) return;
+
+            renderedCount++;
+            const div = document.createElement('div');
+
+            const isZeroHit = !pStat || pStat.w === 0;
+            const zeroHitClass = isZeroHit ? ' pred-card-zero' : '';
 
             const styleClass = Formatters.getStyle(bet.target);
             const rawBetName = 'BET ' + Formatters.getName(bet.category, bet.target);
             const betLabel = isCompact ? Formatters.compactTokenLabel(rawBetName.replace('BET ', '')) : rawBetName;
             const patternLabel = isCompact ? Formatters.compactPatternLabel(bet.pattern) : bet.pattern;
 
-            div.className = `grid-item shrink-0 whitespace-normal relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-lg p-2 sm:p-2.5 flex flex-col justify-center gap-0.5 sm:gap-1 select-none cursor-pointer transition-transform hover:scale-105 hover:shadow-xl duration-300 ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-1 ring-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.25)]' : ''}`;
+            div.className = `grid-item shrink-0 whitespace-normal relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-lg p-2 sm:p-2.5 flex flex-col justify-center gap-0.5 sm:gap-1 select-none cursor-pointer transition-transform hover:scale-105 hover:shadow-xl duration-300 ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-1 ring-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.25)]' : ''}${zeroHitClass}`;
             div.style.flex = "0 0 auto"; div.style.minWidth = "150px"; div.style.maxWidth = "220px";
             div.setAttribute('ondblclick', `app.roulette.toggleBetConfirmation(${index})`);
 

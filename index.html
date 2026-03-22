@@ -923,6 +923,14 @@
                     <label class="apple-switch mt-1 shrink-0"><input type="checkbox" id="setting-ignore-zero" checked=""
                             onchange="app.roulette.toggleIgnoreZero()"><span class="slider"></span></label>
                 </div>
+                <div class="flex items-start justify-between p-2 hover:bg-white/5 rounded-lg transition-colors gap-3 border-b border-white/5 mb-1 pb-3">
+                    <div class="flex flex-col">
+                        <span class="text-gray-300 text-sm">Strict Perimeter</span>
+                        <span class="text-[10px] text-gray-500">Show ONLY perimeter confirmed bets</span>
+                    </div>
+                    <label class="apple-switch mt-1 shrink-0"><input type="checkbox" id="setting-perimeter-only"
+                            onchange="togglePerimeterOnly()"><span class="slider"></span></label>
+                </div>
                 <div class="flex items-start justify-between p-2 hover:bg-white/5 rounded-lg transition-colors gap-3">
                     <div class="flex flex-col w-full">
                         <div class="flex justify-between items-center mb-2">

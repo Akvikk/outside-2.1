@@ -32,7 +32,8 @@ export default class RouletteController {
             engineStatsMaster: this.state.engineStatsMaster, engineStats1to1: this.state.engineStats1to1, engineStats2to1: this.state.engineStats2to1, userStats: this.state.userStats, 
             showTrendIcons: this.state.showTrendIcons, ghostMode: this.state.ghostMode, ignoreZero: this.state.ignoreZero, curvedLayout: this.state.curvedLayout, 
             bankrollTargets: this.state.bankrollTargets, gridSettings: this.state.gridSettings, soundSettings: this.state.soundSettings,
-            perimeterLimit: this.state.perimeterLimit
+            perimeterLimit: this.state.perimeterLimit,
+            perimeterOnly: this.state.perimeterOnly
         };
         StorageService.save('roulette_session', data);
         const icon = document.getElementById('saveIndicator');
@@ -60,6 +61,11 @@ export default class RouletteController {
                 if (data.soundSettings) Object.assign(this.state.soundSettings, data.soundSettings);
                 if (data.showTrendIcons !== undefined) this.state.showTrendIcons = data.showTrendIcons;
                 if (data.ignoreZero !== undefined) this.state.ignoreZero = data.ignoreZero;
+                if (data.perimeterOnly !== undefined) {
+                    this.state.perimeterOnly = data.perimeterOnly;
+                    const poToggle = document.getElementById('setting-perimeter-only');
+                    if (poToggle) poToggle.checked = data.perimeterOnly;
+                }
                 this.state.ghostMode = true; // Enforced background running
                 if (data.curvedLayout !== undefined) this.state.curvedLayout = data.curvedLayout;
                 if (data.gridSettings) this.state.gridSettings = data.gridSettings;
@@ -180,6 +186,7 @@ export default class RouletteController {
     // UI BINDING METHODS (From Monolith)
     // ==========================================
     toggleIgnoreZero() { this.state.ignoreZero = !this.state.ignoreZero; this.saveLocal(); }
+    togglePerimeterOnly() { this.state.perimeterOnly = !this.state.perimeterOnly; this.saveLocal(); this.ui.renderDashboard(); }
     toggleGridColumn(key) { this.state.gridSettings[key] = !this.state.gridSettings[key]; this.saveLocal(); this.reRenderHistory(); }
     updateBankrollSettings() { this.state.bankrollTargets.enabled = document.getElementById('br-enabled')?.checked || false; this.state.bankrollTargets.profit = parseInt(document.getElementById('br-profit')?.value) || 50; this.state.bankrollTargets.loss = parseInt(document.getElementById('br-loss')?.value) || 20; this.saveLocal(); }
     
