@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿:﻿﻿:root {
+﻿﻿:root {
 
     --ios-blue: #0A84FF;
     --ios-green: #30D158;
@@ -418,21 +418,6 @@ body.app-bg::after {
 .modal-open {
     display: flex;
 }
-
-
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.6;
-    }
-}
-
-
-
 
 
 .chart-container {
@@ -2331,7 +2316,6 @@ html {
     }
 }
 
-/* 
 /* 
    ==========================================================================
    EPIC CINEMATIC TRANSITION — "THE REBOOT"
