@@ -71,29 +71,6 @@ body.app-bg {
         repeating-linear-gradient(90deg, rgba(255, 35, 89, 0.035) 0, rgba(255, 35, 89, 0.035) 1px, transparent 1px, transparent 22px);
     background-size: 140% 140%, 140% 140%, 100% 100%, 100% 100%;
     background-position: 0% 50%, 100% 50%, center, center;
-    animation: aurora-drift 28s ease-in-out infinite alternate;
-}
-
-@keyframes aurora-drift {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    25% {
-        background-position: 50% 0%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    75% {
-        background-position: 50% 100%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
 }
 
 body.theme-roulette {
@@ -142,7 +119,6 @@ body.theme-dragontiger {
     position: absolute;
     border-radius: 50%;
     filter: blur(100px);
-    animation: floatBlob 25s ease-in-out infinite alternate;
     will-change: transform;
     transition: background 1.5s ease;
 }
@@ -174,24 +150,6 @@ body.theme-dragontiger {
     left: 30%;
     animation-duration: 40s;
     animation-delay: -15s;
-}
-
-@keyframes floatBlob {
-    0% {
-        transform: translate(0, 0) scale(1);
-    }
-
-    33% {
-        transform: translate(10vw, -10vh) scale(1.1);
-    }
-
-    66% {
-        transform: translate(-10vw, 15vh) scale(0.9);
-    }
-
-    100% {
-        transform: translate(5vw, 5vh) scale(1.05);
-    }
 }
 
 /* Subtle film grain overlay */
@@ -466,43 +424,6 @@ body {
 }
 
 
-@keyframes slideUp {
-    0% {
-        transform: translateY(30px);
-        opacity: 0;
-        filter: blur(10px);
-    }
-
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-        filter: blur(0px);
-    }
-}
-
-.anim-slide-up {
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes pulse-glow {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
-    }
-
-    70% {
-        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-}
-
-.btn-pulse {
-    animation: pulse-glow 2s infinite;
-}
-
-@keyframes pulse-opacity {
 
     0%,
     100% {
@@ -806,26 +727,12 @@ input:checked+.slider:before {
     padding: 12px 20px;
     border-radius: 12px;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    animation: slideInRight 0.3s ease-out;
     display: flex;
     align-items: center;
     gap: 12px;
     min-width: 280px;
     pointer-events: auto;
 }
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
 
 .btn-apple {
     transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
@@ -994,61 +901,6 @@ html {
 .btn-ios:active {
     transform: scale(0.97) !important;
     transition-duration: 0.1s !important;
-}
-
-@keyframes pulse-glow-120 {
-    0% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
-        transform: scale(1);
-    }
-
-    50% {
-        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
-        transform: scale(1.01);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-        transform: scale(1);
-    }
-}
-
-.btn-pulse {
-    animation: pulse-glow-120 2s cubic-bezier(0.16, 1, 0.3, 1) infinite !important;
-}
-
-@keyframes slideUp120 {
-    from {
-        transform: translateY(15px) translateZ(0);
-        opacity: 0;
-        filter: blur(4px);
-    }
-
-    to {
-        transform: translateY(0) translateZ(0);
-        opacity: 1;
-        filter: blur(0px);
-    }
-}
-
-.anim-slide-up {
-    animation: slideUp120 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-}
-
-@keyframes scaleInLight {
-    from {
-        transform: scale(0.95) translateZ(0);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1) translateZ(0);
-        opacity: 1;
-    }
-}
-
-.anim-scale-in {
-    animation: scaleInLight 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .pred-card {
@@ -1587,22 +1439,6 @@ html {
 
     100% {
         transform: scale(1);
-    }
-}
-
-.modal-content-animated {
-    animation: fadeInGlass 0.6s cubic-bezier(0.25, 1.4, 0.35, 1) forwards !important;
-}
-
-@keyframes fadeInGlass {
-    from {
-        opacity: 0;
-        transform: translateY(15px) scale(0.98);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
     }
 }
 

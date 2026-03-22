@@ -7,6 +7,52 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
     <title>FON OUTSIDE</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    keyframes: {
+                        'aurora-drift': {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '25%': { backgroundPosition: '50% 0%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '75%': { backgroundPosition: '50% 100%' },
+                        },
+                        'float-blob': {
+                            '0%': { transform: 'translate(0, 0) scale(1)' },
+                            '33%': { transform: 'translate(10vw, -10vh) scale(1.1)' },
+                            '66%': { transform: 'translate(-10vw, 15vh) scale(0.9)' },
+                            '100%': { transform: 'translate(5vw, 5vh) scale(1.05)' },
+                        },
+                        'scale-in': {
+                            'from': { transform: 'scale(0.95) translateZ(0)', opacity: '0' },
+                            'to': { transform: 'scale(1) translateZ(0)', opacity: '1' },
+                        },
+                        'slide-up': {
+                            'from': { transform: 'translateY(15px) translateZ(0)', opacity: '0', filter: 'blur(4px)' },
+                            'to': { transform: 'translateY(0) translateZ(0)', opacity: '1', filter: 'blur(0px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.4)', transform: 'scale(1)' },
+                            '50%': { boxShadow: '0 0 0 6px rgba(59, 130, 246, 0)', transform: 'scale(1.01)' },
+                        },
+                        'fade-in-glass': {
+                            'from': { opacity: '0', transform: 'translateY(15px) scale(0.98)' },
+                            'to': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        }
+                    },
+                    animation: {
+                        'aurora-drift': 'aurora-drift 28s ease-in-out infinite alternate',
+                        'float-blob': 'float-blob 25s ease-in-out infinite alternate',
+                        'scale-in': 'scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both',
+                        'slide-up': 'slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.16, 1, 0.3, 1) infinite',
+                        'fade-in-glass': 'fade-in-glass 0.6s cubic-bezier(0.25, 1.4, 0.35, 1) forwards'
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" defer=""></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -21,7 +67,7 @@
     </style>
 </head>
 
-<body class="h-[100dvh] flex flex-col overflow-hidden text-sm app-bg" onclick="closeAllMenus(event)">
+<body class="h-[100dvh] flex flex-col overflow-hidden text-sm app-bg animate-aurora-drift" onclick="closeAllMenus(event)">
 
     <!-- CINEMATIC TRANSITION SYSTEM -->
     <canvas id="cinematic-particles"></canvas>
@@ -71,9 +117,9 @@
 
     <!-- AMBIENT SHIFTING BACKGROUND BLOBS -->
     <div id="ambient-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+        <div class="blob animate-float-blob blob-1"></div>
+        <div class="blob animate-float-blob blob-2"></div>
+        <div class="blob animate-float-blob blob-3"></div>
     </div>
 
     <!-- TOP CONTROL BAR / BACCARAT DASHBOARD -->
@@ -135,7 +181,7 @@
             </button>
 
             <button onclick="toggleAnalytics()"
-                class="min-h-[44px] px-3 sm:px-4 btn-apple text-yellow-400 font-medium rounded-lg flex items-center gap-2 btn-pulse transition-colors text-xs">
+            class="min-h-[44px] px-3 sm:px-4 btn-apple text-yellow-400 font-medium rounded-lg flex items-center gap-2 animate-pulse-glow transition-colors text-xs">
                 <i class="fas fa-chart-bar"></i> <span class="hidden md:inline">STATS</span>
             </button>
 
@@ -277,7 +323,7 @@
 
     <!-- ANALYTICS MODAL (MULTI-TAB) -->
     <div id="analyticsModal" class="modal-overlay" onclick="if(event.target === this) app.toggleAnalytics()">
-        <div class="glass-panel glass-surface modal-content-lg anim-slide-up">
+        <div class="glass-panel glass-surface modal-content-lg animate-slide-up">
 
             <!-- HEADER WITH TOGGLE -->
             <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
@@ -516,7 +562,7 @@
 
     <!-- ACTUAL BETS MODAL -->
     <div id="betsModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.toggleBetsModal()">
-        <div class="glass-panel glass-surface modal-content-lg anim-slide-up h-[90dvh]">
+        <div class="glass-panel glass-surface modal-content-lg animate-slide-up h-[90dvh]">
             <div class="modal-header-lg">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-blue-500"><i class="fas fa-list-check"></i></span> Actual Bets
@@ -620,7 +666,7 @@
     <!-- RESET WARNING MODAL -->
     <div id="resetModal" class="modal-overlay z-[900]" onclick="if(event.target === this) app.roulette.closeResetModal()">
         <div
-            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col anim-slide-up p-6 text-center border border-red-500/30">
+            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col animate-slide-up p-6 text-center border border-red-500/30">
             <div class="text-red-500 text-5xl mb-4"><i class="fas fa-triangle-exclamation"></i></div>
             <h2 class="text-2xl font-black text-white mb-2">Wipe Session Data?</h2>
             <p class="text-gray-400 text-sm mb-6">Are you sure you want to wipe all session data? This action cannot be
@@ -638,7 +684,7 @@
     <!-- SWITCH MODE WARNING MODAL -->
     <div id="switchModeModal" class="modal-overlay" onclick="if(event.target === this) app.closeSwitchModeModal()">
         <div id="switchModePanel"
-            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col anim-slide-up p-6 text-center border border-blue-500/30">
+            class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col animate-slide-up p-6 text-center border border-blue-500/30">
             <div id="switchModeIcon" class="text-5xl mb-4">🔄</div>
             <h2 class="text-2xl font-black text-white mb-2">Switch Game Mode?</h2>
             <p class="text-gray-400 text-sm mb-6">Switching to <span id="targetModeName" class="font-black"></span> will
@@ -648,7 +694,7 @@
                 <button onclick="app.closeSwitchModeModal()"
                     class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 font-bold rounded-xl transition-colors w-full">Cancel</button>
                 <button id="switchModeConfirmBtn" onclick="app.executeSwitchMode()"
-                    class="px-5 py-2.5 text-white font-bold rounded-xl shadow-lg transition-colors w-full btn-pulse">Yes,
+                class="px-5 py-2.5 text-white font-bold rounded-xl shadow-lg transition-colors w-full animate-pulse-glow">Yes,
                     Switch</button>
             </div>
         </div>
@@ -657,7 +703,7 @@
     <!-- PATTERN LOG MODAL -->
     <div id="patternLogModal" class="modal-overlay z-[1000]"
         onclick="if(event.target === this) app.roulette.closePatternLog()">
-        <div class="glass-panel glass-surface modal-content-sm anim-slide-up">
+        <div class="glass-panel glass-surface modal-content-sm animate-slide-up">
             <div class="modal-header-sm">
                 <h3 id="pl-title" class="font-bold text-white text-sm">Pattern Log</h3>
                 <button onclick="closePatternLog()" class="btn-close-sm"><i class="fas fa-times"></i></button>
@@ -680,7 +726,7 @@
     <!-- BACCARAT PATTERN LOG MODAL -->
     <div id="bac-patternLogModal" class="modal-overlay z-[1000]"
         onclick="if(event.target === this) app.baccarat.closePatternLog()">
-        <div class="glass-panel glass-surface modal-content-sm anim-slide-up">
+        <div class="glass-panel glass-surface modal-content-sm animate-slide-up">
             <div class="modal-header-sm">
                 <h3 id="bac-pl-title" class="font-bold text-white text-sm">Pattern Log</h3>
                 <button onclick="app.baccarat.closePatternLog()" class="btn-close-sm"><i
@@ -704,7 +750,7 @@
     <!-- DRAGON TIGER PATTERN LOG MODAL -->
     <div id="dt-patternLogModal" class="modal-overlay z-[1000]"
         onclick="if(event.target === this) app.dragontiger.closePatternLog()">
-        <div class="glass-panel glass-surface modal-content-sm anim-slide-up">
+        <div class="glass-panel glass-surface modal-content-sm animate-slide-up">
             <div class="modal-header-sm">
                 <h3 id="dt-pl-title" class="font-bold text-white text-sm">Pattern Log</h3>
                 <button onclick="app.dragontiger.closePatternLog()" class="btn-close-sm"><i
@@ -731,7 +777,7 @@
 
     <!-- FILTER DROPDOWN (MOVED TO ROOT) -->
     <div id="filterDropdown"
-        class="hidden fixed w-[90vw] max-w-md glass-panel glass-surface rounded-2xl shadow-2xl z-50 overflow-hidden anim-slide-up border border-white/20">
+        class="hidden fixed w-[90vw] max-w-md glass-panel glass-surface rounded-2xl shadow-2xl z-50 overflow-hidden animate-slide-up border border-white/20">
         <div class="flex bg-white/5 border-b border-white/10 items-center">
             <div
                 class="w-1/3 p-2 text-center text-[10px] font-bold text-blue-400 uppercase tracking-widest border-r border-white/10 bg-blue-900/10">
@@ -805,7 +851,7 @@
 
     <!-- MAIN MENU DROPDOWN / SIDEBAR -->
     <div id="mainMenuDropdown"
-        class="hidden fixed w-[300px] md:w-80 glass-panel glass-surface shadow-2xl z-[100] overflow-y-auto border border-white/10 rounded-2xl flex flex-col max-h-[85dvh] origin-top-right anim-slide-up"
+        class="hidden fixed w-[300px] md:w-80 glass-panel glass-surface shadow-2xl z-[100] overflow-y-auto border border-white/10 rounded-2xl flex flex-col max-h-[85dvh] origin-top-right animate-slide-up"
         style="position: fixed !important; top: 60px !important; right: 16px !important;">
 
         <!-- GAME MODE -->
@@ -1084,7 +1130,7 @@
 
     <div id="filters-modal" class="fixed inset-0 z-[200] hidden" onclick="app.baccarat.toggleModal('filters-modal')">
         <div id="filters-modal-content"
-            class="glass-panel glass-analytics w-[92vw] max-w-[360px] rounded-2xl p-3 modal-content-animated flex flex-col max-h-[72vh] absolute"
+            class="glass-panel glass-analytics w-[92vw] max-w-[360px] rounded-2xl p-3 animate-fade-in-glass flex flex-col max-h-[72vh] absolute"
             onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-2 shrink-0">
                 <div class="flex flex-col">
@@ -1104,7 +1150,7 @@
     <div id="stats-modal"
         class="fixed inset-0 z-[200] bg-black/25 backdrop-blur-xl hidden flex items-center justify-center p-4"
         onclick="app.baccarat.toggleModal('stats-modal')">
-        <div class="glass-panel glass-surface modal-content-lg anim-slide-up analytics-modal-wash"
+        <div class="glass-panel glass-surface modal-content-lg animate-slide-up analytics-modal-wash"
             onclick="event.stopPropagation()">
 
             <!-- HEADER -->
@@ -1522,7 +1568,7 @@
     <div id="reset-modal-baccarat"
         class="fixed inset-0 z-[900] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
         onclick="app.baccarat.toggleModal('reset-modal-baccarat')">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 modal-content-animated flex flex-col text-center"
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 animate-fade-in-glass flex flex-col text-center"
             onclick="event.stopPropagation()">
             <div class="text-5xl mb-4 text-[#FF453A]"><i class="fas fa-triangle-exclamation"></i></div>
             <h2 class="text-2xl font-black text-white mb-2">Reset Current Shoe?</h2>
@@ -1540,7 +1586,7 @@
     <div id="dt-filters-modal" class="fixed inset-0 z-[200] hidden"
         onclick="app.dragontiger.toggleModal('dt-filters-modal')">
         <div id="dt-filters-modal-content"
-            class="glass-panel glass-analytics w-[92vw] max-w-[360px] rounded-2xl p-3 modal-content-animated flex flex-col max-h-[72vh] absolute"
+            class="glass-panel glass-analytics w-[92vw] max-w-[360px] rounded-2xl p-3 animate-fade-in-glass flex flex-col max-h-[72vh] absolute"
             onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-2 shrink-0">
                 <div class="flex flex-col">
@@ -1560,7 +1606,7 @@
     <div id="dt-stats-modal"
         class="fixed inset-0 z-[200] bg-black/25 backdrop-blur-xl hidden flex items-center justify-center p-4"
         onclick="app.dragontiger.toggleModal('dt-stats-modal')">
-        <div class="glass-panel glass-surface modal-content-lg anim-slide-up analytics-modal-wash"
+        <div class="glass-panel glass-surface modal-content-lg animate-slide-up analytics-modal-wash"
             onclick="event.stopPropagation()">
 
             <!-- HEADER -->
@@ -1963,7 +2009,7 @@
     <div id="reset-modal-dragontiger"
         class="fixed inset-0 z-[900] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"
         onclick="app.dragontiger.toggleModal('reset-modal-dragontiger')">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 modal-content-animated flex flex-col text-center"
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 animate-fade-in-glass flex flex-col text-center"
             onclick="event.stopPropagation()">
             <div class="text-5xl mb-4 text-[#FF453A]"><i class="fas fa-triangle-exclamation"></i></div>
             <h2 class="text-2xl font-black text-white mb-2">Reset Current Shoe?</h2>
