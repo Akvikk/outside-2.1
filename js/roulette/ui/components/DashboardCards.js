@@ -100,8 +100,9 @@ export default class DashboardCards {
             const betLabel = isCompact ? Formatters.compactTokenLabel(rawBetName.replace('BET ', '')) : rawBetName;
             const patternLabel = isCompact ? Formatters.compactPatternLabel(bet.pattern) : bet.pattern;
 
-            div.className = `grid-item shrink-0 whitespace-normal relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-lg p-2 sm:p-2.5 flex flex-col justify-center gap-0.5 sm:gap-1 select-none cursor-pointer transition-transform hover:scale-105 hover:shadow-xl duration-300 ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-1 ring-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.25)]' : ''}${zeroHitClass}`;
+            div.className = `grid-item anim-scale-in shrink-0 whitespace-normal relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent backdrop-blur-lg p-2 sm:p-2.5 flex flex-col justify-center gap-0.5 sm:gap-1 select-none cursor-pointer transition-transform hover:scale-105 hover:shadow-xl duration-300 ${styleClass} ${bet.confirmed ? 'card-confirmed' : ''} ${isHot ? 'ring-1 ring-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.25)]' : ''}${zeroHitClass}`;
             div.style.flex = "0 0 auto"; div.style.minWidth = "150px"; div.style.maxWidth = "220px";
+            div.style.animationDelay = `${(renderedCount - 1) * 40}ms`;
             div.setAttribute('ondblclick', `app.roulette.toggleBetConfirmation(${index})`);
 
             const rateColor = patRate >= 50 ? 'text-emerald-400' : (patRate >= 40 ? 'text-yellow-400' : 'text-rose-400');
