@@ -2,6 +2,7 @@ import HistoryGrid from './components/HistoryGrid.js';
 import DashboardCards from './components/DashboardCards.js';
 import TrendGraph from './components/TrendGraph.js';
 import PerimeterRadar from './components/PerimeterRadar.js';
+import { PATTERN_CONFIG } from '../config.js';
 
 export default class RouletteUI {
     constructor(controller, state) {
@@ -250,4 +251,37 @@ export default class RouletteUI {
     updatePerimeterUI() {
         this.perimeterRadar.render();
     }
+    
+    renderFilters() {
+        const rColors = ['text-cyan-300', 'text-yellow-300', 'text-red-300', 'text-emerald-300', 'text-purple-300', 'text-orange-300', 'text-pink-300', 'text-indigo-300', 'text-rose-300', 'text-rose-400', 'text-rose-500'];
+        const rPatList = document.getElementById('roulette-filter-patterns-list');
+        const rSimList = document.getElementById('roulette-sim-patterns');
+        if (rPatList && this.controller && this.state) {
+            rPatList.innerHTML = PATTERN_CONFIG.map((p, i) => `
+                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors" for="filter-${p.key}">
+                    <input type="checkbox" ${this.state.activeFilters[p.key] !== false ? 'checked' : ''} data-r-filter="${p.key}" class="filter-checkbox r-pattern-toggle" id="filter-${p.key}">
+                    <span class="${rColors[i % rColors.length]} font-bold text-[10px] uppercase tracking-wider flex-1">${p.label} <span id="lbl-filter-${p.key}" class="text-gray-500 ml-1">[-]</span></span>
+                </label>
+            `).join('');
+        }
+        if (rSimList && this.controller && this.state) {
+            rSimList.innerHTML = PATTERN_CONFIG.map((p) => `
+                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer" for="sim-pat-${p.key}">
+                    <input type="checkbox" class="sim-checkbox r-sim-toggle" ${this.state.simState.filters[p.key] !== false ? 'checked' : ''} data-r-sim-filter="${p.key}" id="sim-pat-${p.key}">
+                    <span class="text-gray-300 text-xs">${p.label}</span>
+                </label>
+            `).join('');
+        }
+    }
 }
+
+document.addEventListener('change', (e) => {
+    if (e.target.matches('.r-pattern-toggle')) {
+        if (window.app && window.app.roulette) window.app.roulette.handleFilterChange(e.target.dataset.rFilter, e.target.checked);
+    } else if (e.target.matches('.r-sim-toggle')) {
+        if (window.app && window.app.roulette) {
+            let chk = document.getElementById('sim-pat-' + e.target.dataset.rSimFilter);
+            if(chk) window.app.roulette.toggleSimFilter('pat', e.target.dataset.rSimFilter);
+        }
+    }
+});

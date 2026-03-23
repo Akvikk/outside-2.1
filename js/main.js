@@ -51,7 +51,17 @@ class AppOrchestrator {
 
         try { this.initParallax(); } catch (e) {}
         
-        try { this.renderDynamicFilters(); } catch (e) { console.error('Filter render error:', e); }
+        try {
+            if (this.roulette.ui && this.roulette.ui.renderFilters) this.roulette.ui.renderFilters();
+            if (this.baccarat.ui && this.baccarat.ui.modals && this.baccarat.ui.modals.renderFilters) {
+                this.baccarat.ui.modals.renderFilters();
+                this.baccarat.ui.modals.updateSim();
+            }
+            if (this.dragontiger.ui && this.dragontiger.ui.modals && this.dragontiger.ui.modals.renderFilters) {
+                this.dragontiger.ui.modals.renderFilters();
+                this.dragontiger.ui.modals.updateSim();
+            }
+        } catch (e) { console.error('Filter init error:', e); }
 
         try {
             this.switchGameMode(this.currentMode, true);
@@ -99,78 +109,7 @@ class AppOrchestrator {
         }
     }
 
-    renderDynamicFilters() {
-        const rColors = ['text-cyan-300', 'text-yellow-300', 'text-red-300', 'text-emerald-300', 'text-purple-300', 'text-orange-300', 'text-pink-300', 'text-indigo-300', 'text-rose-300', 'text-rose-400', 'text-rose-500'];
-        const rPatList = document.getElementById('roulette-filter-patterns-list');
-        const rSimList = document.getElementById('roulette-sim-patterns');
-        
-        if (rPatList && this.roulette && this.roulette.state) {
-            rPatList.innerHTML = ROULETTE_PATTERNS.map((p, i) => `
-                <label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors" for="filter-${p.key}">
-                    <input type="checkbox" ${this.roulette.state.activeFilters[p.key] !== false ? 'checked' : ''} onchange="handleFilterChange('${p.key}', this.checked)" class="filter-checkbox" id="filter-${p.key}">
-                    <span class="${rColors[i % rColors.length]} font-bold text-[10px] uppercase tracking-wider flex-1">${p.label} <span id="lbl-filter-${p.key}" class="text-gray-500 ml-1">[-]</span></span>
-                </label>
-            `).join('');
-        }
-        if (rSimList && this.roulette && this.roulette.state) {
-            rSimList.innerHTML = ROULETTE_PATTERNS.map((p) => `
-                <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer" for="sim-pat-${p.key}">
-                    <input type="checkbox" class="sim-checkbox" ${this.roulette.state.simState.filters[p.key] !== false ? 'checked' : ''} onchange="toggleSimFilter('pat', '${p.key}')" id="sim-pat-${p.key}">
-                    <span class="text-gray-300 text-xs">${p.label}</span>
-                </label>
-            `).join('');
-        }
 
-        const bacList = document.getElementById('filters-list');
-        const bacSimList = document.getElementById('sim-filters-list');
-        if (bacList && this.baccarat && this.baccarat.state) {
-            bacList.innerHTML = BACCARAT_PATTERNS.map(p => `
-                <label class="flex items-center justify-between p-2.5 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors shadow-sm mb-2">
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">${p.label} <span id="bac-lbl-filter-${p.key}" class="text-gray-500 ml-1 text-[10px]">[-]</span></span>
-                    <div class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" ${this.baccarat.state.filters[p.key] !== false ? 'checked' : ''} onchange="app.baccarat.togglePatternFilter('${p.key}', this.checked)" class="sr-only peer neon-toggle">
-                        <div class="w-9 h-5 bg-black/60 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0A84FF] shadow-inner border border-white/10"></div>
-                    </div>
-                </label>
-            `).join('');
-        }
-        if (bacSimList && this.baccarat && this.baccarat.state) {
-            bacSimList.innerHTML = BACCARAT_PATTERNS.map(p => `
-                <label class="flex items-center justify-between p-2.5 bg-[#BF5AF2]/10 rounded-xl border border-[#BF5AF2]/30 cursor-pointer hover:bg-[#BF5AF2]/20 transition-colors shadow-[0_0_10px_rgba(191,90,242,0.1)]">
-                    <span class="text-[11px] font-black text-[#E0B0FF] uppercase tracking-wider">${p.label}</span>
-                    <div class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" ${this.baccarat.state.simFilters[p.key] !== false ? 'checked' : ''} onchange="app.baccarat.toggleSimFilter('${p.key}', this.checked)" class="sr-only peer neon-toggle">
-                        <div class="w-8 h-4 bg-black/80 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#BF5AF2] shadow-inner border border-[#BF5AF2]/30"></div>
-                    </div>
-                </label>
-            `).join('');
-        }
-
-        const dtList = document.getElementById('dt-filters-list');
-        const dtSimList = document.getElementById('dt-sim-filters-list');
-        if (dtList && this.dragontiger && this.dragontiger.state) {
-            dtList.innerHTML = DT_PATTERNS.map(p => `
-                <label class="flex items-center justify-between p-2.5 bg-white/5 rounded-xl border border-white/10 cursor-pointer hover:bg-white/10 transition-colors shadow-sm mb-2">
-                    <span class="text-xs font-bold text-white uppercase tracking-wider">${p.label} <span id="dt-lbl-filter-${p.key}" class="text-gray-500 ml-1 text-[10px]">[-]</span></span>
-                    <div class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" ${this.dragontiger.state.filters[p.key] !== false ? 'checked' : ''} onchange="app.dragontiger.togglePatternFilter('${p.key}', this.checked)" class="sr-only peer neon-toggle">
-                        <div class="w-9 h-5 bg-black/60 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#FF453A] shadow-inner border border-white/10"></div>
-                    </div>
-                </label>
-            `).join('');
-        }
-        if (dtSimList && this.dragontiger && this.dragontiger.state) {
-            dtSimList.innerHTML = DT_PATTERNS.map(p => `
-                <label class="flex items-center justify-between p-2.5 bg-[#BF5AF2]/10 rounded-xl border border-[#BF5AF2]/30 cursor-pointer hover:bg-[#BF5AF2]/20 transition-colors shadow-[0_0_10px_rgba(191,90,242,0.1)]">
-                    <span class="text-[11px] font-black text-[#E0B0FF] uppercase tracking-wider">${p.label}</span>
-                    <div class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" ${this.dragontiger.state.simFilters[p.key] !== false ? 'checked' : ''} onchange="app.dragontiger.toggleSimFilter('${p.key}', this.checked)" class="sr-only peer neon-toggle">
-                        <div class="w-8 h-4 bg-black/80 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#BF5AF2] shadow-inner border border-[#BF5AF2]/30"></div>
-                    </div>
-                </label>
-            `).join('');
-        }
-    }
 
     initParallax() {
         const container = document.getElementById('ambient-blobs');

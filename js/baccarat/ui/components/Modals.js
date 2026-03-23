@@ -10,12 +10,12 @@ export default class Modals {
         const names = Object.keys(this.state.filters);
         const allChecked = names.every(n => this.state.filters[n]);
         
-        let html = `<label class="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-lg cursor-pointer transition-colors border-b border-white/10 mb-1"><input type="checkbox" ${allChecked ? 'checked' : ''} onchange="app.baccarat.toggleAllPatternFilters(this.checked)" class="filter-checkbox"><span class="text-yellow-500 font-bold text-[10px] uppercase tracking-wider flex-1">SELECT ALL</span></label>`;
+        let html = `<label class="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-lg cursor-pointer transition-colors border-b border-white/10 mb-1"><input type="checkbox" ${allChecked ? 'checked' : ''} data-bac-filter-all="true" class="filter-checkbox"><span class="text-yellow-500 font-bold text-[10px] uppercase tracking-wider flex-1">SELECT ALL</span></label>`;
         
         names.forEach(name => {
             const stats = this.state.patternStats[name] || { w: 0, l: 0 };
             const wr = (stats.w + stats.l) > 0 ? Math.round((stats.w / (stats.w + stats.l)) * 100) : 0;
-            html += `<label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"><input type="checkbox" ${this.state.filters[name] ? 'checked' : ''} onchange="app.baccarat.togglePatternFilter('${name}', this.checked)" class="filter-checkbox"><span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">${name} <span class="text-gray-500 ml-1">[${wr}%]</span></span></label>`;
+            html += `<label class="flex items-center gap-2 p-1.5 hover:bg-gray-800 rounded cursor-pointer transition-colors"><input type="checkbox" ${this.state.filters[name] ? 'checked' : ''} data-bac-filter="${name}" class="filter-checkbox"><span class="text-white font-bold text-[10px] uppercase tracking-wider flex-1">${name} <span class="text-gray-500 ml-1">[${wr}%]</span></span></label>`;
         });
         el.innerHTML = html;
     }
@@ -227,3 +227,11 @@ export default class Modals {
         }
     }
 }
+
+document.addEventListener('change', (e) => {
+    if (e.target.matches('[data-bac-filter-all]')) {
+        if (window.app && window.app.baccarat) window.app.baccarat.toggleAllPatternFilters(e.target.checked);
+    } else if (e.target.matches('[data-bac-filter]')) {
+        if (window.app && window.app.baccarat) window.app.baccarat.togglePatternFilter(e.target.dataset.bacFilter, e.target.checked);
+    }
+});
