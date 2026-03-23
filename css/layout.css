@@ -1,0 +1,833 @@
+
+
+
+.glass-surface {
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.022), rgba(255, 255, 255, 0.004)),
+        var(--glass-bg);
+    box-shadow:
+        0 26px 54px -18px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.58),
+        inset 0 0 0 1px var(--glass-threadline);
+    backdrop-filter: blur(34px) saturate(165%);
+    -webkit-backdrop-filter: blur(34px) saturate(165%);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    position: relative;
+}
+
+
+
+
+.grid-item {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.004)),
+        var(--card-bg-weak);
+    border: 1px solid var(--card-border);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.02),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(10px);
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-open {
+    display: flex;
+}
+
+
+.chart-container {
+    position: relative;
+    height: 100px;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-line {
+    fill: none;
+    stroke: #3b82f6;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.chart-dot {
+    fill: #3b82f6;
+}
+
+.anim-slide-up,
+.modal-content-animated,
+.pred-card,
+.btn-apple,
+.btn-ios,
+.glass-surface {
+    will-change: transform, opacity, box-shadow;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+
+.road-container {
+    background: rgba(5, 8, 18, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-x: auto;
+    display: flex;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+}
+
+/* Fully opaque background for Big Road to prevent blob bleed-through */
+#big-road,
+#dt-big-road {
+    background: #050812;
+    backdrop-filter: none;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* transparent background for bead plates */
+#bead-plate,
+#dt-bead-plate {
+    background: transparent;
+    backdrop-filter: none;
+}
+
+/* clean grid for big road - fully transparent, no gap artifacts */
+#big-road .road-grid,
+#dt-big-road .road-grid {
+    gap: 0;
+    background: transparent;
+    border-right: none;
+    padding: 4px;
+}
+
+/* clean transparent cells */
+#big-road .road-cell,
+#dt-big-road .road-cell {
+    box-shadow: none;
+    background: transparent;
+}
+
+
+.road-container::-webkit-scrollbar {
+    display: none;
+}
+
+.road-grid {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-auto-flow: column;
+    gap: 1px;
+    background: transparent;
+    border-right: none;
+    padding: 2px;
+}
+
+.road-cell {
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#big-road .road-cell {
+    width: 18px;
+    height: 18px;
+}
+
+/* Neutral glass override for Baccarat + Dragon Tiger analytics stats modals */
+#stats-modal,
+#dt-stats-modal {
+    background: rgba(0, 0, 0, 0.26) !important;
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+}
+
+#stats-modal .analytics-modal-wash,
+#dt-stats-modal .analytics-modal-wash {
+    background: rgba(10, 12, 18, 0.2) !important;
+    backdrop-filter: blur(34px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(34px) saturate(130%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+#stats-modal .analytics-modal-wash::before,
+#stats-modal .analytics-modal-wash::after,
+#dt-stats-modal .analytics-modal-wash::before,
+#dt-stats-modal .analytics-modal-wash::after,
+#stats-modal .analytics-modal-focus::before,
+#stats-modal .analytics-modal-focus::after,
+#dt-stats-modal .analytics-modal-focus::before,
+#dt-stats-modal .analytics-modal-focus::after {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════
+           MOBILE RESPONSIVE — BACCARAT MODE
+           Target: screens ≤ 640px (phones)
+           ═══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+    /* ── Lock body on mobile to prevent toolbar scrolling away ── */
+    body {
+        position: fixed !important;
+        width: 100% !important;
+        height: 100dvh !important;
+        height: 100vh !important;
+        top: 0 !important;
+        left: 0 !important;
+        overflow: hidden !important;
+    }
+
+    /* ── Mobile GPU Performance ── */
+    .glass-surface {
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+    }
+
+    .blob {
+        animation-duration: 30s !important;
+        opacity: 0.3 !important;
+        filter: blur(60px) !important;
+    }
+
+    /* ── Touch Targets ── */
+    button,
+    .pred-card,
+    input,
+    .btn-ios {
+        touch-action: manipulation;
+    }
+
+    /* ── Minimum Font Size ── */
+    .text-\[8px\],
+    .text-\[9px\] {
+        font-size: 11px !important;
+    }
+
+    /* ── Roulette prediction rail on mobile ── */
+    #roulette-dashboard {
+        height: auto !important;
+        min-height: 72px !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        align-items: center !important;
+        overflow-y: hidden !important;
+    }
+
+    #roulette-dashboard .grid-item {
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
+        height: auto !important;
+    }
+
+    #roulette-dashboard .bet-checkbox {
+        width: 1.05em;
+        height: 1.05em;
+    }
+
+    #roulette-dashboard.mobile-overflow-hint::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 36px;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(9, 3, 7, 0), rgba(9, 3, 7, 0.92));
+        pointer-events: none;
+        z-index: 12;
+    }
+
+    #roulette-dashboard.mobile-overflow-hint::after {
+        content: 'SWIPE';
+        position: absolute;
+        right: 6px;
+        top: 4px;
+        padding: 1px 5px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: #93c5fd;
+        background: rgba(10, 132, 255, 0.16);
+        border: 1px solid rgba(10, 132, 255, 0.35);
+        pointer-events: none;
+        z-index: 13;
+    }
+
+    /* ── Stable column widths on mobile ── */
+    #roulette-view .header-cell:nth-child(1),
+    #historyBody td:nth-child(1) {
+        width: 8% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(2),
+    #historyBody td:nth-child(2) {
+        width: 14% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(3),
+    #historyBody td:nth-child(3) {
+        width: 14% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(4),
+    #historyBody td:nth-child(4) {
+        width: 14% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(5),
+    #historyBody td:nth-child(5) {
+        width: 14% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(6),
+    #historyBody td:nth-child(6) {
+        width: 14% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(7),
+    #historyBody td:nth-child(7) {
+        width: 22% !important;
+    }
+
+    /* ── Top Toolbar ── */
+    .glass-bar.glass-surface {
+        padding: 6px 8px !important;
+        gap: 4px;
+    }
+
+    /* ── Baccarat Dashboard (prediction cards bar) ── */
+    #baccarat-dashboard,
+    #dragontiger-dashboard {
+        padding: 6px 8px !important;
+        min-height: 64px !important;
+        height: auto !important;
+        overflow-y: hidden !important;
+        align-items: center !important;
+    }
+
+    #baccarat-dashboard .pred-card,
+    #dragontiger-dashboard .pred-card {
+        min-width: 140px !important;
+        max-width: 160px !important;
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
+        font-size: 11px !important;
+        height: auto !important;
+    }
+
+    /* ── Baccarat View Container ── */
+    #baccarat-view {
+        padding: 4px !important;
+        gap: 4px !important;
+    }
+
+    /* ── Shoe Composition Stats Bar ── */
+    #baccarat-view>div:first-child>.flex.justify-between {
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 0 2px !important;
+    }
+
+    /* ── Road Containers (Bead Plate & Big Road) ── */
+    .road-container {
+        border-radius: 8px !important;
+    }
+
+    /* ── Bead Plate — compact height on mobile ── */
+    #baccarat-bead-wrap,
+    #dragontiger-bead-wrap {
+        flex: 0 0 auto !important;
+        min-height: 0 !important;
+    }
+
+    #bead-plate,
+    #dt-bead-plate {
+        height: 130px !important;
+        max-height: 130px !important;
+        min-height: 130px !important;
+    }
+
+    /* ── Big Road — give it more room ── */
+    #baccarat-big-road-wrap,
+    #dragontiger-big-road-wrap {
+        height: 140px !important;
+    }
+
+    #baccarat-controls,
+    #dragontiger-controls {
+        margin-top: 0 !important;
+    }
+
+    /* ── Road Grid — tighter cells on mobile ── */
+    .road-grid {
+        gap: 0px !important;
+    }
+
+    .road-cell {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    #big-road .road-cell,
+    #dt-big-road .road-cell {
+        width: 15px !important;
+        height: 15px !important;
+    }
+
+    /* ── Beads — smaller on mobile ── */
+    .bead {
+        width: 15px !important;
+        height: 15px !important;
+        font-size: 8px !important;
+    }
+
+    /* ── Hollow circles for derived roads ── */
+    .hollow-p,
+    .hollow-b,
+    .hollow-d,
+    .hollow-t,
+    .hollow-x {
+        width: 11px !important;
+        height: 11px !important;
+        border-width: 2.5px !important;
+    }
+
+    /* ── Prediction Cards (in dashboard & elsewhere) ── */
+    .pred-card {
+        border-radius: 12px !important;
+        backdrop-filter: blur(15px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(15px) saturate(150%) !important;
+    }
+
+    .pred-card:hover {
+        transform: none !important;
+        filter: none !important;
+    }
+
+    /* ── P / T / B Input Buttons ── */
+    #baccarat-controls {
+        padding: 8px !important;
+    }
+
+    #baccarat-controls .flex.items-center {
+        gap: 8px !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-p,
+    #baccarat-controls .btn-ios.btn-b {
+        height: 54px !important;
+        border-radius: 14px !important;
+        box-shadow: 0 5px 0 rgba(0, 0, 0, 0.5), 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-p span:first-child,
+    #baccarat-controls .btn-ios.btn-b span:first-child {
+        font-size: 1.1rem !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-t {
+        width: 56px !important;
+        height: 46px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-t span:first-child {
+        font-size: 0.8rem !important;
+    }
+
+    /* ── btn-ios on mobile — reduce exaggerated shadow ── */
+    .btn-ios {
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .btn-ios:active {
+        transform: translateZ(0) scale(0.96) translateY(3px) !important;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    /* ── Baccarat Modals (stats, vault, sim, logs, filters) ── */
+    #stats-modal .glass-panel,
+    #vault-modal .glass-panel,
+    #log-modal .glass-panel,
+    #sim-modal .glass-panel,
+    #filters-modal .glass-panel,
+    #stats-modal .glass-analytics,
+    #vault-modal .vault-glass,
+    #log-modal .scanner-glass,
+    #sim-modal .cosmic-glass {
+        max-width: 100% !important;
+        width: 100% !important;
+        border-radius: 20px !important;
+        padding: 14px !important;
+        max-height: 90vh !important;
+    }
+
+    /* Keep compact filter popovers anchored under top FILTERS button on mobile */
+    #filters-modal #filters-modal-content,
+    #dt-filters-modal #dt-filters-modal-content {
+        width: min(92vw, 360px) !important;
+        max-width: 360px !important;
+        border-radius: 16px !important;
+        padding: 12px !important;
+        max-height: 72vh !important;
+    }
+
+    /* ── Stats Modal Tabs ── */
+    .epic-tabs {
+        border-radius: 14px !important;
+        padding: 4px !important;
+        gap: 2px !important;
+    }
+
+    .stat-tab {
+        padding: 8px 0 !important;
+        font-size: 9px !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    /* ── KPI cards in stats modal ── */
+    .epic-glass-card {
+        padding: 12px 8px !important;
+        border-radius: 14px !important;
+    }
+
+    #sec-kpis .text-4xl {
+        font-size: 1.75rem !important;
+    }
+
+    #sec-kpis .text-2xl {
+        font-size: 1.25rem !important;
+    }
+
+    /* ── Golden section KPI grid ── */
+    #sec-golden .grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    /* ── Sim Lab modal ── */
+    #sim-modal .cosmic-glass {
+        height: 92vh !important;
+    }
+
+    #sim-modal .text-xl {
+        font-size: 1rem !important;
+    }
+
+    /* ── Heatmap tables ── */
+    #heatmap-body td,
+    #heatmap-body th,
+    #golden-ledger-body td,
+    #golden-ledger-body th {
+        padding: 8px 6px !important;
+        font-size: 10px !important;
+    }
+
+    /* ── Prediction card text sizes ── */
+    .pred-card-gold {
+        transform: scale(1.01) !important;
+    }
+
+    .pred-card-locked {
+        transform: scale(1.02) translateY(-1px) !important;
+    }
+
+    /* ── Toast container on mobile ── */
+    #toast-container {
+        bottom: 80px !important;
+        right: 8px !important;
+        left: 8px !important;
+    }
+
+    .toast {
+        min-width: auto !important;
+        width: 100% !important;
+        border-radius: 10px !important;
+        font-size: 12px !important;
+        padding: 10px 14px !important;
+    }
+
+    /* ── Menu dropdown on mobile ── */
+    #mainMenuDropdown {
+        top: 48px !important;
+        right: 4px !important;
+        left: 4px !important;
+        width: auto !important;
+    }
+
+    /* ── Filter dropdown on mobile ── */
+    #filterDropdown {
+        width: calc(100vw - 16px) !important;
+        max-width: 100% !important;
+        right: 8px !important;
+        left: 8px !important;
+    }
+
+    /* ── Reduce heavy backdrop-filter on mobile for perf ── */
+    .glass-surface {
+        backdrop-filter: blur(20px) saturate(150%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+    }
+
+    /* ── Analytics modal (roulette) on mobile ── */
+    #analyticsModal .glass-panel {
+        width: 96% !important;
+        border-radius: 20px !important;
+        height: 92dvh !important;
+        max-height: 92dvh !important;
+    }
+
+    /* ── Bets modal on mobile ── */
+    #betsModal .glass-panel {
+        width: 96% !important;
+        border-radius: 20px !important;
+        height: 92dvh !important;
+        max-height: 92dvh !important;
+    }
+
+    #betsModal .modal-header-lg {
+        padding: 0.95rem 1rem !important;
+    }
+
+    #betsModal .modal-header-lg h2 {
+        font-size: 1.05rem !important;
+    }
+
+    #betsModal .btn-close-lg {
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+
+    #betsModal .grid.grid-cols-3 {
+        gap: 0.5rem !important;
+        padding: 0.65rem !important;
+    }
+
+    #betsModal .grid.grid-cols-3 .grid-item {
+        min-width: 0;
+        padding: 0.45rem 0.35rem !important;
+    }
+
+    #betsModal .grid.grid-cols-3 .text-\[10px\] {
+        font-size: 9px !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    #betsModal #userNetUnits,
+    #betsModal #userHitRate,
+    #betsModal #userTotalBets {
+        font-size: 1.1rem !important;
+        line-height: 1.1 !important;
+    }
+
+    #betsModal #seg-trend,
+    #betsModal #seg-analytics,
+    #betsModal #seg-logs {
+        font-size: 11px !important;
+        padding-top: 0.45rem !important;
+        padding-bottom: 0.45rem !important;
+    }
+
+    #betsModal #tab-bets-trend,
+    #betsModal #tab-bets-analytics,
+    #betsModal #tab-bets-logs {
+        padding: 0.625rem !important;
+    }
+
+    #betsModal #userGraphContainer {
+        min-height: 210px !important;
+    }
+
+    #betsModal #tab-bets-analytics th,
+    #betsModal #tab-bets-analytics td,
+    #betsModal #tab-bets-logs th,
+    #betsModal #tab-bets-logs td {
+        padding: 0.6rem 0.5rem !important;
+        font-size: 11px !important;
+    }
+
+    #betsModal #roulette-user-heatmap-controls button {
+        padding: 0.3rem 0.5rem !important;
+        font-size: 9px !important;
+    }
+}
+
+/* ── Extra small phones (≤ 380px) ── */
+@media (max-width: 380px) {
+    .road-cell {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    #big-road .road-cell {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .bead {
+        width: 14px !important;
+        height: 14px !important;
+        font-size: 7px !important;
+    }
+
+    .hollow-p,
+    .hollow-b,
+    .hollow-d,
+    .hollow-t,
+    .hollow-x {
+        width: 9px !important;
+        height: 9px !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-p,
+    #baccarat-controls .btn-ios.btn-b {
+        height: 48px !important;
+    }
+
+    #betsModal .glass-panel {
+        width: 98% !important;
+        border-radius: 16px !important;
+        height: 94dvh !important;
+        max-height: 94dvh !important;
+    }
+
+    #betsModal .grid.grid-cols-3 {
+        gap: 0.35rem !important;
+    }
+
+    #betsModal .grid.grid-cols-3 .text-\[10px\] {
+        font-size: 8px !important;
+    }
+
+    #betsModal #userNetUnits,
+    #betsModal #userHitRate,
+    #betsModal #userTotalBets {
+        font-size: 1rem !important;
+    }
+
+    #betsModal #userGraphContainer {
+        min-height: 180px !important;
+    }
+
+    #betsModal #tab-bets-analytics th,
+    #betsModal #tab-bets-analytics td,
+    #betsModal #tab-bets-logs th,
+    #betsModal #tab-bets-logs td {
+        padding: 0.5rem 0.35rem !important;
+        font-size: 10px !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-p span:first-child,
+    #baccarat-controls .btn-ios.btn-b span:first-child {
+        font-size: 0.95rem !important;
+    }
+
+    #baccarat-controls .btn-ios.btn-t {
+        width: 48px !important;
+        height: 40px !important;
+    }
+
+    #baccarat-big-road-wrap,
+    #dragontiger-big-road-wrap {
+        height: 90px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .highlight-ring-signal::before {
+        animation: halo-orbit-pulse 1.8s ease-in-out infinite;
+    }
+}
+
+/* =========================================================================
+   UI COMPONENT ABSTRACTIONS
+   These classes replace repetitive Tailwind utility strings in index.html
+========================================================================= */
+
+/* Large Modal Containers (Stats, Vault, Trends) */
+.modal-content-lg {
+    width: 91.666667%;
+    /* w-11/12 */
+    max-width: 56rem;
+    /* max-w-4xl */
+    max-height: 90vh;
+    /* max-h-[90dvh] */
+    border-radius: 1.5rem;
+    /* rounded-3xl */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* shadow-2xl */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* border border-white/20 */
+}
+
+/* Small Modal Containers (Pattern Logs) */
+.modal-content-sm {
+    width: 90vw;
+    /* w-[90vw] */
+    max-width: 20rem;
+    /* max-w-80 */
+    border-radius: 1rem;
+    /* rounded-2xl */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* shadow-2xl */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* border border-white/20 */
+}
+
+/* Modal Headers */
+.modal-header-lg {
+    padding: 1.25rem;
+    /* p-5 */
+    background-color: rgba(255, 255, 255, 0.05);
+    /* bg-white/5 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    /* border-b border-white/10 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.modal-header-sm {
+    padding: 0.75rem;
+    /* p-3 */
+    background-color: rgba(255, 255, 255, 0.05);
+    /* bg-white/5 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    /* border-b border-white/10 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}

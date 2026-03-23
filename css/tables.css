@@ -1,0 +1,84 @@
+
+
+
+
+
+.data-row {
+    cursor: default;
+}
+
+.data-cell {
+    color: var(--text-main);
+    font-weight: 800;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    padding: 8px 2px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    border-radius: 8px;
+    opacity: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02), 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.header-cell {
+    background: linear-gradient(135deg, rgba(30, 20, 28, 0.9), rgba(16, 14, 30, 0.85));
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    color: #d9deea;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 800;
+    padding: 8px;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    border-radius: 6px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Roulette grid header blocks themed by column */
+#roulette-view #th-index {
+    background: linear-gradient(135deg, rgba(34, 34, 44, 0.9), rgba(14, 14, 24, 0.85));
+}
+
+#roulette-view #th-spin {
+    background: linear-gradient(135deg, rgba(120, 20, 34, 0.9), rgba(28, 16, 26, 0.85));
+}
+
+#roulette-view #th-hl {
+    background: linear-gradient(135deg, rgba(219, 153, 88, 0.85), rgba(95, 143, 195, 0.85));
+}
+
+#roulette-view #th-oe {
+    background: linear-gradient(135deg, rgba(165, 135, 226, 0.85), rgba(223, 143, 149, 0.85));
+}
+
+#roulette-view #th-doz {
+    background: linear-gradient(135deg, rgba(36, 171, 200, 0.85), rgba(106, 113, 131, 0.85), rgba(153, 150, 106, 0.85));
+}
+
+#roulette-view #th-col {
+    background: linear-gradient(135deg, rgba(231, 78, 85, 0.85), rgba(80, 219, 79, 0.85), rgba(133, 115, 34, 0.85));
+}
+
+#roulette-view #th-pred {
+    background: linear-gradient(135deg, rgba(70, 100, 170, 0.85), rgba(34, 41, 88, 0.85));
+}
+
+
+
+
+
+body[data-layout="square"] .data-cell,
+body[data-layout="square"] .header-cell {
+    border-radius: 0px !important;
+}
+
+body[data-layout="square"] table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+}

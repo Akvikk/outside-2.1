@@ -1,0 +1,62 @@
+:root {
+
+    --ios-blue: #0A84FF;
+    --ios-green: #30D158;
+    --ios-red: #FF453A;
+    --ios-yellow: #FFD60A;
+    --ios-purple: #BF5AF2;
+    --ios-gray: #98989D;
+
+
+    --bg-dark: #090307;
+    --bg-left-glow: rgba(140, 17, 37, 0.34);
+    --bg-top-glow: rgba(31, 39, 96, 0.24);
+    --bg-right-glow: rgba(102, 22, 49, 0.22);
+    --bg-bottom-glow: rgba(8, 10, 18, 0.82);
+
+    --glass-bg: rgba(14, 12, 18, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-highlight: rgba(255, 255, 255, 0.1);
+    --glass-threadline: rgba(255, 255, 255, 0.08);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+
+    --blob-1-color: rgba(30, 20, 80, 0.9);
+    --blob-2-color: rgba(10, 40, 90, 0.9);
+    --blob-3-color: rgba(60, 10, 80, 0.7);
+
+    --card-bg-weak: rgba(16, 15, 22, 0.25);
+    --card-border: rgba(255, 255, 255, 0.15);
+
+    --text-main: #f4f6fb;
+    --panel-bg: var(--glass-bg);
+    --cell-border: rgba(255, 255, 255, 0.085);
+
+
+    --col-high: #d89a5b;
+    --col-low: #6c9fd0;
+
+    --col-odd: #9d82d6;
+    --col-even: #d8878c;
+
+    --col-d1: #2299b3;
+    --col-d2: #596073;
+    --col-d3: #908a57;
+
+    --col-c1: #e44c50;
+    --col-c2: #46d94a;
+    --col-c3: #6a5a16;
+
+    --sec-voisins: #00bfff;
+    --sec-tier: #ffcc00;
+    --sec-orphelins: #ccccff;
+
+    --zero-green: #22c55e;
+    --win-gold: #fbbf24;
+    --loss-red: #ef4444;
+
+
+    --apple-blue: #0A84FF;
+    --apple-green: #30D158;
+    --apple-red: #FF453A;
+    --apple-gray: #8E8E93;
+}
