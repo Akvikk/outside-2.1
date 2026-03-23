@@ -1,4 +1,4 @@
-<div id="resetModal" class="modal-overlay z-[900]" onclick="if(event.target === this) app.roulette.closeResetModal()">
+<div id="resetModal" class="modal-overlay z-[900]" data-evt-bind="evt-bind-d5c61084">
         <div
             class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col animate-slide-up p-6 text-center border border-red-500/30">
             <div class="text-red-500 text-5xl mb-4"><i class="fas fa-triangle-exclamation"></i></div>
@@ -6,15 +6,15 @@
             <p class="text-gray-400 text-sm mb-6">Are you sure you want to wipe all session data? This action cannot be
                 undone and will clear your saved progress.</p>
             <div class="flex gap-3 justify-center">
-                <button onclick="app.roulette.closeResetModal()"
+                <button data-evt-bind="evt-bind-3d6cee60"
                     class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 font-bold rounded-xl transition-colors w-full">Cancel</button>
-                <button onclick="app.roulette.executeReset()"
+                <button data-evt-bind="evt-bind-afdc5853"
                     class="px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg transition-colors w-full">Yes,
                     Wipe Data</button>
             </div>
         </div>
     </div>
-<div id="switchModeModal" class="modal-overlay" onclick="if(event.target === this) app.closeSwitchModeModal()">
+<div id="switchModeModal" class="modal-overlay" data-evt-bind="evt-bind-39e05a01">
         <div id="switchModePanel"
             class="glass-panel glass-surface w-11/12 max-w-md rounded-3xl shadow-2xl flex flex-col animate-slide-up p-6 text-center border border-blue-500/30">
             <div id="switchModeIcon" class="text-5xl mb-4">🔄</div>
@@ -23,47 +23,47 @@
                 change the interface. Your current session data is
                 saved automatically.</p>
             <div class="flex gap-3 justify-center">
-                <button onclick="app.closeSwitchModeModal()"
+                <button data-evt-bind="evt-bind-2df95490"
                     class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 font-bold rounded-xl transition-colors w-full">Cancel</button>
-                <button id="switchModeConfirmBtn" onclick="app.executeSwitchMode()"
+                <button id="switchModeConfirmBtn" data-evt-bind="evt-bind-9acf5518"
                 class="px-5 py-2.5 text-white font-bold rounded-xl shadow-lg transition-colors w-full animate-pulse-glow">Yes,
                     Switch</button>
             </div>
         </div>
     </div>
-<div id="analyticsModal" class="modal-overlay" onclick="if(event.target === this) app.toggleAnalytics()">
+<div id="analyticsModal" class="modal-overlay" data-evt-bind="evt-bind-664c591f">
         <div class="glass-panel glass-surface modal-content-lg animate-slide-up">
 
             <!-- HEADER WITH TOGGLE -->
             <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
                 <div class="flex items-center gap-8">
-                    <h2 id="head-analytics" onclick="switchAnalyticsMode('analytics')"
+                    <h2 id="head-analytics" data-evt-bind="evt-bind-c3c46f12"
                         class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-yellow-500 pb-[2px] text-white flex items-center gap-2">
                         <span class="text-yellow-500"><i class="fas fa-chart-pie"></i></span> Engine Analytics
                     </h2>
-                    <h2 id="head-perimeter" onclick="switchAnalyticsMode('perimeter')"
+                    <h2 id="head-perimeter" data-evt-bind="evt-bind-bd7d1ad8"
                         class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-transparent pb-[2px] text-gray-500 hover:text-gray-300 flex items-center gap-2">
                         <span class="text-emerald-500"><i class="fas fa-satellite-dish"></i></span> Perimeter Radar
                     </h2>
-                    <h2 id="head-simulation" onclick="switchAnalyticsMode('simulation')"
+                    <h2 id="head-simulation" data-evt-bind="evt-bind-27788667"
                         class="text-xl font-bold cursor-pointer transition-colors border-b-2 border-transparent pb-[2px] text-gray-500 hover:text-gray-300 flex items-center gap-2">
                         <span class="text-purple-500"><i class="fas fa-flask"></i></span> Simulation
                     </h2>
                 </div>
-                <button onclick="toggleAnalytics()" class="btn-close-lg"><i class="fas fa-times"></i></button>
+                <button data-evt-bind="evt-bind-8e15fc44" class="btn-close-lg"><i class="fas fa-times"></i></button>
             </div>
 
             <!-- VIEW: ENGINE ANALYTICS (DEFAULT) -->
             <div id="analyticsView" class="flex flex-col flex-1 overflow-hidden h-full">
                 <!-- ROULETTE TABS -->
                 <div class="flex flex-wrap gap-2 p-3 bg-transparent border-b border-white/10 shrink-0">
-                    <button id="tab-master" onclick="app.roulette.switchAnalyticsTab('master')"
+                    <button id="tab-master" data-evt-bind="evt-bind-d2a8b721"
                         class="px-4 py-2 bg-[#007AFF] text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors shadow-lg">MASTER
                         DASHBOARD</button>
-                    <button id="tab-1to1" onclick="app.roulette.switchAnalyticsTab('1to1')"
+                    <button id="tab-1to1" data-evt-bind="evt-bind-d3fa7c0f"
                         class="px-4 py-2 bg-white/10 text-gray-400 hover:text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors border border-white/10 hover:border-white/20">EVEN
                         BETS (1:1)</button>
-                    <button id="tab-2to1" onclick="app.roulette.switchAnalyticsTab('2to1')"
+                    <button id="tab-2to1" data-evt-bind="evt-bind-14f8c309"
                         class="px-4 py-2 bg-white/10 text-gray-400 hover:text-white rounded-lg font-semibold text-xs uppercase tracking-wider transition-colors border border-white/10 hover:border-white/20">DOZEN
                         / COLUMN (2:1)</button>
                 </div>
@@ -100,9 +100,9 @@
                     <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
                         <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Efficiency Heatmap</h3>
                         <div id="roulette-heatmap-controls" class="flex bg-black/30 p-1 rounded-lg">
-                            <button id="hm-btn-pat" onclick="app.roulette.toggleHeatmapMode('PATTERNS')"
+                            <button id="hm-btn-pat" data-evt-bind="evt-bind-46e1b54b"
                                 class="px-3 py-1 text-[10px] font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">PATTERNS</button>
-                            <button id="hm-btn-cat" onclick="app.roulette.toggleHeatmapMode('CATEGORIES')"
+                            <button id="hm-btn-cat" data-evt-bind="evt-bind-101acbbe"
                                 class="px-3 py-1 text-[10px] font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">CATEGORIES</button>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                                     <th class="p-3 text-right">Total / Att</th>
                                     <th class="p-3 text-right">W / L</th>
                                     <th class="p-3 text-right cursor-pointer hover:text-white transition-colors"
-                                        onclick="toggleHeatmapMetric()"><span id="hm-header-metric">Share %</span> <i
+                                        data-evt-bind="evt-bind-8247b65f"><span id="hm-header-metric">Share %</span> <i
                                             class="fas fa-sort text-xs ml-1"></i></th>
                                 </tr>
                             </thead>
@@ -129,7 +129,7 @@
                     </div>
                 </div>
                 <div class="p-3 bg-white/5 border-t border-white/10 text-right shrink-0">
-                    <button onclick="app.roulette.resetStats()"
+                    <button data-evt-bind="evt-bind-e3ffb2ee"
                         class="text-xs text-red-500 hover:text-red-400 underline mr-4 transition-colors">Reset All
                         Data</button>
                 </div>
@@ -142,7 +142,7 @@
             <div id="simulationView" class="hidden flex-col flex-1 overflow-hidden h-full bg-transparent">
                 <!-- SIM CONFIG BAR -->
                 <div class="p-3 bg-transparent border-b border-white/10 flex justify-between items-center shrink-0">
-                    <button onclick="app.roulette.toggleSimConfig()"
+                    <button data-evt-bind="evt-bind-784db13b"
                         class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-xs uppercase tracking-wider transition-colors shadow-lg flex items-center gap-2">
                         <i class="fas fa-sliders-h"></i> Strategy Config
                     </button>
@@ -156,7 +156,7 @@
                         <div class="flex-1">
                             <h4 class="text-purple-400 text-[10px] uppercase font-bold tracking-widest mb-2">Betting
                                 Strategy</h4>
-                            <select id="simProgressionSelect" onchange="changeSimProgression(this.value)"
+                            <select id="simProgressionSelect" data-evt-bind="evt-bind-94118a99"
                                 class="w-full bg-white/5 border border-purple-900/50 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition-colors">
                                 <option value="flat">Flat Betting (1 Unit)</option>
                                 <option value="martingale">Martingale (Double on Loss)</option>
@@ -174,31 +174,31 @@
                                 <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
                                     for="sim-cat-Color">
                                     <input type="checkbox" class="sim-checkbox" checked=""
-                                        onchange="toggleSimFilter('cat', 'Color')" id="sim-cat-Color"> <span
+                                        data-evt-bind="evt-bind-7a9c971d" id="sim-cat-Color"> <span
                                         class="text-gray-300 text-xs">Color</span>
                                 </label>
                                 <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
                                     for="sim-cat-High/Low">
                                     <input type="checkbox" class="sim-checkbox" checked=""
-                                        onchange="toggleSimFilter('cat', 'High/Low')" id="sim-cat-High/Low"> <span
+                                        data-evt-bind="evt-bind-fdfd30ef" id="sim-cat-High/Low"> <span
                                         class="text-gray-300 text-xs">High / Low</span>
                                 </label>
                                 <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
                                     for="sim-cat-Odd/Even">
                                     <input type="checkbox" class="sim-checkbox" checked=""
-                                        onchange="toggleSimFilter('cat', 'Odd/Even')" id="sim-cat-Odd/Even"> <span
+                                        data-evt-bind="evt-bind-0adb9ed2" id="sim-cat-Odd/Even"> <span
                                         class="text-gray-300 text-xs">Odd / Even</span>
                                 </label>
                                 <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
                                     for="sim-cat-Dozens">
                                     <input type="checkbox" class="sim-checkbox" checked=""
-                                        onchange="toggleSimFilter('cat', 'Dozens')" id="sim-cat-Dozens"> <span
+                                        data-evt-bind="evt-bind-b121c9f6" id="sim-cat-Dozens"> <span
                                         class="text-gray-300 text-xs">Dozens</span>
                                 </label>
                                 <label class="flex items-center gap-2 p-1 hover:bg-white/5 rounded cursor-pointer"
                                     for="sim-cat-Columns">
                                     <input type="checkbox" class="sim-checkbox" checked=""
-                                        onchange="toggleSimFilter('cat', 'Columns')" id="sim-cat-Columns"> <span
+                                        data-evt-bind="evt-bind-df6949aa" id="sim-cat-Columns"> <span
                                         class="text-gray-300 text-xs">Columns</span>
                                 </label>
                             </div>
@@ -268,18 +268,18 @@
 
         </div>
     </div>
-<div id="betsModal" class="modal-overlay" onclick="if(event.target === this) app.roulette.toggleBetsModal()">
+<div id="betsModal" class="modal-overlay" data-evt-bind="evt-bind-5571ca0c">
         <div class="glass-panel glass-surface modal-content-lg animate-slide-up h-[90dvh]">
             <div class="modal-header-lg">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-blue-500"><i class="fas fa-list-check"></i></span> Actual Bets
                 </h2>
                 <div class="flex items-center gap-3">
-                    <button onclick="clearVault('roulette')"
+                    <button data-evt-bind="evt-bind-618c2c23"
                         class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
                         <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
                     </button>
-                    <button onclick="toggleBetsModal()" class="btn-close-lg"><i class="fas fa-times"></i></button>
+                    <button data-evt-bind="evt-bind-cf2c506c" class="btn-close-lg"><i class="fas fa-times"></i></button>
                 </div>
             </div>
 
@@ -301,11 +301,11 @@
             <!-- Segmented Control -->
             <div class="p-3 bg-transparent border-b border-white/10 shrink-0">
                 <div class="flex bg-black/30 p-1 rounded-lg max-w-md mx-auto">
-                    <button id="seg-trend" onclick="app.roulette.switchBetsTab('trend')"
+                    <button id="seg-trend" data-evt-bind="evt-bind-53a012f3"
                         class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">GRAPH</button>
-                    <button id="seg-analytics" onclick="app.roulette.switchBetsTab('analytics')"
+                    <button id="seg-analytics" data-evt-bind="evt-bind-d177410d"
                         class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">ANALYTICS</button>
-                    <button id="seg-logs" onclick="app.roulette.switchBetsTab('logs')"
+                    <button id="seg-logs" data-evt-bind="evt-bind-10bd1207"
                         class="flex-1 py-1.5 text-xs font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">LOGS</button>
                 </div>
             </div>
@@ -322,9 +322,9 @@
                 <div class="flex justify-between items-center mb-3 border-b border-white/10 pb-2 shrink-0">
                     <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Your Performance Heatmap</h3>
                     <div id="roulette-user-heatmap-controls" class="flex bg-black/30 p-1 rounded-lg">
-                        <button id="uhm-btn-pat" onclick="app.roulette.toggleUserHeatmapMode('PATTERNS')"
+                        <button id="uhm-btn-pat" data-evt-bind="evt-bind-03446bd2"
                             class="px-3 py-1 text-[10px] font-bold rounded-md transition-all bg-[#007AFF] text-white shadow-lg">PATTERNS</button>
-                        <button id="uhm-btn-cat" onclick="app.roulette.toggleUserHeatmapMode('CATEGORIES')"
+                        <button id="uhm-btn-cat" data-evt-bind="evt-bind-2217409c"
                             class="px-3 py-1 text-[10px] font-bold rounded-md transition-all text-gray-400 hover:text-white hover:bg-white/5">CATEGORIES</button>
                     </div>
                 </div>
@@ -369,10 +369,10 @@
             </div>
         </div>
     </div>
-<div id="filters-modal" class="fixed inset-0 z-[200] hidden" onclick="app.baccarat.toggleModal('filters-modal')">
+<div id="filters-modal" class="fixed inset-0 z-[200] hidden" data-evt-bind="evt-bind-52f6b4bf">
         <div id="filters-modal-content"
             class="glass-panel glass-analytics analytics-modal-wash w-[92vw] max-w-[360px] rounded-2xl p-3 animate-fade-in-glass flex flex-col max-h-[72vh] absolute"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-80b2eb6c">
             <div class="flex justify-between items-center mb-2 shrink-0">
                 <div class="flex flex-col">
                     <h3 class="text-base font-black text-white tracking-tight uppercase flex items-center gap-2"><i
@@ -380,7 +380,7 @@
                     <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1">Compact list
                         view</span>
                 </div>
-                <button onclick="app.baccarat.toggleModal('filters-modal')"
+                <button data-evt-bind="evt-bind-7471e11d"
                     class="text-white/40 hover:text-white transition-colors text-xl min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg"><i
                         class="fas fa-times"></i></button>
             </div>
@@ -389,11 +389,11 @@
         </div>
     </div>
 <div id="patternLogModal" class="modal-overlay z-[1000]"
-        onclick="if(event.target === this) app.roulette.closePatternLog()">
+        data-evt-bind="evt-bind-ded48fa0">
         <div class="glass-panel glass-surface modal-content-sm animate-slide-up">
             <div class="modal-header-sm">
                 <h3 id="pl-title" class="font-bold text-white text-sm">Pattern Log</h3>
-                <button onclick="closePatternLog()" class="btn-close-sm"><i class="fas fa-times"></i></button>
+                <button data-evt-bind="evt-bind-3be7d497" class="btn-close-sm"><i class="fas fa-times"></i></button>
             </div>
             <div class="max-h-96 overflow-y-auto overscroll-contain bg-transparent">
                 <table class="w-full text-left">
@@ -410,10 +410,10 @@
         </div>
     </div>
 <div id="dt-filters-modal" class="fixed inset-0 z-[200] hidden"
-        onclick="app.dragontiger.toggleModal('dt-filters-modal')">
+        data-evt-bind="evt-bind-c24700fa">
         <div id="dt-filters-modal-content"
             class="glass-panel glass-analytics analytics-modal-wash w-[92vw] max-w-[360px] rounded-2xl p-3 animate-fade-in-glass flex flex-col max-h-[72vh] absolute"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-c8a27727">
             <div class="flex justify-between items-center mb-2 shrink-0">
                 <div class="flex flex-col">
                     <h3 class="text-base font-black text-white tracking-tight uppercase flex items-center gap-2"><i
@@ -421,7 +421,7 @@
                     <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1">Compact list
                         view</span>
                 </div>
-                <button onclick="app.dragontiger.toggleModal('dt-filters-modal')"
+                <button data-evt-bind="evt-bind-17439fd3"
                     class="text-white/40 hover:text-white transition-colors text-xl min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg"><i
                         class="fas fa-times"></i></button>
             </div>
@@ -431,9 +431,9 @@
     </div>
 <div id="dt-vault-modal"
         class="fixed inset-0 z-[400] bg-black/40 backdrop-blur-xl hidden flex items-center justify-center p-4"
-        onclick="app.dragontiger.toggleModal('dt-vault-modal')">
+        data-evt-bind="evt-bind-d7c3fb2b">
         <div class="vault-glass w-full max-w-3xl rounded-3xl p-5 flex flex-col h-[90vh] relative overflow-hidden"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-f0f30a87">
             <div class="flex justify-between items-center mb-3 shrink-0">
                 <div class="flex flex-col">
                     <h3 class="text-xl font-black text-gold-glow uppercase flex items-center gap-2"><i
@@ -442,18 +442,18 @@
                         Bankroll</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <select id="dt-vault-strategy" onchange="app.dragontiger.renderVault()"
+                    <select id="dt-vault-strategy" data-evt-bind="evt-bind-cfafd2d2"
                         class="bg-[#1a180e] text-[#FFD60A] border border-[#FFD60A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FFD60A]/20 transition-colors appearance-none text-center">
                         <option value="flat">Flat (1U)</option>
                         <option value="martingale">Martingale</option>
                         <option value="paroli">Paroli</option>
                         <option value="1326">1-3-2-6</option>
                     </select>
-                    <button onclick="clearVault('dragontiger')"
+                    <button data-evt-bind="evt-bind-7497883b"
                         class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
                         <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
                     </button>
-                    <button onclick="app.dragontiger.toggleModal('dt-vault-modal')"
+                    <button data-evt-bind="evt-bind-5dec50d5"
                         class="text-[#FFD60A]/50 hover:text-[#FFD60A] transition-colors text-2xl"><i
                             class="fas fa-times"></i></button>
                 </div>
@@ -522,16 +522,16 @@
     </div>
 <div id="dt-stats-modal"
         class="fixed inset-0 z-[200] bg-black/25 backdrop-blur-xl hidden flex items-center justify-center p-4"
-        onclick="app.dragontiger.toggleModal('dt-stats-modal')">
+        data-evt-bind="evt-bind-39f9e0c8">
         <div class="glass-panel glass-surface modal-content-lg animate-slide-up analytics-modal-wash"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-fc35a411">
 
             <!-- HEADER -->
             <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-yellow-500"><i class="fas fa-chart-pie"></i></span> Engine Analytics
                 </h2>
-                <button onclick="app.dragontiger.toggleModal('dt-stats-modal')" class="btn-close-lg"><i
+                <button data-evt-bind="evt-bind-cb0e877b" class="btn-close-lg"><i
                         class="fas fa-times"></i></button>
             </div>
 
@@ -599,7 +599,7 @@
                 <!-- GOLDEN SECTION (Collapsible) -->
                 <div class="border border-[#FFD60A]/20 rounded-2xl overflow-hidden">
                     <button
-                        onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i.fa-chevron-down, i.fa-chevron-up').classList.toggle('fa-chevron-down'); this.querySelector('i.fa-chevron-down, i.fa-chevron-up').classList.toggle('fa-chevron-up');"
+                        data-evt-bind="evt-bind-5f5b3d12"
                         class="w-full flex items-center justify-between p-4 bg-[#FFD60A]/5 hover:bg-[#FFD60A]/10 transition-colors">
                         <span
                             class="text-sm font-bold text-[#FFD60A] uppercase tracking-widest flex items-center gap-2"><i
@@ -655,16 +655,16 @@
     </div>
 <div id="stats-modal"
         class="fixed inset-0 z-[200] bg-black/25 backdrop-blur-xl hidden flex items-center justify-center p-4"
-        onclick="app.baccarat.toggleModal('stats-modal')">
+        data-evt-bind="evt-bind-1f904a5c">
         <div class="glass-panel glass-surface modal-content-lg animate-slide-up analytics-modal-wash"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-6588e4ab">
 
             <!-- HEADER -->
             <div class="p-5 bg-white/5 flex justify-between items-center shrink-0 border-b border-white/10">
                 <h2 class="text-xl font-bold text-white flex items-center gap-2">
                     <span class="text-yellow-500"><i class="fas fa-chart-pie"></i></span> Engine Analytics
                 </h2>
-                <button onclick="app.baccarat.toggleModal('stats-modal')" class="btn-close-lg"><i
+                <button data-evt-bind="evt-bind-44c826d4" class="btn-close-lg"><i
                         class="fas fa-times"></i></button>
             </div>
 
@@ -701,7 +701,7 @@
                         </div>
                         <div class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="comm-toggle" checked=""
-                                onchange="app.baccarat.toggleCommission()" class="sr-only peer">
+                                data-evt-bind="evt-bind-57e80937" class="sr-only peer">
                             <div
                                 class="w-11 h-6 bg-black/60 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#30D158] shadow-inner border border-white/10">
                             </div>
@@ -748,7 +748,7 @@
                 <!-- GOLDEN SECTION (Collapsible) -->
                 <div class="border border-[#FFD60A]/20 rounded-2xl overflow-hidden">
                     <button
-                        onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i.fa-chevron-down, i.fa-chevron-up').classList.toggle('fa-chevron-down'); this.querySelector('i.fa-chevron-down, i.fa-chevron-up').classList.toggle('fa-chevron-up');"
+                        data-evt-bind="evt-bind-3bc0e63e"
                         class="w-full flex items-center justify-between p-4 bg-[#FFD60A]/5 hover:bg-[#FFD60A]/10 transition-colors">
                         <span
                             class="text-sm font-bold text-[#FFD60A] uppercase tracking-widest flex items-center gap-2"><i
@@ -804,9 +804,9 @@
     </div>
 <div id="vault-modal"
         class="fixed inset-0 z-[400] bg-black/40 backdrop-blur-xl hidden flex items-center justify-center p-4"
-        onclick="app.baccarat.toggleModal('vault-modal')">
+        data-evt-bind="evt-bind-267126e4">
         <div class="vault-glass w-full max-w-3xl rounded-3xl p-5 flex flex-col max-h-[90dvh] relative overflow-hidden"
-            onclick="event.stopPropagation()">
+            data-evt-bind="evt-bind-4057e9f2">
             <div class="flex justify-between items-center mb-3 shrink-0">
                 <div class="flex flex-col">
                     <h3 class="text-xl font-black text-gold-glow uppercase flex items-center gap-2"><i
@@ -815,18 +815,18 @@
                         Bankroll</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <select id="vault-strategy" onchange="app.baccarat.renderVault()"
+                    <select id="vault-strategy" data-evt-bind="evt-bind-55c2a7bc"
                         class="bg-[#1a180e] text-[#FFD60A] border border-[#FFD60A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FFD60A]/20 transition-colors appearance-none text-center">
                         <option value="flat">Flat (1U)</option>
                         <option value="martingale">Martingale</option>
                         <option value="paroli">Paroli</option>
                         <option value="1326">1-3-2-6</option>
                     </select>
-                    <button onclick="clearVault('baccarat')"
+                    <button data-evt-bind="evt-bind-a39951ee"
                         class="bg-[#FF453A]/10 text-[#FF453A] border border-[#FF453A]/30 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest outline-none shadow-md cursor-pointer hover:bg-[#FF453A]/20 transition-colors flex items-center gap-1">
                         <i class="fas fa-trash-alt"></i> <span class="hidden sm:inline">Clear</span>
                     </button>
-                    <button onclick="app.baccarat.toggleModal('vault-modal')"
+                    <button data-evt-bind="evt-bind-f09b0d3b"
                         class="text-[#FFD60A]/50 hover:text-[#FFD60A] transition-colors text-2xl"><i
                             class="fas fa-times"></i></button>
                 </div>

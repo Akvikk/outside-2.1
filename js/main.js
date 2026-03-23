@@ -6,6 +6,7 @@ import TrendGraph from './roulette/ui/components/TrendGraph.js';
 import { PATTERN_CONFIG as ROULETTE_PATTERNS } from './roulette/config.js';
 import { PATTERN_CONFIG as BACCARAT_PATTERNS } from './baccarat/config.js';
 import { PATTERN_CONFIG as DT_PATTERNS } from './dragontiger/config.js';
+import bindExtractedEvents from './events.js';
 
 class AppOrchestrator {
     constructor() {
@@ -537,6 +538,8 @@ async function bootApp() {
         inject('baccarat-container', b);
         inject('dragontiger-container', dt);
         inject('modals-container', m);
+        
+        bindExtractedEvents();
     } catch(e) {
         console.error("Critical Error: Failed to load UI components.", e);
     }
