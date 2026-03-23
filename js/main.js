@@ -514,8 +514,38 @@ window.createRipple = function(event) {
     button.appendChild(circle);
 };
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.app.init());
-} else {
+async function bootApp() {
+    try {
+        const fetchHtml = async (url) => {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status} when fetching ${url}`);
+            return await res.text();
+        };
+        const [r, b, dt, m] = await Promise.all([
+            fetchHtml('components/roulette.html'),
+            fetchHtml('components/baccarat.html'),
+            fetchHtml('components/dragontiger.html'),
+            fetchHtml('components/modals.html')
+        ]);
+        
+        const inject = (id, html) => {
+            const el = document.getElementById(id);
+            if(el) el.innerHTML = html;
+        };
+        
+        inject('roulette-container', r);
+        inject('baccarat-container', b);
+        inject('dragontiger-container', dt);
+        inject('modals-container', m);
+    } catch(e) {
+        console.error("Critical Error: Failed to load UI components.", e);
+    }
+    
     window.app.init();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+    bootApp();
 }

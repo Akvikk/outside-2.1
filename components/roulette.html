@@ -1,0 +1,29 @@
+<div id="roulette-view" class="flex-1 flex flex-col overflow-hidden">
+        <!-- FROZEN HEADER GRID -->
+        <div class="glass-surface glass-surface--header shrink-0 bg-transparent pr-[8px] z-20 relative shadow-md">
+            <table class="w-full table-fixed border-separate border-spacing-1">
+                <thead>
+                    <tr>
+                        <th class="header-cell w-[8%]" id="th-index">#</th>
+                        <th class="header-cell w-[10%]" id="th-spin">SPIN</th>
+                        <th class="header-cell w-[18%]" id="th-hl">H/L</th>
+                        <th class="header-cell w-[18%]" id="th-oe">O/E</th>
+                        <th class="header-cell w-[12%]" id="th-doz">DOZ</th>
+                        <th class="header-cell w-[12%]" id="th-col">COL</th>
+                        <th class="header-cell w-[22%]" id="th-pred">PRED</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <!-- HISTORY GRID (SCROLLABLE BODY) -->
+        <div
+            class="flex-1 overflow-y-scroll overscroll-contain history-container relative z-10 bg-transparent no-scrollbar">
+            <table class="w-full table-fixed border-separate border-spacing-1">
+                <tbody id="historyBody">
+                    <!-- Data Rows -->
+                </tbody>
+            </table>
+            <div id="scrollAnchor" class="h-4"></div>
+        </div>
+    </div>
