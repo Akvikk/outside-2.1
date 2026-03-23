@@ -64,5 +64,11 @@ export default class HistoryGrid {
             <td class="data-cell w-[22%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
         `;
         tbody.appendChild(tr);
+
+        // Auto-scroll grid to the newest spin
+        const container = document.querySelector('.history-container');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
 }
