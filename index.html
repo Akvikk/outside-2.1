@@ -197,10 +197,14 @@
         <!-- JS will render cards or placeholder here -->
     </div>
 
-    <!-- ROULETTE VIEW -->
-    
-
-    <!-- BACCARAT VIEW (Initially Hidden) -->
+    <!-- MAIN APP CONTENT AREA (FLEX) -->
+    <main class="flex-1 flex flex-col min-h-0 relative z-10 w-full max-w-7xl mx-auto pb-safe">
+        <!-- INJECT COMPONENTS HERE -->
+        <div id="roulette-container" class="contents"></div>
+        <div id="baccarat-container" class="contents"></div>
+        <div id="dragontiger-container" class="contents"></div>
+        <div id="modals-container" class="contents"></div>
+    </main>
     
     
 
@@ -1027,12 +1031,6 @@
 
 
     <script type="module" src="js/main.js"></script>
-
-    <!-- DYNAMIC COMPONENTS INJECTED HERE -->
-    <div id="roulette-container"></div>
-    <div id="baccarat-container"></div>
-    <div id="dragontiger-container"></div>
-    <div id="modals-container"></div>
 </body>
 
 </html>
