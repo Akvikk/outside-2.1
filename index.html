@@ -170,6 +170,11 @@
                 </button>
             </div>
 
+            <button id="faceHudBtn" data-evt-bind="evt-bind-7bb4ab5a"
+                class="min-h-[44px] px-3 sm:px-4 btn-apple text-gray-300 font-medium rounded-lg flex items-center gap-2 transition-colors text-xs border border-white/10">
+                <i class="fas fa-chart-bar"></i> <span class="hidden md:inline">FACES</span>
+            </button>
+
             <!-- ANALYTICS BUTTON -->
             <button id="roulette-bets-btn" data-evt-bind="evt-bind-1eac46c9"
                 class="min-h-[44px] px-3 sm:px-4 btn-apple text-blue-400 font-medium rounded-lg flex items-center gap-2 transition-colors text-xs">
@@ -501,6 +506,11 @@
                     class="fas fa-chevron-down text-gray-500 transition-transform duration-200 group-hover:text-white"></i>
             </button>
             <div id="acc-grid" class="hidden p-2 bg-black/10 border-b border-white/10">
+                <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
+                    <span class="text-gray-300 text-sm">Face</span>
+                    <label class="apple-switch"><input type="checkbox" id="grid-face" checked=""
+                            data-evt-bind="evt-bind-c0f4ce12"><span class="slider"></span></label>
+                </div>
                 <div class="flex items-center justify-between p-2 hover:bg-white/5 rounded-lg transition-colors">
                     <span class="text-gray-300 text-sm">High / Low</span>
                     <label class="apple-switch"><input type="checkbox" id="grid-hl" checked=""

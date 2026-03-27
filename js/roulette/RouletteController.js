@@ -68,7 +68,7 @@ export default class RouletteController {
                 }
                 this.state.ghostMode = true; // Enforced background running
                 if (data.curvedLayout !== undefined) this.state.curvedLayout = data.curvedLayout;
-                if (data.gridSettings) this.state.gridSettings = data.gridSettings;
+                if (data.gridSettings) this.state.gridSettings = { ...this.state.gridSettings, ...data.gridSettings };
                 if (data.bankrollTargets) Object.assign(this.state.bankrollTargets, data.bankrollTargets);
                 if (data.perimeterLimit !== undefined) {
                     this.state.perimeterLimit = data.perimeterLimit;
@@ -110,7 +110,10 @@ export default class RouletteController {
             this.mutateChaseSet(this.state.bgEngineChases, spinObj);
 
             this.state.history.push(spinObj);
-            if (!suppressRender) this.ui.renderRow(spinObj);
+            if (!suppressRender) {
+                this.ui.renderRow(spinObj);
+                this.ui.renderFaceHud();
+            }
             this.checkNewChases();
 
             const alerts = this.scanner.scanPatterns(false, this.state.engineChases).filter(a => this.state.activeFilters[a.patternName] !== false);
@@ -171,10 +174,12 @@ export default class RouletteController {
     toggleBetConfirmation(index) { if (this.state.pendingBets[index]) { this.state.pendingBets[index].confirmed = !this.state.pendingBets[index].confirmed; this.ui.renderDashboard(); this.saveLocal(); } }
     
     reRenderHistory() { 
+        if (this.ui && this.ui.grid && this.ui.grid.applyGridSettings) this.ui.grid.applyGridSettings();
         const tbody = document.getElementById('historyBody'); 
         if (tbody) tbody.innerHTML = ''; 
         const displaySpins = this.state.history.length > 500 ? this.state.history.slice(-500) : this.state.history;
         displaySpins.forEach(spin => this.ui.renderRow(spin)); 
+        this.ui.renderFaceHud();
     }
     
     recalculateAllStats() {
@@ -186,6 +191,7 @@ export default class RouletteController {
     // UI BINDING METHODS (From Monolith)
     // ==========================================
     toggleIgnoreZero() { this.state.ignoreZero = !this.state.ignoreZero; this.saveLocal(); }
+    toggleFaceHud() { this.ui.toggleFaceHud(); }
     togglePerimeterOnly() { this.state.perimeterOnly = !this.state.perimeterOnly; this.saveLocal(); this.ui.renderDashboard(); }
     toggleGridColumn(key) { this.state.gridSettings[key] = !this.state.gridSettings[key]; this.saveLocal(); this.reRenderHistory(); }
     updateBankrollSettings() { this.state.bankrollTargets.enabled = document.getElementById('br-enabled')?.checked || false; this.state.bankrollTargets.profit = parseInt(document.getElementById('br-profit')?.value) || 50; this.state.bankrollTargets.loss = parseInt(document.getElementById('br-loss')?.value) || 20; this.saveLocal(); }

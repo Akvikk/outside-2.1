@@ -249,7 +249,7 @@ class AppOrchestrator {
         this.currentMode = mode;
 
         const uiGroups = {
-            roulette: ['roulette-view', 'roulette-controls', 'roulette-dashboard', 'roulette-menu-items', 'roulette-bets-btn', 'sw-container'],
+            roulette: ['roulette-view', 'roulette-controls', 'roulette-dashboard', 'roulette-menu-items', 'roulette-bets-btn', 'faceHudBtn', 'sw-container'],
             baccarat: ['baccarat-view', 'baccarat-controls', 'baccarat-dashboard', 'baccarat-menu-items', 'btn-baccarat-undo', 'sw-container'],
             dragontiger: ['dragontiger-view', 'dragontiger-controls', 'dragontiger-dashboard', 'dragontiger-menu-items', 'btn-dragontiger-undo', 'sw-container']
         };
@@ -403,6 +403,7 @@ window.closeAllMenus = (e) => window.app.roulette.closeAllMenus(e);
 window.toggleMainMenu = (e) => window.app.roulette.toggleMainMenu(e);
 window.toggleAccordion = (id) => window.app.roulette.toggleAccordion(id);
 window.toggleGridColumn = (key) => window.app.roulette.toggleGridColumn(key);
+window.toggleFaceHud = () => window.app.roulette.toggleFaceHud();
 window.updateBankrollSettings = () => window.app.roulette.updateBankrollSettings();
 window.togglePerimeterOnly = () => window.app.roulette.togglePerimeterOnly();
 window.exportSpins = () => window.app.roulette.exportSpins();

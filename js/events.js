@@ -255,6 +255,18 @@ export default function bindExtractedEvents() {
         });
     });
 
+    document.querySelectorAll('[data-evt-bind="evt-bind-c0f4ce12"]').forEach(el => {
+        el.addEventListener('change', function(event) {
+            window.toggleGridColumn('face')
+        });
+    });
+
+    document.querySelectorAll('[data-evt-bind="evt-bind-7bb4ab5a"]').forEach(el => {
+        el.addEventListener('click', function(event) {
+            window.toggleFaceHud()
+        });
+    });
+
     document.querySelectorAll('[data-evt-bind="evt-bind-634ae44f"]').forEach(el => {
         el.addEventListener('change', function(event) {
             window.toggleGridColumn('hl')

@@ -23,7 +23,7 @@ export default class RouletteState {
         this.userStats = { totalWins: 0, totalLosses: 0, netUnits: 0, currentStreak: 0, totalBets: 0, bankrollHistory: [0] };
         
         this.soundSettings = { predictions: false, wins: false, losses: false };
-        this.gridSettings = { hl: true, oe: true, doz: true, col: true };
+        this.gridSettings = { face: true, hl: true, oe: true, doz: true, col: true };
         this.showTrendIcons = true;
         this.ghostMode = true;
         this.ignoreZero = true;

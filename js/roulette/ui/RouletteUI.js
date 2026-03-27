@@ -2,6 +2,7 @@ import HistoryGrid from './components/HistoryGrid.js';
 import DashboardCards from './components/DashboardCards.js';
 import TrendGraph from './components/TrendGraph.js';
 import PerimeterRadar from './components/PerimeterRadar.js';
+import FaceHud from './components/FaceHud.js';
 import { PATTERN_CONFIG } from '../config.js';
 
 export default class RouletteUI {
@@ -11,6 +12,7 @@ export default class RouletteUI {
         this.grid = new HistoryGrid(controller, state);
         this.dashboard = new DashboardCards(controller, state);
         this.perimeterRadar = new PerimeterRadar(controller, state);
+        this.faceHud = new FaceHud(controller, state);
         this._viewportSyncTimer = null;
         this.bindViewportSync();
     }
@@ -35,6 +37,10 @@ export default class RouletteUI {
     renderRow(spin) { this.grid.renderRow(spin); }
     
     renderDashboard() { this.dashboard.renderDashboard(); }
+
+    renderFaceHud() { this.faceHud.render(); }
+
+    toggleFaceHud() { this.faceHud.toggle(); }
     
     updateFilterEfficiencies() { this.dashboard.updateFilterEfficiencies(); }
 

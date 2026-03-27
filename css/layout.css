@@ -280,37 +280,42 @@
     /* ── Stable column widths on mobile ── */
     #roulette-view .header-cell:nth-child(1),
     #historyBody td:nth-child(1) {
-        width: 8% !important;
+        width: 7% !important;
     }
 
     #roulette-view .header-cell:nth-child(2),
     #historyBody td:nth-child(2) {
-        width: 14% !important;
+        width: 13% !important;
     }
 
     #roulette-view .header-cell:nth-child(3),
     #historyBody td:nth-child(3) {
-        width: 14% !important;
+        width: 16% !important;
     }
 
     #roulette-view .header-cell:nth-child(4),
     #historyBody td:nth-child(4) {
-        width: 14% !important;
+        width: 12% !important;
     }
 
     #roulette-view .header-cell:nth-child(5),
     #historyBody td:nth-child(5) {
-        width: 14% !important;
+        width: 12% !important;
     }
 
     #roulette-view .header-cell:nth-child(6),
     #historyBody td:nth-child(6) {
-        width: 14% !important;
+        width: 10% !important;
     }
 
     #roulette-view .header-cell:nth-child(7),
     #historyBody td:nth-child(7) {
-        width: 22% !important;
+        width: 10% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(8),
+    #historyBody td:nth-child(8) {
+        width: 20% !important;
     }
 
     /* ── Top Toolbar ── */
