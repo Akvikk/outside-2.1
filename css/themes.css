@@ -89,6 +89,24 @@ body.theme-dragontiger {
     color: #ffffff;
 }
 
+.cat-sec-voi {
+    background: linear-gradient(135deg, rgba(42, 183, 123, 0.85), rgba(35, 143, 188, 0.85));
+    border-color: rgba(42, 183, 123, 0.3);
+    color: #ffffff;
+}
+
+.cat-sec-orp {
+    background: linear-gradient(135deg, rgba(225, 108, 72, 0.85), rgba(152, 68, 104, 0.85));
+    border-color: rgba(225, 108, 72, 0.3);
+    color: #ffffff;
+}
+
+.cat-sec-tier {
+    background: linear-gradient(135deg, rgba(194, 160, 75, 0.85), rgba(110, 86, 191, 0.85));
+    border-color: rgba(194, 160, 75, 0.3);
+    color: #ffffff;
+}
+
 .style-red {
     border-color: rgba(255, 97, 110, 0.62);
     background: linear-gradient(135deg, rgba(159, 30, 41, 0.9), rgba(96, 17, 29, 0.9)) !important;

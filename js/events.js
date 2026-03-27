@@ -291,6 +291,12 @@ export default function bindExtractedEvents() {
         });
     });
 
+    document.querySelectorAll('[data-evt-bind="evt-bind-889d89f1"]').forEach(el => {
+        el.addEventListener('change', function(event) {
+            window.toggleGridColumn('sec')
+        });
+    });
+
     document.querySelectorAll('[data-evt-bind="evt-bind-7fe35e6a"]').forEach(el => {
         el.addEventListener('click', function(event) {
             window.toggleAccordion('acc-bankroll')

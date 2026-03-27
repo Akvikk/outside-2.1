@@ -12,9 +12,11 @@ export default class HistoryGrid {
     syncCompactGridHeaders() {
         this.isCompactMobile = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
         const thFace = document.getElementById('th-face');
+        const thSec = document.getElementById('th-sec');
         const thHL = document.getElementById('th-hl'); const thOE = document.getElementById('th-oe');
         const thDoz = document.getElementById('th-doz'); const thCol = document.getElementById('th-col');
         if (thFace) thFace.textContent = 'FACE';
+        if (thSec) thSec.textContent = this.isCompactMobile ? 'SEC' : 'SEC';
         if (thHL) thHL.textContent = 'H/L'; if (thOE) thOE.textContent = 'O/E';
         if (thDoz) thDoz.textContent = this.isCompactMobile ? 'D' : 'DOZ';
         if (thCol) thCol.textContent = this.isCompactMobile ? 'C' : 'COL';
@@ -28,7 +30,8 @@ export default class HistoryGrid {
             hl: 'th-hl',
             oe: 'th-oe',
             doz: 'th-doz',
-            col: 'th-col'
+            col: 'th-col',
+            sec: 'th-sec'
         };
 
         Object.entries(headerMap).forEach(([key, id]) => {
@@ -41,7 +44,8 @@ export default class HistoryGrid {
             hl: 'grid-hl',
             oe: 'grid-oe',
             doz: 'grid-doz',
-            col: 'grid-col'
+            col: 'grid-col',
+            sec: 'grid-sec'
         };
 
         Object.entries(inputMap).forEach(([key, id]) => {
@@ -86,17 +90,22 @@ export default class HistoryGrid {
         const cOE = spin.oe === 'Odd' ? 'cat-oe-odd' : (spin.oe === 'Even' ? 'cat-oe-even' : '');
         const cDZ = spin.doz === 'D1' ? 'cat-doz-d1' : (spin.doz === 'D2' ? 'cat-doz-d2' : (spin.doz === 'D3' ? 'cat-doz-d3' : ''));
         const cCL = spin.col === 'C1' ? 'cat-col-c1' : (spin.col === 'C2' ? 'cat-col-c2' : (spin.col === 'C3' ? 'cat-col-c3' : ''));
+        const cSC = spin.section === 'VOISINS' ? 'cat-sec-voi' : (spin.section === 'ORPHELINS' ? 'cat-sec-orp' : 'cat-sec-tier');
+        const sectionLabel = spin.section === 'VOISINS'
+            ? 'VOI'
+            : (spin.section === 'ORPHELINS' ? (this.isCompactMobile ? 'ORP' : 'ORPH') : 'TIER');
         const faceCell = getFaceCellPresentation(spin.val);
 
         tr.innerHTML = `
             <td class="data-cell w-[7%] text-gray-400 border-white/10 text-xs font-mono bg-black/40">${spin.spinNumber}</td>
             <td class="data-cell w-[10%] ${bgNum} text-lg font-black">${spin.val}</td>
             ${this.state.gridSettings.face ? `<td class="data-cell w-[12%] px-2" style="${faceCell.style}">${faceCell.html}</td>` : ''}
-            ${this.state.gridSettings.hl ? `<td class="data-cell w-[13%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
-            ${this.state.gridSettings.oe ? `<td class="data-cell w-[13%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (this.isCompactMobile ? 'E' : 'Even'))}</td>` : ''}
+            ${this.state.gridSettings.hl ? `<td class="data-cell w-[12%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
+            ${this.state.gridSettings.oe ? `<td class="data-cell w-[12%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (this.isCompactMobile ? 'E' : 'Even'))}</td>` : ''}
             ${this.state.gridSettings.doz ? `<td class="data-cell w-[10%] ${cDZ}">${zTxt || spin.doz}</td>` : ''}
-            ${this.state.gridSettings.col ? `<td class="data-cell w-[10%] ${cCL}">${zTxt || spin.col}</td>` : ''}
-            <td class="data-cell w-[25%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
+            ${this.state.gridSettings.col ? `<td class="data-cell w-[9%] ${cCL}">${zTxt || spin.col}</td>` : ''}
+            <td class="data-cell w-[10%] ${cSC} ${this.state.gridSettings.sec ? '' : 'hidden'}">${sectionLabel}</td>
+            <td class="data-cell w-[18%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
         `;
         tbody.appendChild(tr);
 

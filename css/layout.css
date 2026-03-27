@@ -295,12 +295,12 @@
 
     #roulette-view .header-cell:nth-child(4),
     #historyBody td:nth-child(4) {
-        width: 13% !important;
+        width: 12% !important;
     }
 
     #roulette-view .header-cell:nth-child(5),
     #historyBody td:nth-child(5) {
-        width: 13% !important;
+        width: 12% !important;
     }
 
     #roulette-view .header-cell:nth-child(6),
@@ -310,12 +310,17 @@
 
     #roulette-view .header-cell:nth-child(7),
     #historyBody td:nth-child(7) {
-        width: 10% !important;
+        width: 9% !important;
     }
 
     #roulette-view .header-cell:nth-child(8),
     #historyBody td:nth-child(8) {
-        width: 22% !important;
+        width: 10% !important;
+    }
+
+    #roulette-view .header-cell:nth-child(9),
+    #historyBody td:nth-child(9) {
+        width: 15% !important;
     }
 
     /* ── Top Toolbar ── */

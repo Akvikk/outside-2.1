@@ -71,6 +71,10 @@
     background: linear-gradient(135deg, rgba(231, 78, 85, 0.85), rgba(80, 219, 79, 0.85), rgba(133, 115, 34, 0.85));
 }
 
+#roulette-view #th-sec {
+    background: linear-gradient(135deg, rgba(42, 183, 123, 0.82), rgba(175, 126, 44, 0.82), rgba(128, 92, 201, 0.82));
+}
+
 #roulette-view #th-pred {
     background: linear-gradient(135deg, rgba(70, 100, 170, 0.85), rgba(34, 41, 88, 0.85));
 }
