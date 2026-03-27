@@ -4,6 +4,7 @@ export const FACE_GROUPS = {
         name: 'Face 1',
         numbers: [1, 6, 10, 15, 24, 29, 33],
         color: '#32ADE6',
+        fill: 'rgba(50, 173, 230, 0.42)',
         border: 'rgba(50, 173, 230, 0.65)',
         background: 'rgba(50, 173, 230, 0.12)',
         glow: 'rgba(50, 173, 230, 0.12)'
@@ -13,6 +14,7 @@ export const FACE_GROUPS = {
         name: 'Face 2',
         numbers: [2, 7, 11, 16, 20, 24, 25, 29],
         color: '#FF9F0A',
+        fill: 'rgba(255, 159, 10, 0.4)',
         border: 'rgba(255, 159, 10, 0.65)',
         background: 'rgba(255, 159, 10, 0.12)',
         glow: 'rgba(255, 159, 10, 0.12)'
@@ -22,6 +24,7 @@ export const FACE_GROUPS = {
         name: 'Face 3',
         numbers: [3, 8, 12, 17, 21, 26, 30, 35],
         color: '#BF5AF2',
+        fill: 'rgba(191, 90, 242, 0.38)',
         border: 'rgba(191, 90, 242, 0.65)',
         background: 'rgba(191, 90, 242, 0.12)',
         glow: 'rgba(191, 90, 242, 0.12)'
@@ -31,6 +34,7 @@ export const FACE_GROUPS = {
         name: 'Face 4',
         numbers: [4, 9, 13, 18, 22, 27, 31, 36],
         color: '#FFD60A',
+        fill: 'rgba(255, 214, 10, 0.38)',
         border: 'rgba(255, 214, 10, 0.65)',
         background: 'rgba(255, 214, 10, 0.14)',
         glow: 'rgba(255, 214, 10, 0.14)'
@@ -40,6 +44,7 @@ export const FACE_GROUPS = {
         name: 'Face 5',
         numbers: [0, 5, 10, 14, 15, 19, 23, 28, 32],
         color: '#FF453A',
+        fill: 'rgba(255, 69, 58, 0.4)',
         border: 'rgba(255, 69, 58, 0.65)',
         background: 'rgba(255, 69, 58, 0.12)',
         glow: 'rgba(255, 69, 58, 0.12)'
@@ -60,42 +65,35 @@ export function getFaceGroupsForNumber(value) {
     return keys.map((key) => ({ key, ...FACE_GROUPS[key] }));
 }
 
-export function renderFaceBadges(value) {
+export function getFaceCellPresentation(value) {
     const faces = getFaceGroupsForNumber(value);
 
     if (faces.length === 0) {
-        return `
-            <div class="flex items-center justify-center w-full h-full">
-                <span class="text-xs font-bold text-gray-500">-</span>
-            </div>
-        `;
+        return {
+            html: '<span class="text-xs font-bold text-gray-500">-</span>',
+            style: ''
+        };
     }
 
     if (faces.length === 1) {
         const face = faces[0];
-        return `
-            <div class="flex items-center justify-center w-full">
-                <div
-                    class="w-full rounded-xl border px-2 py-2 text-sm font-black uppercase tracking-wider"
-                    style="color:#f8fafc; border-color:${face.border}; background:linear-gradient(135deg, ${face.background} 0%, rgba(18,12,24,0.72) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 0 18px ${face.glow}; text-shadow:0 1px 2px rgba(0,0,0,0.45);">
-                    ${face.label}
-                </div>
-            </div>
-        `;
+        return {
+            html: `<span class="text-white font-black tracking-wider">${face.label}</span>`,
+            style: `background:linear-gradient(135deg, ${face.fill} 0%, rgba(32, 12, 24, 0.88) 100%); border-color:${face.border}; box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 0 18px ${face.glow};`
+        };
     }
 
-    return `
-        <div class="grid grid-cols-2 gap-1 w-full">
-            ${faces.map((face) => `
-                <span
-                    class="inline-flex items-center justify-center rounded-lg border px-1 py-2 text-xs font-black uppercase tracking-wide"
-                    style="color:#f8fafc; border-color:${face.border}; background:linear-gradient(135deg, ${face.background} 0%, rgba(18,12,24,0.72) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px ${face.glow}; white-space:nowrap; text-shadow:0 1px 2px rgba(0,0,0,0.45);"
-                    title="${face.name}">
-                    ${face.label}
-                </span>
-            `).join('')}
-        </div>
-    `;
+    const [faceA, faceB] = faces;
+    return {
+        html: `
+            <div class="flex items-center justify-center gap-2 w-full">
+                <span class="text-white font-black tracking-wider">${faceA.label}</span>
+                <span class="text-white/45 text-xs">/</span>
+                <span class="text-white font-black tracking-wider">${faceB.label}</span>
+            </div>
+        `,
+        style: `background:linear-gradient(135deg, ${faceA.fill} 0%, rgba(34, 14, 28, 0.92) 48%, rgba(34, 14, 28, 0.92) 52%, ${faceB.fill} 100%); border-color:rgba(255,255,255,0.1); box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 0 18px ${faceA.glow}, 0 0 18px ${faceB.glow};`
+    };
 }
 
 export default FACE_GROUPS;

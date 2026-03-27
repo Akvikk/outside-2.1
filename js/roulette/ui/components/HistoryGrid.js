@@ -1,6 +1,6 @@
 import Formatters from '../Formatters.js';
 import BankrollManager from '../../engine/BankrollManager.js';
-import { renderFaceBadges } from './FaceGroups.js';
+import { getFaceCellPresentation } from './FaceGroups.js';
 
 export default class HistoryGrid {
     constructor(controller, state) {
@@ -86,11 +86,12 @@ export default class HistoryGrid {
         const cOE = spin.oe === 'Odd' ? 'cat-oe-odd' : (spin.oe === 'Even' ? 'cat-oe-even' : '');
         const cDZ = spin.doz === 'D1' ? 'cat-doz-d1' : (spin.doz === 'D2' ? 'cat-doz-d2' : (spin.doz === 'D3' ? 'cat-doz-d3' : ''));
         const cCL = spin.col === 'C1' ? 'cat-col-c1' : (spin.col === 'C2' ? 'cat-col-c2' : (spin.col === 'C3' ? 'cat-col-c3' : ''));
+        const faceCell = getFaceCellPresentation(spin.val);
 
         tr.innerHTML = `
             <td class="data-cell w-[7%] text-gray-400 border-white/10 text-xs font-mono bg-black/40">${spin.spinNumber}</td>
             <td class="data-cell w-[10%] ${bgNum} text-lg font-black">${spin.val}</td>
-            ${this.state.gridSettings.face ? `<td class="data-cell w-[16%] border-white/10 bg-black/10 px-1 py-1.5">${renderFaceBadges(spin.val)}</td>` : ''}
+            ${this.state.gridSettings.face ? `<td class="data-cell w-[16%] px-2" style="${faceCell.style}">${faceCell.html}</td>` : ''}
             ${this.state.gridSettings.hl ? `<td class="data-cell w-[13%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
             ${this.state.gridSettings.oe ? `<td class="data-cell w-[13%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (this.isCompactMobile ? 'E' : 'Even'))}</td>` : ''}
             ${this.state.gridSettings.doz ? `<td class="data-cell w-[10%] ${cDZ}">${zTxt || spin.doz}</td>` : ''}
