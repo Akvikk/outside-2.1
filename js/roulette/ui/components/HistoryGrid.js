@@ -91,12 +91,12 @@ export default class HistoryGrid {
         tr.innerHTML = `
             <td class="data-cell w-[7%] text-gray-400 border-white/10 text-xs font-mono bg-black/40">${spin.spinNumber}</td>
             <td class="data-cell w-[10%] ${bgNum} text-lg font-black">${spin.val}</td>
-            ${this.state.gridSettings.face ? `<td class="data-cell w-[16%] px-2" style="${faceCell.style}">${faceCell.html}</td>` : ''}
+            ${this.state.gridSettings.face ? `<td class="data-cell w-[12%] px-2" style="${faceCell.style}">${faceCell.html}</td>` : ''}
             ${this.state.gridSettings.hl ? `<td class="data-cell w-[13%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
             ${this.state.gridSettings.oe ? `<td class="data-cell w-[13%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (this.isCompactMobile ? 'E' : 'Even'))}</td>` : ''}
             ${this.state.gridSettings.doz ? `<td class="data-cell w-[10%] ${cDZ}">${zTxt || spin.doz}</td>` : ''}
             ${this.state.gridSettings.col ? `<td class="data-cell w-[10%] ${cCL}">${zTxt || spin.col}</td>` : ''}
-            <td class="data-cell w-[21%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
+            <td class="data-cell w-[25%] bg-black/30 border-l border-white/10 font-bold ${pObj.style}" title="${pObj.tooltip}">${pObj.text}</td>
         `;
         tbody.appendChild(tr);
 

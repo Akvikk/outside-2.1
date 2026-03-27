@@ -290,17 +290,17 @@
 
     #roulette-view .header-cell:nth-child(3),
     #historyBody td:nth-child(3) {
-        width: 16% !important;
+        width: 12% !important;
     }
 
     #roulette-view .header-cell:nth-child(4),
     #historyBody td:nth-child(4) {
-        width: 12% !important;
+        width: 13% !important;
     }
 
     #roulette-view .header-cell:nth-child(5),
     #historyBody td:nth-child(5) {
-        width: 12% !important;
+        width: 13% !important;
     }
 
     #roulette-view .header-cell:nth-child(6),
@@ -315,7 +315,7 @@
 
     #roulette-view .header-cell:nth-child(8),
     #historyBody td:nth-child(8) {
-        width: 20% !important;
+        width: 22% !important;
     }
 
     /* ── Top Toolbar ── */
