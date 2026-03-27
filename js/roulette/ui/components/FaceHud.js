@@ -54,34 +54,29 @@ export default class FaceHud {
     }
 
     ensureMounted() {
-        const host = document.getElementById('roulette-view');
+        const host = document.body;
         if (!host) return false;
-
-        host.classList.add('relative');
 
         if (!this.root) {
             const root = document.createElement('div');
             root.id = 'roulette-face-hud';
-            root.className = 'absolute z-30 hidden select-none';
-            root.style.width = 'min(300px, calc(100% - 24px))';
-            root.style.maxWidth = '300px';
+            root.className = 'fixed z-30 hidden select-none';
+            root.style.width = 'min(182px, calc(100% - 20px))';
+            root.style.maxWidth = '182px';
 
             root.innerHTML = `
-                <div class="glass-panel glass-surface relative overflow-hidden rounded-3xl p-3" style="border-color:rgba(48,209,88,0.15); box-shadow:0 24px 60px rgba(0,0,0,0.42), inset 0 1px 0 rgba(48,209,88,0.08), 0 0 35px rgba(48,209,88,0.08);">
-                    <div class="pointer-events-none absolute inset-x-6 top-0 h-px" style="background:linear-gradient(90deg, transparent 0%, rgba(48,209,88,0.7) 50%, transparent 100%);"></div>
+                <div class="glass-panel glass-surface relative overflow-hidden rounded-[20px] p-2" style="border-color:rgba(48,209,88,0.12); box-shadow:0 12px 28px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.04), 0 0 16px rgba(48,209,88,0.05);">
+                    <div class="pointer-events-none absolute inset-x-4 top-0 h-px" style="background:linear-gradient(90deg, transparent 0%, rgba(48,209,88,0.55) 50%, transparent 100%);"></div>
                     <div
                         id="roulette-face-hud-drag"
-                        class="mb-3 flex cursor-grab touch-none items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-3 py-2 active:cursor-grabbing">
-                        <div class="flex flex-col">
-                            <span class="text-[11px] font-black uppercase tracking-[0.28em]" style="color:#30D158;">Face HUD</span>
-                            <span class="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">Roulette Overlay</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span id="roulette-face-hud-total" class="rounded-full border border-white/10 bg-black/20 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">0 Spins</span>
-                            <span class="text-white/30"><i class="fas fa-grip-lines"></i></span>
+                        class="mb-1.5 flex cursor-grab touch-none items-center justify-between rounded-[14px] border border-white/10 bg-black/20 px-2 py-1.5 active:cursor-grabbing">
+                        <span class="text-[8px] font-black uppercase tracking-[0.26em]" style="color:#30D158;">Faces</span>
+                        <div class="flex items-center gap-1">
+                            <span id="roulette-face-hud-total" class="rounded-full border border-white/10 bg-white/[0.04] px-1.5 py-0.5 text-[8px] font-black tracking-[0.08em] text-white/60">0</span>
+                            <span class="text-[9px] text-white/25"><i class="fas fa-grip-lines"></i></span>
                         </div>
                     </div>
-                    <div id="roulette-face-hud-rows" class="flex flex-col gap-2"></div>
+                    <div id="roulette-face-hud-rows" class="flex flex-col gap-1"></div>
                 </div>
             `;
 
@@ -107,22 +102,18 @@ export default class FaceHud {
     }
 
     placeDefaultPosition() {
-        const host = document.getElementById('roulette-view');
-        if (!host || !this.root) return;
-
-        const hudWidth = this.root.offsetWidth || 300;
-        this.position.left = Math.max(12, host.clientWidth - hudWidth - 12);
-        this.position.top = 12;
+        const hudWidth = this.root.offsetWidth || 182;
+        this.position.left = Math.max(12, window.innerWidth - hudWidth - 12);
+        this.position.top = 84;
         this.applyPosition();
         this.saveState();
     }
 
     clampPosition() {
-        const host = document.getElementById('roulette-view');
-        if (!host || !this.root) return;
+        if (!this.root) return;
 
-        const maxLeft = Math.max(12, host.clientWidth - this.root.offsetWidth - 12);
-        const maxTop = Math.max(12, host.clientHeight - this.root.offsetHeight - 12);
+        const maxLeft = Math.max(12, window.innerWidth - this.root.offsetWidth - 12);
+        const maxTop = Math.max(12, window.innerHeight - this.root.offsetHeight - 12);
         this.position.left = Math.min(Math.max(12, this.position.left ?? 12), maxLeft);
         this.position.top = Math.min(Math.max(12, this.position.top ?? 12), maxTop);
     }
@@ -136,8 +127,9 @@ export default class FaceHud {
     startDrag(event) {
         if (!this.root) return;
 
-        const startLeft = this.position.left ?? this.root.offsetLeft;
-        const startTop = this.position.top ?? this.root.offsetTop;
+        const rect = this.root.getBoundingClientRect();
+        const startLeft = this.position.left ?? rect.left;
+        const startTop = this.position.top ?? rect.top;
 
         this.dragState = {
             pointerId: event.pointerId,
@@ -211,7 +203,7 @@ export default class FaceHud {
 
         return Object.entries(FACE_GROUPS).map(([key, config]) => ({
             key,
-            label: config.name.toUpperCase(),
+            label: config.label,
             count: counts[key],
             percent: totalSpins > 0 ? Math.round((counts[key] / totalSpins) * 100) : 0,
             color: config.color
@@ -221,34 +213,40 @@ export default class FaceHud {
     render() {
         if (!this.ensureMounted()) return;
 
-        this.root.classList.toggle('hidden', !this.isVisible);
+        const isRouletteMode = window.app?.currentMode === 'roulette';
+        this.root.classList.toggle('hidden', !(this.isVisible && isRouletteMode));
         this.syncButton();
 
-        if (!this.isVisible || !this.rowsEl) return;
+        if (!(this.isVisible && isRouletteMode) || !this.rowsEl) return;
 
         const stats = this.computeStats();
         const total = this.state.history.length;
         const totalEl = this.root.querySelector('#roulette-face-hud-total');
-        if (totalEl) totalEl.textContent = `${total} Spin${total === 1 ? '' : 's'}`;
+        if (totalEl) totalEl.textContent = String(total);
 
-        this.rowsEl.innerHTML = stats.map((face) => `
-            <div class="grid-item relative overflow-hidden rounded-[20px] border-white/8 bg-black/20">
-                <div
-                    class="absolute inset-y-0 left-0 rounded-r-[20px]"
-                    style="width:${face.percent}%; background:linear-gradient(90deg, ${face.color}66 0%, ${face.color}1f 100%); box-shadow:0 0 24px ${face.color}22;"></div>
-                <div class="relative flex items-center justify-between gap-3 px-4 py-3">
-                    <span class="text-sm font-black uppercase tracking-wide text-white">
-                        ${face.label}
-                        <span class="text-white/45">(${face.percent}%)</span>
-                    </span>
-                    <span
-                        class="rounded-full border px-2 py-1 text-[10px] font-black uppercase tracking-[0.14em]"
-                        style="color:${face.color}; border-color:${face.color}66; background:${face.color}14;">
-                        ${face.key}
-                    </span>
+        this.rowsEl.innerHTML = stats.map((face) => {
+            const isHot = face.percent >= 20;
+            const icon = isHot ? 'fa-fire' : 'fa-snowflake';
+            const iconColor = isHot ? '#FF9F0A' : '#64D2FF';
+
+            return `
+                <div class="relative overflow-hidden rounded-[14px] border border-white/8 bg-black/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+                    <div
+                        class="absolute inset-y-0 left-0 rounded-r-[14px]"
+                        style="width:${face.percent}%; background:linear-gradient(90deg, ${face.color}66 0%, ${face.color}24 100%); box-shadow:0 0 14px ${face.color}1f;"></div>
+                    <div class="relative flex min-h-[30px] items-center justify-between gap-2 px-2 py-1.5">
+                        <div class="flex items-center gap-1.5">
+                            <span class="h-1.5 w-1.5 rounded-full" style="background:${face.color}; box-shadow:0 0 8px ${face.color};"></span>
+                            <span class="text-[10px] font-black uppercase tracking-[0.14em] text-white">${face.label}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[9px] font-black uppercase tracking-[0.08em] text-white/55">${face.percent}%</span>
+                            <span class="text-[10px]" style="color:${iconColor};"><i class="fas ${icon}"></i></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         this.clampPosition();
         this.applyPosition();

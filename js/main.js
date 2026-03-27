@@ -269,6 +269,7 @@ class AppOrchestrator {
             if (mode === 'roulette') { this.roulette.reRenderHistory(); this.roulette.ui.renderDashboard(); this.roulette.ui.updateFilterEfficiencies(); }
             else if (mode === 'baccarat') { this.baccarat.render(); this.baccarat.runEngine(); }
             else if (mode === 'dragontiger') { this.dragontiger.render(); this.dragontiger.runEngine(); }
+            if (this.roulette.ui?.renderFaceHud) this.roulette.ui.renderFaceHud();
             document.body.classList.remove('theme-roulette', 'theme-baccarat', 'theme-dragontiger'); document.body.classList.add(`theme-${mode}`);
             return;
         }
@@ -295,6 +296,7 @@ class AppOrchestrator {
             if (mode === 'roulette') { this.roulette.reRenderHistory(); this.roulette.ui.renderDashboard(); this.roulette.ui.updateFilterEfficiencies(); }
             else if (mode === 'baccarat') { this.baccarat.render(); this.baccarat.runEngine(); }
             else if (mode === 'dragontiger') { this.dragontiger.render(); this.dragontiger.runEngine(); }
+            if (this.roulette.ui?.renderFaceHud) this.roulette.ui.renderFaceHud();
             
             document.body.classList.remove('theme-roulette', 'theme-baccarat', 'theme-dragontiger'); document.body.classList.add(`theme-${mode}`);
             if (newView) { newView.classList.add('pro-enter'); }
