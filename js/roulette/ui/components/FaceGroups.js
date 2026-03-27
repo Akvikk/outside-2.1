@@ -64,15 +64,32 @@ export function renderFaceBadges(value) {
     const faces = getFaceGroupsForNumber(value);
 
     if (faces.length === 0) {
-        return '<span class="text-xs font-bold text-gray-500">-</span>';
+        return `
+            <div class="flex items-center justify-center w-full h-full">
+                <span class="text-xs font-bold text-gray-500">-</span>
+            </div>
+        `;
+    }
+
+    if (faces.length === 1) {
+        const face = faces[0];
+        return `
+            <div class="flex items-center justify-center w-full">
+                <div
+                    class="w-full rounded-xl border px-2 py-2 text-sm font-black uppercase tracking-wider"
+                    style="color:#f8fafc; border-color:${face.border}; background:linear-gradient(135deg, ${face.background} 0%, rgba(18,12,24,0.72) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.06), 0 0 18px ${face.glow}; text-shadow:0 1px 2px rgba(0,0,0,0.45);">
+                    ${face.label}
+                </div>
+            </div>
+        `;
     }
 
     return `
-        <div class="flex flex-wrap items-center justify-center gap-1">
+        <div class="grid grid-cols-2 gap-1 w-full">
             ${faces.map((face) => `
                 <span
-                    class="inline-flex items-center justify-center rounded-lg border px-2 py-1 text-xs font-black uppercase tracking-wide"
-                    style="min-width:42px; color:${face.color}; border-color:${face.border}; background:${face.background}; box-shadow:0 0 18px ${face.glow}; white-space:nowrap;"
+                    class="inline-flex items-center justify-center rounded-lg border px-1 py-2 text-xs font-black uppercase tracking-wide"
+                    style="color:#f8fafc; border-color:${face.border}; background:linear-gradient(135deg, ${face.background} 0%, rgba(18,12,24,0.72) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,0.05), 0 0 16px ${face.glow}; white-space:nowrap; text-shadow:0 1px 2px rgba(0,0,0,0.45);"
                     title="${face.name}">
                     ${face.label}
                 </span>

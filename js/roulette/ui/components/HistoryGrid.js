@@ -90,7 +90,7 @@ export default class HistoryGrid {
         tr.innerHTML = `
             <td class="data-cell w-[7%] text-gray-400 border-white/10 text-xs font-mono bg-black/40">${spin.spinNumber}</td>
             <td class="data-cell w-[10%] ${bgNum} text-lg font-black">${spin.val}</td>
-            ${this.state.gridSettings.face ? `<td class="data-cell w-[16%] border-white/10 bg-black/20">${renderFaceBadges(spin.val)}</td>` : ''}
+            ${this.state.gridSettings.face ? `<td class="data-cell w-[16%] border-white/10 bg-black/10 px-1 py-1.5">${renderFaceBadges(spin.val)}</td>` : ''}
             ${this.state.gridSettings.hl ? `<td class="data-cell w-[13%] ${cHL}">${zTxt || (spin.hl === 'H' ? (this.isCompactMobile ? 'H' : 'High') : (this.isCompactMobile ? 'L' : 'Low'))}</td>` : ''}
             ${this.state.gridSettings.oe ? `<td class="data-cell w-[13%] ${cOE}">${zTxt || (spin.oe === 'Odd' ? (this.isCompactMobile ? 'O' : 'Odd') : (this.isCompactMobile ? 'E' : 'Even'))}</td>` : ''}
             ${this.state.gridSettings.doz ? `<td class="data-cell w-[10%] ${cDZ}">${zTxt || spin.doz}</td>` : ''}
