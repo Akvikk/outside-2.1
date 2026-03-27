@@ -12,7 +12,7 @@ export const FACE_GROUPS = {
     F2: {
         label: 'F2',
         name: 'Face 2',
-        numbers: [2, 7, 11, 16, 20, 24, 25, 29],
+        numbers: [2, 7, 11, 16, 20, 24, 25, 29, 34],
         color: '#FF9F0A',
         fill: 'rgba(255, 159, 10, 0.4)',
         border: 'rgba(255, 159, 10, 0.65)',
